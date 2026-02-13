@@ -1,5 +1,4 @@
 services:
-  #  Database (MongoDB)
   mongo:
     image: mongo:latest
     container_name: unifound_db
@@ -12,7 +11,7 @@ services:
   backend:
     build: ./UniFound-Backend
     env_file:
-    - ./UniFound-Backend/.env
+      - ./UniFound-Backend/.env
     container_name: unifound_backend
     ports:
       - "5000:5000"
@@ -21,14 +20,12 @@ services:
     volumes:
       - ./UniFound-Backend:/app
       - /app/node_modules
-    environment:
-      - MONGO_URI=mongodb://mongo:27017/unifound_db
 
-  #  Frontend Service
+  # Frontend Service
   frontend:
     build: ./UniFound-Frontend
     env_file:
-    - ./UniFound-Frontend/.env
+      - ./UniFound-Frontend/.env
     container_name: unifound_frontend
     ports:
       - "5173:5173"
