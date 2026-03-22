@@ -4,7 +4,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import userRouter from "./routes/userRouter.js"; 
 import claimRouter from "./routes/claimRouter.js";
-
+import itemRouter from "./routes/itemRouter.js";
 
 dotenv.config();
 
@@ -31,6 +31,7 @@ connectDB();
 // Routes
 app.use("/api/users", userRouter); 
 app.use("/api/claims", claimRouter);
+app.use("/api/items", itemRouter);
 
 app.get("/", (req, res) => {
   res.send("UniFound Backend is Running & DB Connected! 🚀");
