@@ -1,24 +1,27 @@
 import express from "express";
 import {
   createClaim,
-  getAllClaims,
-  getUserClaims,
-  getItemClaims,
+  getClaims,
+  getClaimById,
   updateClaim,
-  approveClaim,
-  rejectClaim,
-  deleteClaim
+  deleteClaim,
 } from "../controllers/claimController.js";
 
-const claimRouter = express.Router();
+const router = express.Router();
 
-claimRouter.post("/", createClaim);
-claimRouter.get("/", getAllClaims);
-claimRouter.get("/user/:userId", getUserClaims);
-claimRouter.get("/item/:itemId", getItemClaims);
-claimRouter.put("/:id", updateClaim);
-claimRouter.put("/:id/approve", approveClaim);
-claimRouter.put("/:id/reject", rejectClaim);
-claimRouter.delete("/:id", deleteClaim);
+// 🟢 Create a new claim
+router.post("/", createClaim);
 
-export default claimRouter;
+// 🟢 Get all claims (optional userId query param)
+router.get("/", getClaims);
+
+// 🟢 Get single claim by ID
+router.get("/:id", getClaimById);
+
+// 🟢 Update claim by ID
+router.put("/:id", updateClaim);
+
+// 🟢 Permanent delete claim by ID
+router.delete("/:id", deleteClaim);
+
+export default router;
