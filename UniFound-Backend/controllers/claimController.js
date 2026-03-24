@@ -1,6 +1,9 @@
+import mongoose from "mongoose";
 import Claim from "../models/claim.js";
+import User from "../models/user.js";
+import Item from "../models/item.js";
 
-// ✅ Create Claim
+// 🔹 Create a new claim with auto-generated claimId (CLAIM001, CLAIM002…)
 export const createClaim = async (req, res) => {
   try {
     const {
@@ -8,156 +11,131 @@ export const createClaim = async (req, res) => {
       userId,
       description,
       evidenceText,
+      evidenceImage,
       contactNumber,
-      meetingLocation
+      email,
+      meetingLocation,
+      meetingTime,
     } = req.body;
 
-    // 🔴 Basic validation
-    if (!itemId || !userId || !description || !evidenceText || !contactNumber || !meetingLocation) {
-      return res.status(400).json({ message: "Please fill all required fields" });
+    // Validate ObjectIds
+    if (!mongoose.Types.ObjectId.isValid(itemId)) {
+      return res.status(400).json({ message: "Invalid itemId" });
+    }
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: "Invalid userId" });
     }
 
-    // 🔍 Check item exists
+    // Check if item exists
     const item = await Item.findById(itemId);
-    if (!item) {
-      return res.status(404).json({ message: "Item not found" });
-    }
+    if (!item) return res.status(404).json({ message: "Item not found" });
 
-    // ⚠️ Prevent duplicate claim (same user same item)
-    const existingClaim = await Claim.findOne({ itemId, userId });
-    if (existingClaim) {
-      return res.status(400).json({ message: "You already claimed this item" });
-    }
+    // Check if user exists
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
 
-    // ✅ Create claim
-    const claim = await Claim.create(req.body);
+    // 🔹 Generate custom claimId
+    const count = await Claim.countDocuments();
+    const customClaimId = `CLAIM${(count + 1).toString().padStart(3, "0")}`;
 
-    res.status(201).json({
-      message: "Claim submitted successfully",
-      claim
+    const newClaim = new Claim({
+      claimId: customClaimId, // assign auto-generated claimId
+      itemId,
+      userId,
+      description,
+      evidenceText,
+      evidenceImage,
+      contactNumber,
+      email,
+      meetingLocation,
+      meetingTime,
+      status: "Pending",
+      history: [{ status: "Pending", updatedBy: userId, note: "Claim created" }],
     });
 
+    const savedClaim = await newClaim.save();
+    res.status(201).json(savedClaim);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Error creating claim", error });
   }
 };
 
-
-// 📄 Get All Claims (Admin)
-export const getAllClaims = async (req, res) => {
+// 🔹 Get all claims (admin or user-specific)
+export const getClaims = async (req, res) => {
   try {
-    const claims = await Claim.find({ isDeleted: false })
-      .populate("userId", "name email")
-      .populate("itemId", "title category status");
+    const { userId } = req.query;
+    const filter = {};
+    if (userId) filter.userId = userId;
 
-    res.json(claims);
+    const claims = await Claim.find(filter)
+      .populate("itemId")
+      .populate("userId")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json(claims);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Error fetching claims", error });
   }
 };
 
-
-// 👤 Get Claims by User
-export const getUserClaims = async (req, res) => {
+// 🔹 Get single claim by ID
+export const getClaimById = async (req, res) => {
   try {
-    const claims = await Claim.find({
-      userId: req.params.userId,
-      isDeleted: false
-    }).populate("itemId", "title status");
+    const { id } = req.params;
+    const claim = await Claim.findById(id)
+      .populate("itemId")
+      .populate("userId");
+    if (!claim) return res.status(404).json({ message: "Claim not found" });
 
-    res.json(claims);
+    res.status(200).json(claim);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Error fetching claim", error });
   }
 };
 
-
-// 📦 Get Claims for an Item
-export const getItemClaims = async (req, res) => {
-  try {
-    const claims = await Claim.find({
-      itemId: req.params.itemId,
-      isDeleted: false
-    }).populate("userId", "name email");
-
-    res.json(claims);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-
-// ✅ Approve Claim (Admin)
-export const approveClaim = async (req, res) => {
-  try {
-    const claim = await Claim.findById(req.params.id);
-
-    if (!claim) {
-      return res.status(404).json({ message: "Claim not found" });
-    }
-
-    claim.status = "Approved";
-    await claim.save();
-
-    res.json({ message: "Claim approved", claim });
-
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-
-// ❌ Reject Claim (Admin)
-export const rejectClaim = async (req, res) => {
-  try {
-    const claim = await Claim.findById(req.params.id);
-
-    if (!claim) {
-      return res.status(404).json({ message: "Claim not found" });
-    }
-
-    claim.status = "Rejected";
-    await claim.save();
-
-    res.json({ message: "Claim rejected", claim });
-
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-
-// ✏️ Update Claim (User)
+// 🔹 Update claim (status, evidence, admin note)
 export const updateClaim = async (req, res) => {
   try {
-    const updated = await Claim.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
-    );
+    const { id } = req.params;
+    const { status, adminNote, updatedBy, evidenceImage, evidenceText } = req.body;
 
-    res.json(updated);
+    const claim = await Claim.findById(id);
+    if (!claim) return res.status(404).json({ message: "Claim not found" });
+
+    if (status) claim.status = status;
+    if (adminNote) claim.adminNote = adminNote;
+    if (evidenceImage) claim.evidenceImage = evidenceImage;
+    if (evidenceText) claim.evidenceText = evidenceText;
+
+    if (status || adminNote) {
+      claim.history.push({
+        status: claim.status,
+        updatedBy,
+        note: adminNote || `Status updated to ${claim.status}`,
+      });
+    }
+
+    const updatedClaim = await claim.save();
+    res.status(200).json(updatedClaim);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Error updating claim", error });
   }
 };
 
-
-// ❌ Soft Delete Claim
+// 🔹 Permanent delete
 export const deleteClaim = async (req, res) => {
   try {
-    const claim = await Claim.findById(req.params.id);
+    const { id } = req.params;
+    const deletedClaim = await Claim.findByIdAndDelete(id);
+    if (!deletedClaim) return res.status(404).json({ message: "Claim not found" });
 
-    if (!claim) {
-      return res.status(404).json({ message: "Claim not found" });
-    }
-
-    claim.isDeleted = true;
-    await claim.save();
-
-    res.json({ message: "Claim deleted (soft)" });
-
+    res.status(200).json({ message: "Claim permanently deleted" });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Error deleting claim", error });
   }
 };
