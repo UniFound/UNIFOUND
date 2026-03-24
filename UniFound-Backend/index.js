@@ -48,20 +48,20 @@ app.listen(PORT, () => {
   Admin Users List:
  
   1. Minuri Sewmini 
-     - Email (Username): minuri@gmail.com
-     - Password: adminpassword123
+     - Email (Username): minuri.sewmini@example.com
+     - Password: AdminPass123!
 
   2. Rashmini Kavindya
-     - Email (Username): rashmini@gmail.com
-     - Password: adminpassword123
+     - Email (Username): rashmini.kavindya@example.com
+     - Password: AdminPass123!
 
   3. Geethmi Uduwana
-     - Email (Username): geethmi@gmail.com
-     - Password: adminpassword123
+     - Email (Username): geethmi.uduwana@example.com
+     - Password: Admin123
 
   4. Chathuni Imalsha
-     - Email (Username): chathuni@gmail.com
-     - Password: adminpassword123
+     - Email (Username): chathuni.imashla@example.com
+     - Password: Admin123
 
 */
 
@@ -69,11 +69,11 @@ app.listen(PORT, () => {
 /*
   Sample Customer Users:
   
-  1. Chamidu Dilshan
-     - Email: chamidu@gmail.com
-     - Password: user123
+  1. 
+     - Email: nadeesha.perera@example.com
+     - Password: CustomerPass123!
 
-  2. Kaveesha Sandeepani
-     - Email: kavee@gmail.com
-     - Password: user123
+  2. 
+     - Email: geethma.fernando@example.com
+     - Password: CustomerPass123!
 */
