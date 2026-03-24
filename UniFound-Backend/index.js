@@ -5,6 +5,10 @@ import dotenv from "dotenv";
 import userRouter from "./routes/userRouter.js"; 
 import claimRouter from "./routes/claimRouter.js";
 import itemRouter from "./routes/itemRouter.js";
+import conversationRoutes from "./routes/conversationRoutes.js";
+import messageRoutes from "./routes/messageRoutes.js";
+import notificationRoutes from "./routes/notificationRoutes.js";
+import ticketRouter from "./routes/ticketRouter.js";
 
 dotenv.config();
 
@@ -32,6 +36,10 @@ connectDB();
 app.use("/api/users", userRouter); 
 app.use("/api/claims", claimRouter);
 app.use("/api/items", itemRouter);
+app.use("/api/conversations", conversationRoutes);
+app.use("/api/messages", messageRoutes);
+app.use("/api/notifications", notificationRoutes);
+app.use("/api/tickets", ticketRouter);
 
 app.get("/", (req, res) => {
   res.send("UniFound Backend is Running & DB Connected! 🚀");
