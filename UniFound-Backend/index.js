@@ -2,13 +2,16 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
-import userRouter from "./routes/userRouter.js"; 
+
+// Routes
+import userRouter from "./routes/userRouter.js";
 import claimRouter from "./routes/claimRouter.js";
 import itemRouter from "./routes/itemRouter.js";
 import conversationRoutes from "./routes/conversationRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import ticketRouter from "./routes/ticketRouter.js";
+import adminUserRoutes from "./routes/adminUserRoutes.js"; // ✅ NEW
 
 dotenv.config();
 
@@ -16,12 +19,11 @@ const app = express();
 
 // Middleware
 app.use(cors());
-app.use(express.json()); 
+app.use(express.json());
 
 // MongoDB Connection
 const connectDB = async () => {
   try {
-    
     await mongoose.connect(process.env.MONGO_URI);
     console.log("✅ MongoDB Connected Successfully!");
   } catch (error) {
@@ -33,7 +35,8 @@ const connectDB = async () => {
 connectDB();
 
 // Routes
-app.use("/api/users", userRouter); 
+app.use("/api/users", userRouter);
+app.use("/api/admin-users", adminUserRoutes); // ✅ NEW (Admin User Management)
 app.use("/api/claims", claimRouter);
 app.use("/api/items", itemRouter);
 app.use("/api/conversations", conversationRoutes);
@@ -41,47 +44,14 @@ app.use("/api/messages", messageRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/tickets", ticketRouter);
 
+// Root route
 app.get("/", (req, res) => {
   res.send("UniFound Backend is Running & DB Connected! 🚀");
 });
 
+// Server Port
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
-
-
-/*
-  Admin Users List:
- 
-  1. Minuri Sewmini 
-     - Email (Username): minuri.sewmini@example.com
-     - Password: AdminPass123!
-
-  2. Rashmini Kavindya
-     - Email (Username): rashmini.kavindya@example.com
-     - Password: AdminPass123!
-
-  3. Geethmi Uduwana
-     - Email (Username): geethmi.uduwana@example.com
-     - Password: Admin123
-
-  4. Chathuni Imalsha
-     - Email (Username): chathuni.imashla@example.com
-     - Password: Admin123
-
-*/
-
-
-/*
-  Sample Customer Users:
-  
-  1. 
-     - Email: nadeesha.perera@example.com
-     - Password: CustomerPass123!
-
-  2. 
-     - Email: geethma.fernando@example.com
-     - Password: CustomerPass123!
-*/
