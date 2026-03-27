@@ -2,16 +2,22 @@ import mongoose from "mongoose";
 
 const claimSchema = new mongoose.Schema(
   {
+
+    claimId: {
+      type: String,
+      unique: true
+
+    },
     // 🔗 Which item is being claimed
     itemId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Item",
+      type: String ,
+      ref: "item",
       required: true,
     },
 
     // 👤 Who is claiming
     userId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: String ,
       ref: "User",
       required: true,
     },
