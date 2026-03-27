@@ -1,215 +1,109 @@
-import React, { useState, useEffect } from 'react';
-import { Users, Box, CheckCircle, TrendingUp, Search, Filter, Plus, Edit, Ban, Trash2, ChevronLeft, ChevronRight, Clock, FileText, Package } from 'lucide-react';
+import AdminLayout from "../pages/AdminLayout";
+import { TrendingUp, Users, Box, ShieldCheck, LifeBuoy, ArrowUpRight, ArrowDownRight, MoreHorizontal } from "lucide-react";
 
-const AdminDashboard = () => {
-  const [users] = useState([
-    { id: 1, name: 'John Doe', email: 'john.doe@university.edu', role: 'admin', status: 'active', itemsFound: 12, joinedDate: '2024-01-15' },
-    { id: 2, name: 'Jane Smith', email: 'jane.smith@university.edu', role: 'user', status: 'active', itemsFound: 8, joinedDate: '2024-02-20' },
-    { id: 3, name: 'Mike Johnson', email: 'mike.j@university.edu', role: 'user', status: 'suspended', itemsFound: 5, joinedDate: '2024-03-10' },
-    { id: 4, name: 'Sarah Wilson', email: 'sarah.w@university.edu', role: 'user', status: 'active', itemsFound: 15, joinedDate: '2024-01-20' },
-    { id: 5, name: 'Tom Brown', email: 'tom.brown@university.edu', role: 'admin', status: 'active', itemsFound: 20, joinedDate: '2023-12-10' }
-  ]);
-  
-  // Stats
-  const totalUsers = users.length;
-  const activeUsers = users.filter(user => user.status === 'active').length;
-  const totalItems = users.reduce((sum, user) => sum + user.itemsFound, 0);
-  const resolvedCases = Math.floor(totalItems * 0.7); // Mock calculation
-  
-  // Chart data (mock)
-  const monthlyData = [
-    { month: 'Jan', lost: 12, found: 8 },
-    { month: 'Feb', lost: 19, found: 15 },
-    { month: 'Mar', lost: 15, found: 18 },
-    { month: 'Apr', lost: 25, found: 20 },
-    { month: 'May', lost: 22, found: 25 },
-    { month: 'Jun', lost: 30, found: 28 }
-  ];
-  
-  const categoryData = [
-    { name: 'Electronics', value: 30, color: 'bg-blue-500' },
-    { name: 'Clothing', value: 25, color: 'bg-purple-500' },
-    { name: 'Books', value: 20, color: 'bg-green-500' },
-    { name: 'Accessories', value: 15, color: 'bg-yellow-500' },
-    { name: 'Other', value: 10, color: 'bg-red-500' }
-  ];
-  
+export default function AdminDashboard() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Navigation */}
-      <div className="w-full flex justify-center fixed top-4 z-50">
-        <div className="w-[92%] max-w-7xl flex items-center justify-between px-6 py-3
-          bg-white/70 backdrop-blur-xl border border-white/40
-          rounded-full shadow-lg">
+    <AdminLayout>
+      <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        
+        {/* REFINED STATS GRID */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <StatCard 
+            icon={<Users size={20} />} 
+            color="blue"
+            label="Total Users" 
+            value="12,423" 
+            trend="+12%" 
+            isPositive={true}
+          />
+          <StatCard 
+            icon={<Box size={20} />} 
+            color="emerald"
+            label="Found Items" 
+            value="1,221" 
+            trend="+5.4%" 
+            isPositive={true}
+          />
+          <StatCard 
+            icon={<ShieldCheck size={20} />} 
+            color="orange"
+            label="Active Claims" 
+            value="423" 
+            trend="+2.1%" 
+            isPositive={true}
+          />
+          <StatCard 
+            icon={<LifeBuoy size={20} />} 
+            color="rose"
+            label="Open Tickets" 
+            value="18" 
+            trend="-2%" 
+            isPositive={false}
+          />
+        </div>
 
-          {/* Logo */}
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">
-              U
+        {/* BOTTOM SECTION */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 bg-white rounded-[32px] p-8 shadow-sm border border-slate-100/50 relative overflow-hidden">
+             {/* Subtle pattern background for the chart area */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-full blur-3xl opacity-50 -mr-16 -mt-16"></div>
+            
+            <div className="flex items-center justify-between mb-10 relative z-10">
+              <div>
+                <h3 className="font-black text-slate-900 text-lg tracking-tight">Platform Analytics</h3>
+                <p className="text-[10px] font-black text-slate-400 mt-1 uppercase tracking-[0.2em]">Activity Overview</p>
+              </div>
+              <button className="p-2.5 bg-slate-50 hover:bg-slate-100 rounded-xl transition-colors">
+                <MoreHorizontal size={20} className="text-slate-400" />
+              </button>
             </div>
-            <span className="font-semibold text-gray-800">
-              UniFound
-            </span>
-            <span className="ml-3 px-3 py-1 bg-blue-100 text-blue-600 text-xs rounded-full">Admin Control</span>
+            
+            <div className="h-[340px] bg-slate-50/50 rounded-[24px] border border-slate-100 flex items-center justify-center">
+               <p className="text-slate-300 font-black italic text-sm tracking-widest opacity-50 underline decoration-blue-500/30 decoration-4 underline-offset-8">Visual Data Stream</p>
+            </div>
           </div>
 
-          {/* Nav */}
-          <div className="hidden lg:flex items-center gap-6 text-sm text-gray-600">
-            <a href="/admin" className="text-blue-600 font-medium transition hover:text-blue-700">Dashboard</a>
-            <a href="/admin/users" className="transition hover:text-blue-600">Users</a>
-            <a href="/admin/categories" className="transition hover:text-blue-600">Categories</a>
-            <a href="/admin/analytics" className="transition hover:text-blue-600">Analytics</a>
-            <a href="/admin/audit" className="transition hover:text-blue-600">Audit Logs</a>
-            <a href="/admin/reports" className="transition hover:text-blue-600">Reports</a>
-          </div>
-
-          {/* Right */}
-          <div className="flex items-center gap-3">
-            <button className="text-sm text-gray-600 hover:text-blue-600">
-              Sign out
-            </button>
-            <button className="bg-blue-600 text-white px-4 py-1.5 rounded-full text-sm shadow hover:bg-blue-700 transition">
-              Admin →
+          {/* SIDE PROMO CARD */}
+          <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-[35px] p-10 text-white relative overflow-hidden flex flex-col justify-end shadow-xl shadow-blue-200">
+            <div className="absolute top-10 right-10 opacity-10 rotate-12"><ShieldCheck size={120} /></div>
+            <h2 className="text-2xl font-black mb-4 leading-tight tracking-tight">Ready to verify new claims?</h2>
+            <p className="text-blue-100/80 text-sm font-bold mb-8 leading-relaxed">Check the latest item ownership proofs submitted by users today.</p>
+            <button className="bg-white text-blue-600 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-50 transition-colors shadow-lg shadow-blue-900/20">
+              Review Now
             </button>
           </div>
         </div>
       </div>
+    </AdminLayout>
+  );
+}
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-8">
-        {/* Page Header */}
-        <div className="mb-8">
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
-          <p className="text-gray-600">System Intelligence & Administration Control Center</p>
+function StatCard({ icon, color, label, value, trend, isPositive }) {
+  // Color configuration to remove excessive whiteness
+  const theme = {
+    blue: "bg-blue-50/50 border-blue-100 text-blue-600 hover:border-blue-300",
+    emerald: "bg-emerald-50/50 border-emerald-100 text-emerald-600 hover:border-emerald-300",
+    orange: "bg-orange-50/50 border-orange-100 text-orange-600 hover:border-orange-300",
+    rose: "bg-rose-50/50 border-rose-100 text-rose-600 hover:border-rose-300",
+  }[color];
+
+  return (
+    <div className={`p-6 rounded-[30px] border transition-all duration-300 group ${theme}`}>
+      <div className="flex items-center justify-between mb-5">
+        <div className={`p-3 rounded-2xl bg-white shadow-sm group-hover:scale-110 transition-transform`}>
+          {icon}
         </div>
-
-        {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm border-l-4 border-l-blue-500 hover:shadow-md transition-shadow">
-            <div className="flex items-center space-x-4">
-              <div className="p-3 bg-blue-100 rounded-lg">
-                <Users className="h-6 w-6 text-blue-600" />
-              </div>
-              <div>
-                <p className="text-gray-500 text-sm">TOTAL</p>
-                <p className="text-2xl font-bold text-gray-800">{totalUsers.toLocaleString()}</p>
-                <p className="text-gray-500 text-sm">Registered Users</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm border-l-4 border-l-purple-500 hover:shadow-md transition-shadow">
-            <div className="flex items-center space-x-4">
-              <div className="p-3 bg-purple-100 rounded-lg">
-                <Box className="h-6 w-6 text-purple-600" />
-              </div>
-              <div>
-                <p className="text-gray-500 text-sm">ITEMS</p>
-                <p className="text-2xl font-bold text-gray-800">{totalItems}</p>
-                <p className="text-gray-500 text-sm">Lost + Found Posts</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm border-l-4 border-l-green-500 hover:shadow-md transition-shadow">
-            <div className="flex items-center space-x-4">
-              <div className="p-3 bg-green-100 rounded-lg">
-                <CheckCircle className="h-6 w-6 text-green-600" />
-              </div>
-              <div>
-                <p className="text-gray-500 text-sm">SUCCESS</p>
-                <p className="text-2xl font-bold text-gray-800">{resolvedCases}</p>
-                <p className="text-gray-500 text-sm">Resolved Cases</p>
-              </div>
-            </div>
-          </div>
+        <div className={`flex items-center gap-1 px-2.5 py-1 rounded-lg font-black text-[10px] bg-white shadow-sm ${
+          isPositive ? 'text-emerald-600' : 'text-rose-600'
+        }`}>
+          {isPositive ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
+          {trend}
         </div>
-
-        {/* Charts Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-gray-800 text-lg font-semibold">Monthly Activity</h3>
-              <div className="flex space-x-4">
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-blue-500 rounded"></div>
-                  <span className="text-gray-600 text-sm">Lost Items</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-green-500 rounded"></div>
-                  <span className="text-gray-600 text-sm">Found Items</span>
-                </div>
-              </div>
-            </div>
-            <div className="h-64 flex items-end justify-between space-x-2">
-              {monthlyData.map((data, index) => (
-                <div key={index} className="flex-1 flex flex-col items-center space-y-2">
-                  <div className="w-full flex flex-col space-y-1">
-                    <div 
-                      className="bg-blue-500 rounded-t"
-                      style={{ height: `${(data.lost / 30) * 100}%` }}
-                    ></div>
-                    <div 
-                      className="bg-green-500 rounded-b"
-                      style={{ height: `${(data.found / 30) * 100}%` }}
-                    ></div>
-                  </div>
-                  <span className="text-gray-600 text-xs">{data.month}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-            <h3 className="text-gray-800 text-lg font-semibold mb-4">Category Distribution</h3>
-            <div className="h-64 flex items-center justify-center">
-              <div className="relative w-48 h-48">
-                <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-blue-500 via-purple-500 to-green-500 opacity-80"></div>
-                <div className="absolute inset-4 rounded-full bg-white flex items-center justify-center">
-                  <span className="text-gray-800 text-2xl font-bold">100%</span>
-                </div>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-2 mt-4">
-              {categoryData.map((category, index) => (
-                <div key={index} className="flex items-center space-x-2">
-                  <div className={`w-3 h-3 rounded ${category.color}`}></div>
-                  <span className="text-gray-600 text-sm">{category.name}: {category.value}%</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm mb-8">
-          <h3 className="text-gray-800 text-lg font-semibold mb-4">Quick Actions</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <a href="/admin/users" className="flex items-center space-x-3 p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
-              <Users className="h-8 w-8 text-blue-600" />
-              <div>
-                <p className="font-medium text-gray-800">Manage Users</p>
-                <p className="text-sm text-gray-600">Add, edit, or remove users</p>
-              </div>
-            </a>
-            <a href="/admin/categories" className="flex items-center space-x-3 p-4 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors">
-              <Package className="h-8 w-8 text-purple-600" />
-              <div>
-                <p className="font-medium text-gray-800">Categories</p>
-                <p className="text-sm text-gray-600">Manage item categories</p>
-              </div>
-            </a>
-            <a href="/admin/reports" className="flex items-center space-x-3 p-4 bg-green-50 hover:bg-green-100 rounded-lg transition-colors">
-              <FileText className="h-8 w-8 text-green-600" />
-              <div>
-                <p className="font-medium text-gray-800">Generate Reports</p>
-                <p className="text-sm text-gray-600">View system analytics</p>
-              </div>
-            </a>
-          </div>
-        </div>
+      </div>
+      <div>
+        <p className="text-[10px] font-black opacity-60 uppercase tracking-[0.15em] mb-1">{label}</p>
+        <p className="text-2xl font-black text-slate-900 tracking-tighter">{value}</p>
       </div>
     </div>
   );
-};
-
-export default AdminDashboard;
+}
