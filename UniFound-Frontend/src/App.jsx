@@ -8,6 +8,13 @@ import Categories from "./pages/Categories";
 import Analytics from "./pages/Analytics";
 import AuditLogs from "./pages/AuditLogs";
 import Reports from "./pages/Reports";
+import LostItems from "./pages/LostItemsPage";
+import FoundItemsPage from "./pages/FoundItemsPage";
+import ReportItemPage from "./pages/ReportItemPage";
+import AboutPage from "./pages/AboutPage";
+import UserProfile from "./pages/UserProfile";
+import ItemDetailsPage from "./pages/ItemDetailsPage";
+import TicketsPage from "./pages/TicketsPage";
 
 function App() {
   return (
@@ -22,6 +29,16 @@ function App() {
         <Route path="/admin/analytics" element={<Analytics />} />
         <Route path="/admin/audit" element={<AuditLogs />} />
         <Route path="/admin/reports" element={<Reports />} />
+        <Route path="/lostItem" element={<LostItems />} />
+        <Route path="/foundItem" element={<FoundItemsPage />} />
+        <Route path="/report" element={<ReportItemPage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/profile" element={<UserProfile/>} />
+        <Route path="/items/:id" element={<ItemDetailsPage />} />
+        
+        
+
+        <Route path="/tickets" element={<TicketsPage />} />
       </Routes>
     </Router>
   );

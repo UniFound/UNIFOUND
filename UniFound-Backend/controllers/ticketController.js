@@ -3,11 +3,16 @@ import Ticket from "../models/ticket.js";
 // Create Ticket
 export const createTicket = async (req, res) => {
   try {
-    const { userId, subject, description } = req.body;
-    if (!userId || !subject) return res.status(400).json({ message: "userId and subject are required" });
+    const { userId, name, email, phone, subject, description } = req.body;
+    if (!userId || !name || !email || !phone || !subject) {
+      return res.status(400).json({ message: "userId, name, email, phone and subject are required" });
+    }
 
     const ticket = await Ticket.create({
       userId,
+      name,
+      email,
+      phone,
       subject,
       description,
       messages: description ? [{ senderId: userId, text: description }] : [],
@@ -44,9 +49,7 @@ export const addTicketMessage = async (req, res) => {
 // Get tickets for a user
 export const getUserTickets = async (req, res) => {
   try {
-    const tickets = await Ticket.find({ userId: req.params.userId })
-      .populate("userId", "firstName lastName email")
-      .populate("assignedAdminId", "firstName lastName email");
+    const tickets = await Ticket.find({ userId: req.params.userId });
 
     res.json(tickets);
   } catch (error) {
@@ -59,9 +62,7 @@ export const getTicketById = async (req, res) => {
   try {
     const { ticketId } = req.params;
 
-    const ticket = await Ticket.findById(ticketId)
-      .populate("userId", "firstName lastName email")
-      .populate("assignedAdminId", "firstName lastName email");
+    const ticket = await Ticket.findById(ticketId);
 
     if (!ticket) return res.status(404).json({ message: "Ticket not found" });
 
@@ -74,9 +75,7 @@ export const getTicketById = async (req, res) => {
 // Get tickets for admin
 export const getAdminTickets = async (req, res) => {
   try {
-    const tickets = await Ticket.find({ assignedAdminId: req.params.adminId })
-      .populate("userId", "firstName lastName email")
-      .populate("assignedAdminId", "firstName lastName email");
+    const tickets = await Ticket.find({ assignedAdminId: req.params.adminId });
     res.json(tickets);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -112,6 +111,40 @@ export const assignAdminToTicket = async (req, res) => {
     ticket.assignedAdminId = adminId;
     await ticket.save();
     res.json({ message: "Admin assigned to ticket", ticket });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Edit message in ticket
+export const editTicketMessage = async (req, res) => {
+  try {
+    const { ticketId, messageId } = req.params;
+    const { senderId, text, newText } = req.body;
+
+    const ticket = await Ticket.findById(ticketId);
+    if (!ticket) return res.status(404).json({ message: "Ticket not found" });
+
+    const message = ticket.messages.id(messageId);
+    if (!message) return res.status(404).json({ message: "Message not found" });
+
+    // Check if the user is the original sender of the message
+    if (message.senderId !== senderId) {
+      return res.status(403).json({ message: "You can only edit your own messages" });
+    }
+
+    // Don't allow editing auto-reply messages
+    if (message.autoReply) {
+      return res.status(403).json({ message: "Auto-reply messages cannot be edited" });
+    }
+
+    // Use either 'text' or 'newText' field
+    const updatedText = newText || text;
+    message.text = updatedText;
+    message.updatedAt = new Date();
+
+    await ticket.save();
+    res.json({ message: "Message updated successfully", ticket });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
