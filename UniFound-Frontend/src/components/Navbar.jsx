@@ -128,6 +128,9 @@ export default function Navbar() {
               </div>
             </>
           )}
+        {/* Right */}
+        <div className="flex items-center gap-3">
+          {/* Navigation buttons only - no sign in/get started */}
         </div>
       </div>
     </div>

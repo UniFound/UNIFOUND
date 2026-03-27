@@ -11,9 +11,7 @@ export default function CTA() {
           Join UniFound today and start recovering your lost items quickly and safely.
         </p>
 
-        <button className="bg-primary text-white px-8 py-3 rounded-xl hover:bg-primary-dark transition font-medium">
-          Get Started
-        </button>
+        {/* Get Started button removed */}
       </div>
     </section>
   );

@@ -45,6 +45,19 @@ export default function HeroSection() {
             text-white px-6 py-2.5 rounded-full shadow-lg 
             hover:shadow-xl hover:scale-105 transition-all duration-300 
             flex items-center gap-2 font-medium">
+      <div className="mt-6 flex gap-3">
+        {/* Get Started button removed */}
+        {/* Explore Features button removed */}
+      </div>
+
+      <div className="mt-6 flex gap-6 text-sm text-gray-600">
+        <div>
+          <span className="font-bold text-gray-900">500+</span> Items Found
+        </div>
+        <div>
+          <span className="font-bold text-gray-900">1K+</span> Students
+        </div>
+      </div>
 
               Get Started
               <ArrowRight size={16} />

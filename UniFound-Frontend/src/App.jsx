@@ -7,6 +7,7 @@ import ReportItemPage from "./pages/ReportItemPage";
 import AboutPage from "./pages/AboutPage";
 import UserProfile from "./pages/UserProfile";
 import ItemDetailsPage from "./pages/ItemDetailsPage";
+import TicketsPage from "./pages/TicketsPage";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         
         
 
+        <Route path="/tickets" element={<TicketsPage />} />
       </Routes>
     </Router>
   );

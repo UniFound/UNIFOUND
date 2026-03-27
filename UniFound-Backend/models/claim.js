@@ -2,15 +2,13 @@ import mongoose from "mongoose";
 
 const claimSchema = new mongoose.Schema(
   {
-
     claimId: {
-      type: String,
-      unique: true
-
-    },
+    type: String,
+    unique: true
+  },
     // 🔗 Which item is being claimed
     itemId: {
-      type: String ,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "item",
       required: true,
     },
@@ -22,13 +20,13 @@ const claimSchema = new mongoose.Schema(
       required: true,
     },
 
-    // 📝 Why this item is yours (main explanation)
+    // 📝 Main explanation why this item belongs to user
     description: {
       type: String,
       required: true,
     },
 
-    // 🧾 Evidence text (details like "my ID inside wallet")
+    // 🧾 Evidence text (like "my ID inside wallet")
     evidenceText: {
       type: String,
       required: true,
@@ -65,7 +63,7 @@ const claimSchema = new mongoose.Schema(
     // 📌 Claim status
     status: {
       type: String,
-      enum: ["Pending", "Approved", "Rejected"],
+      enum: ["Pending", "Under Review", "Approved", "Rejected", "On Hold"],
       default: "Pending",
     },
 
@@ -75,11 +73,24 @@ const claimSchema = new mongoose.Schema(
       default: "",
     },
 
-    // ❌ Soft delete (optional)
+    // 🔄 Workflow history (tracking status changes)
+    history: [
+      {
+        status: {
+          type: String,
+          enum: ["Pending", "Under Review", "Approved", "Rejected", "On Hold"],
+        },
+        updatedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        timestamp: { type: Date, default: Date.now },
+        note: String,
+      },
+    ],
+
+    // ❌ Soft delete
     isDeleted: {
       type: Boolean,
       default: false,
-    }
+    },
   },
   { timestamps: true }
 );

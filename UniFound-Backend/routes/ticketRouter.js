@@ -2,6 +2,7 @@ import express from "express";
 import {
   createTicket,
   addTicketMessage,
+  editTicketMessage,
   getUserTickets,
   getTicketById,
   getAdminTickets,
@@ -17,6 +18,9 @@ router.post("/", createTicket);
 
 // Add message to ticket
 router.post("/:ticketId/message", addTicketMessage);
+
+// Edit message in ticket
+router.put("/:ticketId/message/:messageId", editTicketMessage);
 
 // Get ticket by ID → must come BEFORE /user/:userId or /admin/:adminId
 router.get("/ticket/:ticketId", getTicketById); // ✅ notice the /ticket prefix to avoid conflicts
