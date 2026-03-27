@@ -40,13 +40,7 @@ export default function Navbar() {
 
         {/* Right */}
         <div className="flex items-center gap-3">
-          <button className="text-sm text-gray-600 hover:text-blue-600">
-            Sign in
-          </button>
-
-          <button className="bg-blue-600 text-white px-4 py-1.5 rounded-full text-sm shadow hover:bg-blue-700 transition">
-            Get Started →
-          </button>
+          {/* Navigation buttons only - no sign in/get started */}
         </div>
       </div>
     </div>
