@@ -34,13 +34,8 @@ export default function HeroSection() {
       </p>
 
       <div className="mt-6 flex gap-3">
-        <button className="bg-blue-600 text-white px-6 py-2 rounded-full shadow hover:bg-blue-700 transition flex items-center gap-2">
-          Get Started <ArrowRight size={16} />
-        </button>
-
-        <button className="bg-white/70 backdrop-blur border border-gray-200 px-6 py-2 rounded-full text-gray-700 hover:bg-white transition">
-          Explore Features
-        </button>
+        {/* Get Started button removed */}
+        {/* Explore Features button removed */}
       </div>
 
       <div className="mt-6 flex gap-6 text-sm text-gray-600">
