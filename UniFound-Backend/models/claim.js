@@ -15,7 +15,7 @@ const claimSchema = new mongoose.Schema(
 
     // 👤 Who is claiming
     userId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: String ,
       ref: "User",
       required: true,
     },
