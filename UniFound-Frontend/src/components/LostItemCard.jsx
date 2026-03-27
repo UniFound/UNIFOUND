@@ -65,7 +65,7 @@ export default function LostItemCard({ item }) {
   className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 rounded-xl transition"
 >
   View Item
-</button>
+      </button>
           <button
             onClick={() => setShowClaimModal(true)}
             className="flex-1 border border-blue-600 text-blue-600 hover:bg-blue-50 text-sm font-medium py-2 rounded-xl transition"

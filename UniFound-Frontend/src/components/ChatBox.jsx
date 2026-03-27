@@ -71,7 +71,7 @@ export default function ChatBox({ claimId, messages, onSendMessage, onEditMessag
   return (
     <div className="fixed bottom-4 right-4 z-50 w-96 bg-white border border-gray-200 rounded-lg shadow-2xl">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-4 rounded-t-lg flex items-center justify-between">
+      <div className="bg-linear-to-r from-blue-500 to-blue-600 text-white p-4 rounded-t-lg flex items-center justify-between">
         <div>
           <h3 className="text-lg font-semibold">Claim Chat</h3>
           <p className="text-sm opacity-90">Claim ID: {claimId}</p>
