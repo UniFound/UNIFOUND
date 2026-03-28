@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { ArrowRight, Mail, Lock, CheckCircle2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ArrowRight, Mail, Lock, CheckCircle2, AlertCircle } from "lucide-react";
 import api from "../api/axios.js";
 import { useNavigate } from "react-router-dom";
 
@@ -10,12 +10,44 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [serverError, setServerError] = useState("");
+  
+  // Live Validation States
+  const [errors, setErrors] = useState({ email: "", password: "" });
+  const [isFormValid, setIsFormValid] = useState(false);
+
+  // Live Validation Logic
+  useEffect(() => {
+    const validateForm = () => {
+      let emailErr = "";
+      let passErr = "";
+
+      // Email Validation
+      if (email.length > 0) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          emailErr = "Please enter a valid email address.";
+        }
+      }
+
+      // Password Validation
+      if (password.length > 0 && password.length < 6) {
+        passErr = "Password must be at least 6 characters.";
+      }
+
+      setErrors({ email: emailErr, password: passErr });
+      setIsFormValid(email.length > 0 && password.length >= 6 && !emailErr && !passErr);
+    };
+
+    validateForm();
+  }, [email, password]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!isFormValid) return;
+
     setLoading(true);
-    setError("");
+    setServerError("");
 
     try {
       const res = await api.post("/users/login", { email, password });
@@ -29,7 +61,7 @@ export default function LoginPage() {
         navigate("/");
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Login failed. Please check your credentials.");
+      setServerError(err.response?.data?.message || "Login failed. Please check your credentials.");
     } finally {
       setLoading(false);
     }
@@ -37,7 +69,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#f8faff] font-sans relative overflow-hidden">
-      {/* Background Decorative Elements - matching your system theme */}
+      {/* Background Elements */}
       <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-blue-100/50 rounded-full blur-3xl" />
       <div className="absolute bottom-[-10%] left-[-5%] w-[400px] h-[400px] bg-indigo-50/50 rounded-full blur-3xl" />
 
@@ -45,7 +77,6 @@ export default function LoginPage() {
         
         {/* LEFT SIDE: Visual Content */}
         <div className="hidden md:flex w-1/2 bg-gradient-to-br from-blue-600 to-indigo-700 p-12 text-white flex-col justify-between relative overflow-hidden">
-          {/* Subtle patterns on blue background */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-20 -mt-20 blur-2xl" />
           
           <div className="relative z-10">
@@ -81,50 +112,64 @@ export default function LoginPage() {
             <p className="text-gray-500 font-medium">Please enter your details to sign in.</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {error && (
-              <div className="p-4 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm rounded-r-xl flex items-center animate-in fade-in">
-                {error}
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {serverError && (
+              <div className="p-4 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm rounded-r-xl flex items-center gap-2 animate-in fade-in duration-300">
+                <AlertCircle size={18} />
+                {serverError}
               </div>
             )}
 
-            <div className="space-y-2">
+            {/* Email Field */}
+            <div className="space-y-1.5">
               <label className="text-sm font-bold text-gray-700 ml-1">Email Address</label>
               <div className="relative group">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-600 transition-colors" size={20} />
+                <Mail className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${errors.email ? 'text-red-400' : 'text-gray-400 group-focus-within:text-blue-600'}`} size={20} />
                 <input
                   type="email"
                   placeholder="name@university.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:bg-white focus:border-blue-500 outline-none transition-all"
+                  className={`w-full pl-12 pr-4 py-4 rounded-2xl outline-none transition-all border ${
+                    errors.email 
+                      ? 'border-red-200 bg-red-50/30 focus:border-red-500 focus:ring-4 focus:ring-red-500/5' 
+                      : 'border-gray-100 bg-gray-50 focus:ring-4 focus:ring-blue-500/10 focus:bg-white focus:border-blue-500'
+                  }`}
                   required
                 />
               </div>
+              {errors.email && <p className="text-[12px] text-red-500 font-medium ml-1 flex items-center gap-1 mt-1"><AlertCircle size={12}/> {errors.email}</p>}
             </div>
 
-            <div className="space-y-2">
+            {/* Password Field */}
+            <div className="space-y-1.5">
               <div className="flex justify-between items-center ml-1">
                 <label className="text-sm font-bold text-gray-700">Password</label>
                 <button type="button" className="text-xs font-bold text-blue-600 hover:underline">Forgot Password?</button>
               </div>
               <div className="relative group">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-600 transition-colors" size={20} />
+                <Lock className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${errors.password ? 'text-red-400' : 'text-gray-400 group-focus-within:text-blue-600'}`} size={20} />
                 <input
                   type="password"
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:bg-white focus:border-blue-500 outline-none transition-all"
+                  className={`w-full pl-12 pr-4 py-4 rounded-2xl outline-none transition-all border ${
+                    errors.password 
+                      ? 'border-red-200 bg-red-50/30 focus:border-red-500 focus:ring-4 focus:ring-red-500/5' 
+                      : 'border-gray-100 bg-gray-50 focus:ring-4 focus:ring-blue-500/10 focus:bg-white focus:border-blue-500'
+                  }`}
                   required
                 />
               </div>
+              {errors.password && <p className="text-[12px] text-red-500 font-medium ml-1 flex items-center gap-1 mt-1"><AlertCircle size={12}/> {errors.password}</p>}
             </div>
 
+            {/* Submit Button */}
             <button
               type="submit"
-              disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl shadow-lg shadow-blue-200 flex items-center justify-center gap-2 transform transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
+              disabled={loading || !isFormValid}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl shadow-lg shadow-blue-200 flex items-center justify-center gap-2 transform transition-all active:scale-[0.98] disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed mt-2"
             >
               {loading ? (
                 <div className="w-6 h-6 border-3 border-white/30 border-t-white rounded-full animate-spin" />

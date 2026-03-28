@@ -16,6 +16,8 @@ import UserProfile from "./pages/UserProfile";
 import ItemDetailsPage from "./pages/ItemDetailsPage";
 import TicketsPage from "./pages/TicketsPage";
 import AdminClaims from "./pages/AdminClaims";
+import RegisterPage from "./pages/Register";
+import ClaimHistory from "./pages/ClaimHistory";
 
 function App() {
   return (
@@ -36,6 +38,8 @@ function App() {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/profile" element={<UserProfile/>} />
         <Route path="/items/:id" element={<ItemDetailsPage />} />
+        <Route path="/signup" element={<RegisterPage />} />
+        <Route path="/myclaims" element={<ClaimHistory />} />
         
         
         
