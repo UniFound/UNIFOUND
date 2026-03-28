@@ -15,6 +15,8 @@ import AboutPage from "./pages/AboutPage";
 import UserProfile from "./pages/UserProfile";
 import ItemDetailsPage from "./pages/ItemDetailsPage";
 import TicketsPage from "./pages/TicketsPage";
+import AdminTicketsPage from "./pages/AdminTicketsPage";
+import TicketDetailsPage from "./pages/TicketDetailsPage";
 
 function App() {
   return (
@@ -36,9 +38,10 @@ function App() {
         <Route path="/profile" element={<UserProfile/>} />
         <Route path="/items/:id" element={<ItemDetailsPage />} />
         
-        
 
         <Route path="/tickets" element={<TicketsPage />} />
+        <Route path="/ticket/:ticketId" element={<TicketDetailsPage />} />
+        <Route path="/admin/tickets" element={<AdminTicketsPage />} />
       </Routes>
     </Router>
   );
