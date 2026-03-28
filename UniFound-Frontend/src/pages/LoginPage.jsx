@@ -56,7 +56,7 @@ export default function LoginPage() {
       localStorage.setItem("user", JSON.stringify(user));
 
       if (user.type?.toLowerCase() === "admin" || user.role?.toLowerCase() === "admin") {
-        navigate("/admindashboard");
+        navigate("/admin");
       } else {
         navigate("/");
       }
