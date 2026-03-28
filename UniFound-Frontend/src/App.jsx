@@ -15,6 +15,7 @@ import AboutPage from "./pages/AboutPage";
 import UserProfile from "./pages/UserProfile";
 import ItemDetailsPage from "./pages/ItemDetailsPage";
 import TicketsPage from "./pages/TicketsPage";
+import AdminClaims from "./pages/AdminClaims";
 
 function App() {
   return (
@@ -22,7 +23,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/admindashboard" element={<AdminDashboard />} />
+        <Route path="/admin/*" element={<AdminDashboard />} />
         <Route path="/admin/users" element={<UsersPage />} />
         <Route path="/admin/user-form" element={<UserForm />} />
         <Route path="/admin/categories" element={<Categories />} />
@@ -35,6 +36,8 @@ function App() {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/profile" element={<UserProfile/>} />
         <Route path="/items/:id" element={<ItemDetailsPage />} />
+        
+        
         
         
 

@@ -13,7 +13,7 @@ export default function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Logout කිරීමේදී සිදුවිය යුතු දේ
+
   const handleLogout = () => {
     // අවශ්‍ය නම් මෙතනදී session/token clear කළ හැක
     // localStorage.clear();
@@ -24,7 +24,7 @@ export default function Sidebar() {
     { 
       icon: <LayoutDashboard size={20} />, 
       label: "Dashboard", 
-      path: "/admin/dashboard" 
+      path: "/admin" 
     },
     { 
       icon: <Users size={20} />, 
