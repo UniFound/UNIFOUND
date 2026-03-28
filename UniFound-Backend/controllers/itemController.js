@@ -1,13 +1,24 @@
 import Item from "../models/item.js";
 
-// CREATE ITEM
+// ✅ CREATE ITEM (Updated with robust Auto-ID Logic)
 export const createItem = async (req, res) => {
   try {
-    const { title, description, category, color, status, location, image_url } = req.body;
+    const { title, description, category, color, status, location, image_url, user_id } = req.body;
 
-    // Generate auto itemId
-    const count = await Item.countDocuments();
-    const itemId = `ITEM${String(count + 1).padStart(3, "0")}`;
+    // 1. Database eke thiyena anthimata dapu item eka ganna (Created date eka anuwa sort karala)
+    const lastItem = await Item.findOne().sort({ createdAt: -1 });
+
+    let newNumber = 1;
+    if (lastItem && lastItem.itemId) {
+      // "ITEM011" kiyana eken numbers tika witharak wen karala ganna
+      const lastNumber = parseInt(lastItem.itemId.replace("ITEM", ""));
+      if (!isNaN(lastNumber)) {
+        newNumber = lastNumber + 1;
+      }
+    }
+
+    // 2. Aluth unique ID eka hadanna (e.g., ITEM012)
+    const itemId = `ITEM${String(newNumber).padStart(3, "0")}`;
 
     const item = await Item.create({
       itemId,
@@ -18,7 +29,8 @@ export const createItem = async (req, res) => {
       status,
       location,
       image_url,
-      user_id: req.user?.id || null,
+      // Frontend payload eken user_id ganna, nathnam auth middleware eken req.user.id ganna
+      user_id: user_id || req.user?.id || null, 
     });
 
     res.status(201).json({
@@ -26,11 +38,17 @@ export const createItem = async (req, res) => {
       data: item,
     });
   } catch (error) {
+    // Duplicate Key Error (E11000) eka awoth pahadiwa dhenna
+    if (error.code === 11000) {
+      return res.status(400).json({ 
+        message: "Duplicate Item ID detected. Please try submitting again." 
+      });
+    }
     res.status(500).json({ message: error.message });
   }
 };
 
-// GET ALL ITEMS
+// ✅ GET ALL ITEMS
 export const getAllItems = async (req, res) => {
   try {
     const items = await Item.find({ isDeleted: false }).sort({ createdAt: -1 });
@@ -81,7 +99,7 @@ export const updateItem = async (req, res) => {
   }
 };
 
-//delete
+// ✅ DELETE ITEM (Permanently)
 export const deleteItem = async (req, res) => {
   try {
     const item = await Item.findOneAndDelete({
