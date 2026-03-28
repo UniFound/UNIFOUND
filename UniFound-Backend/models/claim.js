@@ -8,7 +8,7 @@ const claimSchema = new mongoose.Schema(
   },
     // 🔗 Which item is being claimed
     itemId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: String ,
       ref: "item",
       required: true,
     },
@@ -80,7 +80,7 @@ const claimSchema = new mongoose.Schema(
           type: String,
           enum: ["Pending", "Under Review", "Approved", "Rejected", "On Hold"],
         },
-        updatedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        updatedBy: { type: String , ref: "User" },
         timestamp: { type: Date, default: Date.now },
         note: String,
       },
