@@ -8,7 +8,7 @@ export const createClaim = async (req, res) => {
   try {
     const {
       itemId,
-      userId,
+      userId, // This is coming from localStorage (e.g., "USER001")
       description,
       evidenceText,
       evidenceImage,
@@ -18,20 +18,18 @@ export const createClaim = async (req, res) => {
       meetingTime,
     } = req.body;
 
-    // Validate ObjectIds
+    // 1. Validate itemId (Assuming itemId is a standard MongoDB ObjectId)
     if (!mongoose.Types.ObjectId.isValid(itemId)) {
       return res.status(400).json({ message: "Invalid itemId" });
     }
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).json({ message: "Invalid userId" });
-    }
 
-    // Check if item exists
+    // 2. Check if item exists using findById
     const item = await Item.findById(itemId);
     if (!item) return res.status(404).json({ message: "Item not found" });
 
-    // Check if user exists
-    const user = await User.findById(userId);
+    // 3. Check if user exists using the CUSTOM userId field (not _id)
+    // We remove the ObjectId validation here because your userId is a custom string.
+    const user = await User.findOne({ userId: userId }); 
     if (!user) return res.status(404).json({ message: "User not found" });
 
     // 🔹 Generate custom claimId
@@ -39,9 +37,9 @@ export const createClaim = async (req, res) => {
     const customClaimId = `CLAIM${(count + 1).toString().padStart(3, "0")}`;
 
     const newClaim = new Claim({
-      claimId: customClaimId, // assign auto-generated claimId
+      claimId: customClaimId,
       itemId,
-      userId,
+      userId: user._id, // Store the actual MongoDB _id for population to work later
       description,
       evidenceText,
       evidenceImage,
@@ -50,7 +48,7 @@ export const createClaim = async (req, res) => {
       meetingLocation,
       meetingTime,
       status: "Pending",
-      history: [{ status: "Pending", updatedBy: userId, note: "Claim created" }],
+      history: [{ status: "Pending", updatedBy: user._id, note: "Claim created" }],
     });
 
     const savedClaim = await newClaim.save();
