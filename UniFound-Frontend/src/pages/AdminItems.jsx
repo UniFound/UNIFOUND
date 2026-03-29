@@ -30,13 +30,14 @@ export default function AdminItems() {
   const currentItems = activeTab === "found" ? foundItems : lostItems;
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
+    /* Font එක Inter, Segoe UI, සහ sans-serif ලෙස ඉතා පැහැදිලි එකකට වෙනස් කර ඇත */
+    <div className="space-y-8 animate-in fade-in duration-500 font-['Inter',_-apple-system,_.SFNSText-Regular,'Segoe_UI','Helvetica_Neue',sans-serif]">
       
       {/* --- HEADER & TABS --- */}
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">Items Management</h1>
-          <p className="text-slate-500 font-bold text-sm mt-1 uppercase tracking-widest">
+          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Items Management</h1>
+          <p className="text-slate-500 font-bold text-xs mt-1 uppercase tracking-widest">
             Monitor and manage all reported items across campus
           </p>
 
@@ -44,7 +45,7 @@ export default function AdminItems() {
           <div className="flex gap-2 mt-8 bg-slate-100 p-1.5 rounded-[22px] w-fit border border-slate-200/50">
             <button 
               onClick={() => setActiveTab("found")}
-              className={`px-8 py-3 rounded-[18px] text-xs font-black uppercase tracking-widest transition-all ${
+              className={`px-8 py-3 rounded-[18px] text-xs font-bold uppercase tracking-widest transition-all ${
                 activeTab === "found" 
                 ? "bg-white text-blue-600 shadow-sm" 
                 : "text-slate-500 hover:text-slate-700"
@@ -54,7 +55,7 @@ export default function AdminItems() {
             </button>
             <button 
               onClick={() => setActiveTab("lost")}
-              className={`px-8 py-3 rounded-[18px] text-xs font-black uppercase tracking-widest transition-all ${
+              className={`px-8 py-3 rounded-[18px] text-xs font-bold uppercase tracking-widest transition-all ${
                 activeTab === "lost" 
                 ? "bg-white text-rose-600 shadow-sm" 
                 : "text-slate-500 hover:text-slate-700"
@@ -72,7 +73,7 @@ export default function AdminItems() {
             <input 
               type="text" 
               placeholder={`Search ${activeTab} items...`} 
-              className="pl-12 pr-6 py-3.5 bg-white border border-slate-100 rounded-2xl text-sm font-bold text-slate-700 w-full md:w-72 shadow-sm focus:ring-4 focus:ring-blue-50 focus:border-blue-200 outline-none transition-all"
+              className="pl-12 pr-6 py-3.5 bg-white border border-slate-100 rounded-2xl text-sm font-medium text-slate-700 w-full md:w-72 shadow-sm focus:ring-4 focus:ring-blue-50 focus:border-blue-200 outline-none transition-all"
             />
           </div>
           <button className="p-3.5 bg-white border border-slate-100 rounded-2xl text-slate-400 hover:text-blue-600 transition-all shadow-sm">
@@ -87,11 +88,11 @@ export default function AdminItems() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50 border-b border-slate-50">
-                <th className="px-8 py-6 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Item Info</th>
-                <th className="px-8 py-6 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Category</th>
-                <th className="px-8 py-6 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Location & Date</th>
-                <th className="px-8 py-6 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Status</th>
-                <th className="px-8 py-6 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] text-right">Actions</th>
+                <th className="px-8 py-6 text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em]">Item Info</th>
+                <th className="px-8 py-6 text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em]">Category</th>
+                <th className="px-8 py-6 text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em]">Location & Date</th>
+                <th className="px-8 py-6 text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em]">Status</th>
+                <th className="px-8 py-6 text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em] text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -103,31 +104,31 @@ export default function AdminItems() {
                          <img src={item.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="" />
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-sm font-black text-slate-900 leading-tight">{item.name}</span>
-                        <span className="text-[10px] font-black text-blue-600 uppercase tracking-tighter mt-1">{item.id}</span>
+                        <span className="text-sm font-bold text-slate-900 leading-tight">{item.name}</span>
+                        <span className="text-[10px] font-bold text-blue-600 uppercase tracking-tighter mt-1">{item.id}</span>
                       </div>
                     </div>
                   </td>
                   <td className="px-8 py-6">
                     <div className="flex items-center gap-2">
                       <Tag size={14} className="text-slate-300" />
-                      <span className="text-xs font-extrabold text-slate-600">{item.category}</span>
+                      <span className="text-xs font-bold text-slate-600">{item.category}</span>
                     </div>
                   </td>
                   <td className="px-8 py-6">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2 text-slate-500">
                         <MapPin size={14} className="text-slate-300" />
-                        <span className="text-[11px] font-bold">{item.location}</span>
+                        <span className="text-[11px] font-medium">{item.location}</span>
                       </div>
                       <div className="flex items-center gap-2 text-slate-400">
                         <Calendar size={14} className="text-slate-300" />
-                        <span className="text-[11px] font-bold">{item.date}</span>
+                        <span className="text-[11px] font-medium">{item.date}</span>
                       </div>
                     </div>
                   </td>
                   <td className="px-8 py-6">
-                    <span className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border ${
+                    <span className={`px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-widest border ${
                       item.status === 'Claimed' || item.status === 'Searching' 
                       ? 'bg-green-50 text-green-600 border-green-100' 
                       : 'bg-amber-50 text-amber-600 border-amber-100'

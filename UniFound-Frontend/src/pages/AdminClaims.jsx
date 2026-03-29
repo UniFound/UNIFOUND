@@ -55,13 +55,14 @@ export default function AdminClaims() {
   };
 
   return (
-    <div className="flex-1 bg-[#F8FAFF] min-h-screen p-8 lg:p-12 overflow-y-auto">
+    /* Font එක Inter, Segoe UI, සහ sans-serif ලෙස ඉතා පැහැදිලි එකකට වෙනස් කර ඇත */
+    <div className="flex-1 bg-[#F8FAFF] min-h-screen p-8 lg:p-12 overflow-y-auto font-['Inter',_-apple-system,_.SFNSText-Regular,'Segoe_UI','Helvetica_Neue',sans-serif]">
       
       {/* --- HEADER SECTION --- */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">Claim Verification</h1>
-          <p className="text-slate-500 font-bold text-sm mt-1 uppercase tracking-widest">
+          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Claim Verification</h1>
+          <p className="text-slate-500 font-bold text-xs mt-1 uppercase tracking-widest">
             Manage and verify lost item ownership claims
           </p>
         </div>
@@ -72,7 +73,7 @@ export default function AdminClaims() {
             <input 
               type="text" 
               placeholder="Search by Claim ID or Item..." 
-              className="pl-12 pr-6 py-3.5 bg-white border border-slate-100 rounded-2xl text-sm font-bold text-slate-700 w-full md:w-80 shadow-sm focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-200 transition-all"
+              className="pl-12 pr-6 py-3.5 bg-white border border-slate-100 rounded-2xl text-sm font-medium text-slate-700 w-full md:w-80 shadow-sm focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-200 transition-all"
             />
           </div>
           <button className="p-3.5 bg-white border border-slate-100 rounded-2xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 transition-all shadow-sm group">
@@ -93,8 +94,8 @@ export default function AdminClaims() {
               {stat.icon}
             </div>
             <div>
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{stat.label}</p>
-              <p className="text-2xl font-black text-slate-900">{stat.value}</p>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{stat.label}</p>
+              <p className="text-2xl font-bold text-slate-900">{stat.value}</p>
             </div>
           </div>
         ))}
@@ -106,11 +107,11 @@ export default function AdminClaims() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-slate-50 bg-slate-50/50">
-                <th className="px-8 py-6 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Claimant Info</th>
-                <th className="px-8 py-6 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Lost Item</th>
-                <th className="px-8 py-6 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Date Filed</th>
-                <th className="px-8 py-6 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Status</th>
-                <th className="px-8 py-6 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] text-right">Actions</th>
+                <th className="px-8 py-6 text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em]">Claimant Info</th>
+                <th className="px-8 py-6 text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em]">Lost Item</th>
+                <th className="px-8 py-6 text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em]">Date Filed</th>
+                <th className="px-8 py-6 text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em]">Status</th>
+                <th className="px-8 py-6 text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em] text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -118,12 +119,12 @@ export default function AdminClaims() {
                 <tr key={claim.id} className="hover:bg-blue-50/30 transition-colors group">
                   <td className="px-8 py-6">
                     <div className="flex items-center gap-4">
-                      <div className="w-11 h-11 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 overflow-hidden border-2 border-white shadow-sm font-black text-xs">
+                      <div className="w-11 h-11 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 overflow-hidden border-2 border-white shadow-sm font-bold text-xs">
                         {claim.claimant.charAt(0)}
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-sm font-extrabold text-slate-900">{claim.claimant}</span>
-                        <span className="text-[11px] font-bold text-slate-400">{claim.studentId}</span>
+                        <span className="text-sm font-bold text-slate-900">{claim.claimant}</span>
+                        <span className="text-[11px] font-medium text-slate-400">{claim.studentId}</span>
                       </div>
                     </div>
                   </td>
@@ -131,19 +132,19 @@ export default function AdminClaims() {
                     <div className="flex items-center gap-3">
                       <img src={claim.proofImg} className="w-10 h-10 rounded-xl object-cover border border-slate-200" alt="Proof" />
                       <div className="flex flex-col">
-                        <span className="text-sm font-extrabold text-slate-700">{claim.itemName}</span>
-                        <span className="text-[10px] font-black text-blue-600 uppercase tracking-tighter">{claim.id}</span>
+                        <span className="text-sm font-bold text-slate-700">{claim.itemName}</span>
+                        <span className="text-[10px] font-bold text-blue-600 uppercase tracking-tighter">{claim.id}</span>
                       </div>
                     </div>
                   </td>
                   <td className="px-8 py-6">
                     <div className="flex items-center gap-2 text-slate-500">
                       <Calendar size={14} className="text-slate-400" />
-                      <span className="text-sm font-bold">{claim.date}</span>
+                      <span className="text-sm font-medium">{claim.date}</span>
                     </div>
                   </td>
                   <td className="px-8 py-6">
-                    <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border ${getStatusStyle(claim.status)}`}>
+                    <span className={`px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest border ${getStatusStyle(claim.status)}`}>
                       {claim.status}
                     </span>
                   </td>
@@ -170,8 +171,8 @@ export default function AdminClaims() {
         <div className="p-8 border-t border-slate-50 flex justify-between items-center bg-slate-50/30">
           <p className="text-xs font-bold text-slate-400 tracking-wide uppercase">Showing 3 of 254 claims</p>
           <div className="flex gap-2">
-            <button className="px-5 py-2.5 text-xs font-black bg-white border border-slate-200 text-slate-400 rounded-xl hover:bg-slate-50 transition-all">Previous</button>
-            <button className="px-5 py-2.5 text-xs font-black bg-blue-600 text-white rounded-xl shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all">Next Page</button>
+            <button className="px-5 py-2.5 text-xs font-bold bg-white border border-slate-200 text-slate-400 rounded-xl hover:bg-slate-50 transition-all">Previous</button>
+            <button className="px-5 py-2.5 text-xs font-bold bg-blue-600 text-white rounded-xl shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all">Next Page</button>
           </div>
         </div>
       </div>

@@ -18,7 +18,8 @@ export default function AdminDashboard() {
   const [claimCount, setClaimCount] = useState("423");
 
   return (
-    <div className="flex min-h-screen bg-[#F8FAFF] font-sans text-[#1E293B]">
+    /* Font එක Inter, Segoe UI, සහ sans-serif ලෙස වඩාත් පැහැදිලි එකකට වෙනස් කර ඇත */
+    <div className="flex min-h-screen bg-[#F8FAFF] font-['Inter',_-apple-system,_.SFNSText-Regular,'Segoe_UI','Helvetica_Neue',sans-serif] text-[#1E293B]">
       {/* Sidebar - Fixed Left */}
       <Sidebar />
       
@@ -77,8 +78,8 @@ export default function AdminDashboard() {
                       
                       <div className="flex items-center justify-between mb-10 relative z-10">
                         <div>
-                          <h3 className="font-black text-slate-900 text-lg tracking-tight">Platform Analytics</h3>
-                          <p className="text-[10px] font-black text-slate-400 mt-1 uppercase tracking-[0.2em]">Activity Overview</p>
+                          <h3 className="font-bold text-slate-900 text-lg tracking-tight">Platform Analytics</h3>
+                          <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-[0.2em]">Activity Overview</p>
                         </div>
                         <button className="p-2.5 bg-slate-50 hover:bg-slate-100 rounded-xl transition-colors">
                           <MoreHorizontal size={20} className="text-slate-400" />
@@ -86,16 +87,16 @@ export default function AdminDashboard() {
                       </div>
                       
                       <div className="h-[340px] bg-slate-50/50 rounded-[24px] border border-slate-100 flex items-center justify-center">
-                         <p className="text-slate-300 font-black italic text-sm tracking-widest opacity-50 underline decoration-blue-500/30 decoration-4 underline-offset-8">Visual Data Stream</p>
+                         <p className="text-slate-400 font-medium italic text-sm tracking-widest opacity-60 underline decoration-blue-500/30 decoration-4 underline-offset-8">Visual Data Stream</p>
                       </div>
                     </div>
 
                     {/* SIDE PROMO CARD */}
                     <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-[35px] p-10 text-white relative overflow-hidden flex flex-col justify-end shadow-xl shadow-blue-200">
                       <div className="absolute top-10 right-10 opacity-10 rotate-12"><ShieldCheck size={120} /></div>
-                      <h2 className="text-2xl font-black mb-4 leading-tight tracking-tight">Ready to verify new claims?</h2>
-                      <p className="text-blue-100/80 text-sm font-bold mb-8 leading-relaxed">Check the latest item ownership proofs submitted by users today.</p>
-                      <button className="bg-white text-blue-600 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-50 transition-colors shadow-lg shadow-blue-900/20">
+                      <h2 className="text-2xl font-bold mb-4 leading-tight tracking-tight">Ready to verify new claims?</h2>
+                      <p className="text-blue-100/80 text-sm font-medium mb-8 leading-relaxed">Check the latest item ownership proofs submitted by users today.</p>
+                      <button className="bg-white text-blue-600 py-4 rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-blue-50 transition-colors shadow-lg shadow-blue-900/20">
                         Review Now
                       </button>
                     </div>
@@ -131,7 +132,7 @@ function StatCard({ icon, color, label, value, trend, isPositive }) {
         <div className={`p-3 rounded-2xl bg-white shadow-sm group-hover:scale-110 transition-transform`}>
           {icon}
         </div>
-        <div className={`flex items-center gap-1 px-2.5 py-1 rounded-lg font-black text-[10px] bg-white shadow-sm ${
+        <div className={`flex items-center gap-1 px-2.5 py-1 rounded-lg font-bold text-[10px] bg-white shadow-sm ${
           isPositive ? 'text-emerald-600' : 'text-rose-600'
         }`}>
           {isPositive ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
@@ -139,8 +140,8 @@ function StatCard({ icon, color, label, value, trend, isPositive }) {
         </div>
       </div>
       <div>
-        <p className="text-[10px] font-black opacity-60 uppercase tracking-[0.15em] mb-1">{label}</p>
-        <p className="text-2xl font-black text-slate-900 tracking-tighter">{value}</p>
+        <p className="text-[10px] font-bold opacity-70 uppercase tracking-[0.15em] mb-1">{label}</p>
+        <p className="text-2xl font-bold text-slate-900 tracking-tighter">{value}</p>
       </div>
     </div>
   );
