@@ -112,7 +112,7 @@ export default function Navbar() {
               {/* User Avatar */}
               <div className="relative">
                 <img
-                  src={user.profilePicture || "/default-avatar.png"}
+                  src={user.profilePicture || "https://ytzzomqohkjpftxnrzjd.supabase.co/storage/v1/object/public/unifound-images/Minuri/548a659c2b06a877516d3c998f5b0939.jpg"}
                   alt="User Avatar"
                   className="w-10 h-10 rounded-full cursor-pointer border border-gray-200"
                   onClick={() => setDropdownOpen(!dropdownOpen)}
