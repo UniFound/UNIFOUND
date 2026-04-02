@@ -2,7 +2,7 @@
 
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Bell } from "lucide-react"; // Add bell icon
+import { Bell, ClipboardList } from "lucide-react"; // ClipboardList icon eka add kala
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -91,26 +91,34 @@ export default function Navbar() {
             </>
           ) : (
             <>
+              {/* Claim History Icon */}
+              <button
+                className={`p-2 rounded-full transition relative ${location.pathname === "/myclaims" ? "bg-blue-50 text-blue-600" : "hover:bg-gray-100 text-gray-600"}`}
+                onClick={() => navigate("/myclaims")}
+                title="Claim History"
+              >
+                <ClipboardList className="w-6 h-6" />
+              </button>
+
               {/* Bell Icon */}
               <button
                 className="p-2 rounded-full hover:bg-gray-100 transition relative"
-                onClick={() => alert("Notifications clicked!")} // You can replace with your notifications logic
+                onClick={() => alert("Notifications clicked!")}
               >
                 <Bell className="w-6 h-6 text-gray-600" />
-                {/* Optional: Notification badge */}
                 <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
               </button>
 
               {/* User Avatar */}
               <div className="relative">
                 <img
-                  src={user.profilePicture || "/default-avatar.png"}
+                  src={user.profilePicture || "https://ytzzomqohkjpftxnrzjd.supabase.co/storage/v1/object/public/unifound-images/Minuri/548a659c2b06a877516d3c998f5b0939.jpg"}
                   alt="User Avatar"
-                  className="w-10 h-10 rounded-full cursor-pointer"
+                  className="w-10 h-10 rounded-full cursor-pointer border border-gray-200"
                   onClick={() => setDropdownOpen(!dropdownOpen)}
                 />
                 {dropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg flex flex-col py-1">
+                  <div className="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg flex flex-col py-1 border border-gray-100">
                     <button
                       onClick={() => { navigate("/profile"); setDropdownOpen(false); }}
                       className="text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
@@ -128,12 +136,8 @@ export default function Navbar() {
               </div>
             </>
           )}
-        {/* Right */}
-        <div className="flex items-center gap-3">
-          {/* Navigation buttons only - no sign in/get started */}
         </div>
       </div>
     </div>
-     </div>
   );
 }
