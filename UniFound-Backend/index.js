@@ -11,7 +11,7 @@ import conversationRoutes from "./routes/conversationRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import ticketRouter from "./routes/ticketRouter.js";
-import adminUserRoutes from "./routes/adminUserRoutes.js"; // ✅ NEW
+import adminUserRoutes from "./routes/adminUserRoutes.js"; // 
 
 dotenv.config();
 
@@ -21,11 +21,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Serve static files for uploads
+app.use('/uploads', express.static('uploads'));
+
 // MongoDB Connection
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);
-    console.log("✅ MongoDB Connected Successfully!");
+    console.log(" MongoDB Connected Successfully!");
   } catch (error) {
     console.error("❌ MongoDB Connection Failed:", error.message);
     process.exit(1);

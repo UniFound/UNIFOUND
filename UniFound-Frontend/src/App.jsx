@@ -15,6 +15,8 @@ import AboutPage from "./pages/AboutPage";
 import UserProfile from "./pages/UserProfile";
 import ItemDetailsPage from "./pages/ItemDetailsPage";
 import TicketsPage from "./pages/TicketsPage";
+import AdminTicketsPage from "./pages/AdminTicketsPage";
+import TicketDetailsPage from "./pages/TicketDetailsPage";
 import AdminClaims from "./pages/AdminClaims";
 import RegisterPage from "./pages/Register";
 import ClaimHistory from "./pages/ClaimHistory";
@@ -43,9 +45,10 @@ function App() {
         
         
         
-        
 
         <Route path="/tickets" element={<TicketsPage />} />
+        <Route path="/ticket/:ticketId" element={<TicketDetailsPage />} />
+        <Route path="/admin/tickets" element={<AdminTicketsPage />} />
       </Routes>
     </Router>
   );
