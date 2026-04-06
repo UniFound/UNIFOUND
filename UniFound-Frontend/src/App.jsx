@@ -15,6 +15,11 @@ import AboutPage from "./pages/AboutPage";
 import UserProfile from "./pages/UserProfile";
 import ItemDetailsPage from "./pages/ItemDetailsPage";
 import TicketsPage from "./pages/TicketsPage";
+import TicketDetailsPage from "./pages/TicketDetailsPage";
+import AdminClaims from "./pages/AdminClaims";
+import RegisterPage from "./pages/Register";
+import ClaimHistory from "./pages/ClaimHistory";
+import AutoMatchView from "./pages/AutoMatchView";
 
 function App() {
   return (
@@ -22,8 +27,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/admindashboard" element={<AdminDashboard />} />
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/*" element={<AdminDashboard />} />
         <Route path="/admin/users" element={<UsersPage />} />
         <Route path="/admin/user-form" element={<UserForm />} />
         <Route path="/admin/categories" element={<Categories />} />
@@ -36,9 +40,10 @@ function App() {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/profile" element={<UserProfile/>} />
         <Route path="/items/:id" element={<ItemDetailsPage />} />
-        
-
+        <Route path="/signup" element={<RegisterPage />} />
+        <Route path="/myclaims" element={<ClaimHistory />} />
         <Route path="/tickets" element={<TicketsPage />} />
+        <Route path="/ticket/:ticketId" element={<TicketDetailsPage />} />
       </Routes>
     </Router>
   );

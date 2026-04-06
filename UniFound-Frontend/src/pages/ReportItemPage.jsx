@@ -15,9 +15,16 @@ export default function ReportItemPage() {
     color: "",
     location: "",
     image: null,
+    category_other: "",
+    location_other: "",
   });
 
-  // Color options (Buttons ලෙස පාවිච්චි කිරීමට)
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState("");
+  const [submitError, setSubmitError] = useState("");
+
   const colorOptions = [
     { name: "Black", hex: "#000000" },
     { name: "White", hex: "#FFFFFF" },
@@ -28,30 +35,54 @@ export default function ReportItemPage() {
     { name: "Gold", hex: "#F59E0B" },
   ];
 
-  const [previewUrl, setPreviewUrl] = useState(null);
-  const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState("");
-  const [submitError, setSubmitError] = useState("");
+  const categoryOptions = ["Laptop", "Mobile Phone", "Student ID", "Electronics", "Laptop Charger", "Backpack", "Other"];
+  const locationOptions = ["Basement", "Canteen", "New Building", "Main Building", "Near the Beach", "Library", "Anohana Canteen", "Office Area", "Other"];
 
+  // --- Live Validation Logic ---
   useEffect(() => {
     const newErrors = {};
-    if (!formData.title) newErrors.title = "Title is required";
+    
+    // Title Validation
+    if (!formData.title) {
+      newErrors.title = "Title is required";
+    } else if (formData.title.length < 5) {
+      newErrors.title = "Title must be at least 5 characters long";
+    }
+
     if (!formData.category) newErrors.category = "Category is required";
+    if (formData.category === "Other" && !formData.category_other) newErrors.category = "Please specify category";
+    
     if (!formData.location) newErrors.location = "Location is required";
+    if (formData.location === "Other" && !formData.location_other) newErrors.location = "Please specify location";
+    
     if (!formData.image) newErrors.image = "Image is required";
+
     setErrors(newErrors);
   }, [formData]);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
+
     if (name === "image") {
       const file = files[0];
       setFormData((prev) => ({ ...prev, image: file }));
       if (file) setPreviewUrl(URL.createObjectURL(file));
-    } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
+      return;
     }
+
+    // --- Block Numbers Logic ---
+    // Title, Color, saha "Other" fields walata numbers gahanna bari wenna block karanawa
+    if (["title", "color", "category_other", "location_other"].includes(name)) {
+      const containsNumber = /\d/.test(value);
+      if (containsNumber) {
+        // Numbers thiyenawa nam state eka update karanne na (block karanawa)
+        // User ta message ekak pennanna ona nam mehema karanna puluwan:
+        setErrors(prev => ({ ...prev, [name]: "Numbers are not allowed in this field" }));
+        return; 
+      }
+    }
+
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
@@ -65,14 +96,18 @@ export default function ReportItemPage() {
       let imageUrl = "";
       if (formData.image) imageUrl = await uploadMediaToSupabase(formData.image);
 
-      await api.post("/items", {
+      const payload = {
         ...formData,
+        category: formData.category === "Other" ? formData.category_other : formData.category,
+        location: formData.location === "Other" ? formData.location_other : formData.location,
         status: activeTab,
         image_url: imageUrl,
-      });
+      };
 
-      setSuccess(`The ${activeTab} item has been reported successfully!`);
-      setFormData({ title: "", description: "", category: "", color: "", location: "", image: null });
+      await api.post("/items", payload);
+
+      setSuccess(`Your report is submitted! It will appear on the feed after Admin approval.`);
+      setFormData({ title: "", description: "", category: "", color: "", location: "", image: null, category_other: "", location_other: "" });
       setPreviewUrl(null);
     } catch (err) {
       setSubmitError(err.response?.data?.message || "Submission failed.");
@@ -115,6 +150,7 @@ export default function ReportItemPage() {
               {["lost", "found"].map((tab) => (
                 <button
                   key={tab}
+                  type="button"
                   onClick={() => setActiveTab(tab)}
                   className={`px-8 py-2.5 rounded-xl text-sm font-bold transition-all capitalize ${activeTab === tab ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
                 >
@@ -128,13 +164,14 @@ export default function ReportItemPage() {
               <div className="relative">
                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2 block ml-1">Item Title *</label>
                 <div className="relative">
-                  <Type className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                  <Type className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${errors.title ? 'text-red-400' : 'text-slate-400'}`} size={18} />
                   <input
                     type="text" name="title" value={formData.title} onChange={handleChange}
                     placeholder="e.g. Blue Nike Backpack"
-                    className={`w-full pl-12 pr-4 py-4 bg-slate-50 border rounded-2xl outline-none transition focus:ring-4 ${errors.title ? 'border-red-300 focus:ring-red-50' : 'border-slate-200 focus:ring-blue-50 focus:border-blue-500'}`}
+                    className={`w-full pl-12 pr-4 py-4 bg-slate-50 border rounded-2xl outline-none transition focus:ring-4 ${errors.title ? 'border-red-300 focus:ring-red-50 focus:border-red-400' : 'border-slate-200 focus:ring-blue-50 focus:border-blue-500'}`}
                   />
                 </div>
+                {errors.title && <p className="text-[10px] text-red-500 font-bold mt-1 ml-2 italic animate-in fade-in slide-in-from-top-1">{errors.title}</p>}
               </div>
 
               {/* Color Selection Section */}
@@ -152,31 +189,87 @@ export default function ReportItemPage() {
                       <span className={`text-xs font-bold tracking-tight ${formData.color === c.name ? 'text-blue-600' : 'text-slate-500'}`}>{c.name}</span>
                     </button>
                   ))}
-                  {/* Custom color option */}
                   <input 
                     type="text" name="color" value={formData.color} onChange={handleChange}
                     placeholder="Other..."
                     className="flex-1 min-w-[100px] text-xs font-bold px-4 py-1.5 rounded-full border border-slate-200 bg-slate-50 outline-none focus:border-blue-500"
                   />
                 </div>
+                {errors.color && <p className="text-[10px] text-red-500 font-bold italic">{errors.color}</p>}
               </div>
 
-              {/* Category & Location Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2 block ml-1">Category *</label>
-                  <div className="relative">
-                    <Tag className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                    <input type="text" name="category" value={formData.category} onChange={handleChange} placeholder="Electronics" className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-500 transition"/>
+              {/* Category Section */}
+              <div className="group">
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2 block ml-1 group-focus-within:text-blue-500 transition-colors">
+                  Category *
+                </label>
+                <div className="relative overflow-hidden">
+                  <Tag className={`absolute left-4 top-[18px] transition-colors duration-300 ${formData.category ? 'text-blue-500' : 'text-slate-400'}`} size={18} />
+                  <select
+                    name="category"
+                    value={formData.category}
+                    onChange={handleChange}
+                    className="w-full pl-12 pr-10 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-500 transition-all appearance-none cursor-pointer hover:bg-white"
+                  >
+                    <option value="">Select Category</option>
+                    {categoryOptions.map((cat) => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                  </select>
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 4l4 4 4-4"/></svg>
                   </div>
                 </div>
-                <div>
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2 block ml-1">Location *</label>
-                  <div className="relative">
-                    <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                    <input type="text" name="location" value={formData.location} onChange={handleChange} placeholder="Main Library" className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-500 transition"/>
+                {formData.category === "Other" && (
+                  <div className="animate-in slide-in-from-top-2 duration-300">
+                    <input
+                      type="text"
+                      name="category_other"
+                      value={formData.category_other}
+                      placeholder="Please specify category..."
+                      className="mt-3 w-full px-5 py-3 bg-white border-2 border-blue-100 rounded-2xl outline-none focus:border-blue-500 shadow-sm placeholder:text-slate-300 transition-all"
+                      onChange={handleChange}
+                    />
+                  </div>
+                )}
+                {errors.category && <p className="text-[10px] text-red-500 font-bold mt-1 ml-2 italic">{errors.category}</p>}
+              </div>
+
+              {/* Location Section */}
+              <div className="group mt-6">
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2 block ml-1 group-focus-within:text-blue-500 transition-colors">
+                  Location *
+                </label>
+                <div className="relative">
+                  <MapPin className={`absolute left-4 top-[18px] transition-colors duration-300 ${formData.location ? 'text-blue-500' : 'text-slate-400'}`} size={18} />
+                  <select
+                    name="location"
+                    value={formData.location}
+                    onChange={handleChange}
+                    className="w-full pl-12 pr-10 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-500 transition-all appearance-none cursor-pointer hover:bg-white"
+                  >
+                    <option value="">Select Location</option>
+                    {locationOptions.map((loc) => (
+                      <option key={loc} value={loc}>{loc}</option>
+                    ))}
+                  </select>
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 4l4 4 4-4"/></svg>
                   </div>
                 </div>
+                {formData.location === "Other" && (
+                  <div className="animate-in slide-in-from-top-2 duration-300">
+                    <input
+                      type="text"
+                      name="location_other"
+                      value={formData.location_other}
+                      placeholder="Enter specific location..."
+                      className="mt-3 w-full px-5 py-3 bg-white border-2 border-blue-100 rounded-2xl outline-none focus:border-blue-500 shadow-sm placeholder:text-slate-300 transition-all"
+                      onChange={handleChange}
+                    />
+                  </div>
+                )}
+                {errors.location && <p className="text-[10px] text-red-500 font-bold mt-1 ml-2 italic">{errors.location}</p>}
               </div>
 
               {/* Description */}
@@ -218,6 +311,7 @@ export default function ReportItemPage() {
                   )}
                   <input type="file" name="image" accept="image/*" onChange={handleChange} className="absolute inset-0 opacity-0 cursor-pointer" />
                 </div>
+                {errors.image && <p className="text-[10px] text-red-500 font-bold ml-2 italic">{errors.image}</p>}
               </div>
 
               {/* Feedback Alerts */}

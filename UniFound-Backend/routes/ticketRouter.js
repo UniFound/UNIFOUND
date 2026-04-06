@@ -3,9 +3,12 @@ import {
   createTicket,
   addTicketMessage,
   editTicketMessage,
+  deleteTicketMessage,
   getUserTickets,
   getTicketById,
+  getAllTickets,
   getAdminTickets,
+  updateTicket,
   updateTicketStatus,
   assignAdminToTicket,
   deleteTicket
@@ -16,20 +19,29 @@ const router = express.Router();
 // Create new ticket
 router.post("/", createTicket);
 
+// Get all tickets for admin
+router.get("/", getAllTickets);
+
 // Add message to ticket
 router.post("/:ticketId/message", addTicketMessage);
 
 // Edit message in ticket
 router.put("/:ticketId/message/:messageId", editTicketMessage);
 
-// Get ticket by ID → must come BEFORE /user/:userId or /admin/:adminId
-router.get("/ticket/:ticketId", getTicketById); // ✅ notice the /ticket prefix to avoid conflicts
+// Delete message in ticket
+router.delete("/:ticketId/message/:messageId", deleteTicketMessage);
+
+// Get ticket by ticketId (for frontend navigation)
+router.get("/:ticketId", getTicketById);
 
 // Get tickets of a user
 router.get("/user/:userId", getUserTickets);
 
 // Get tickets assigned to an admin
 router.get("/admin/:adminId", getAdminTickets);
+
+// Update ticket
+router.put("/:ticketId", updateTicket);
 
 // Update ticket status
 router.put("/:ticketId/status", updateTicketStatus);

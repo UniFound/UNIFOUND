@@ -15,6 +15,15 @@ const itemSchema = new mongoose.Schema(
     },
     category: {
       type: String,
+      enum: [
+        "Laptop",
+        "Mobile Phone",
+        "Student ID",
+        "Electronics",
+        "Laptop Charger",
+        "Backpack",
+        "Other"
+      ],
       required: true,
     },
     color: {
@@ -27,6 +36,17 @@ const itemSchema = new mongoose.Schema(
     },
     location: {
       type: String,
+      enum: [
+        "Basement",
+        "Canteen",
+        "New Building",
+        "Main Building",
+        "Near the Beach",
+        "Library",
+        "Anohana Canteen",
+        "Office Area",
+        "Other"
+      ],
       required: true,
     },
     image_url: {
@@ -34,8 +54,12 @@ const itemSchema = new mongoose.Schema(
       required: true,
     },
     user_id: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: String,
       ref: "User",
+    },
+    isApproved: {
+      type: Boolean,
+      default: false, 
     },
     isDeleted: {
       type: Boolean,

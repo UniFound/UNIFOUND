@@ -16,10 +16,7 @@ export default function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Logout කිරීමේදී සිදුවිය යුතු දේ
   const handleLogout = () => {
-    // අවශ්‍ය නම් මෙතනදී session/token clear කළ හැක
-    // localStorage.clear();
     navigate("/login");
   };
 
@@ -27,7 +24,7 @@ export default function Sidebar() {
     { 
       icon: <LayoutDashboard size={20} />, 
       label: "Dashboard", 
-      path: "/admindashboard" 
+      path: "/admin" 
     },
     { 
       icon: <Users size={20} />, 
@@ -62,8 +59,7 @@ export default function Sidebar() {
     { 
       icon: <LifeBuoy size={20} />, 
       label: "Tickets", 
-      path: "/admin/tickets", 
-      badge: "2" 
+      path: "/admin/tickets" 
     },
     { 
       icon: <Settings size={20} />, 
@@ -73,7 +69,8 @@ export default function Sidebar() {
   ];
 
   return (
-    <aside className="w-72 bg-white border-r border-slate-100 flex flex-col p-7 sticky top-0 h-screen overflow-hidden">
+    /* Font එක Inter, Segoe UI, සහ sans-serif ලෙස ඉතා පැහැදිලි එකකට වෙනස් කර ඇත */
+    <aside className="w-72 bg-white border-r border-slate-100 flex flex-col p-7 sticky top-0 h-screen overflow-hidden font-['Inter',_-apple-system,_.SFNSText-Regular,'Segoe_UI','Helvetica_Neue',sans-serif]">
       
       {/* LOGO SECTION */}
       <div className="flex items-center gap-3.5 mb-14 px-3">
@@ -81,14 +78,14 @@ export default function Sidebar() {
           <Box size={22} strokeWidth={2.5} />
         </div>
         <div className="flex flex-col">
-          <span className="text-xl font-black tracking-tight text-slate-900 leading-none">UniFound</span>
-          <span className="text-[10px] font-black text-blue-600 uppercase tracking-[0.2em] mt-1">Admin Portal</span>
+          <span className="text-xl font-bold tracking-tight text-slate-900 leading-none">UniFound</span>
+          <span className="text-[10px] font-bold text-blue-600 uppercase tracking-[0.2em] mt-1">Admin Portal</span>
         </div>
       </div>
 
       {/* NAVIGATION SECTION */}
       <nav className="flex-1 space-y-1.5 overflow-y-auto pr-2 custom-scrollbar">
-        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 px-4">Main Menu</p>
+        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-4 px-4">Main Menu</p>
         
         {menuItems.map((item, idx) => {
           const isActive = location.pathname === item.path;
@@ -107,13 +104,13 @@ export default function Sidebar() {
                 <span className={`${isActive ? "text-white" : "text-slate-400 group-hover:text-blue-600"} transition-colors`}>
                   {item.icon}
                 </span>
-                <span className={`text-[13px] font-extrabold tracking-wide ${isActive ? "text-white" : "text-slate-500 group-hover:text-slate-900"}`}>
+                <span className={`text-[13px] font-bold tracking-wide ${isActive ? "text-white" : "text-slate-600 group-hover:text-slate-900"}`}>
                   {item.label}
                 </span>
               </div>
               
               {item.badge && (
-                <span className={`text-[10px] font-black px-2 py-0.5 rounded-lg ${
+                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-lg ${
                   isActive ? "bg-white/20 text-white" : "bg-blue-50 text-blue-600"
                 }`}>
                   {item.badge}
@@ -128,7 +125,7 @@ export default function Sidebar() {
       <div className="mt-auto pt-6 border-t border-slate-50 space-y-2">
         <button 
           onClick={handleLogout}
-          className="w-full flex items-center gap-4 px-4 py-4 text-slate-400 font-extrabold text-sm hover:text-rose-500 hover:bg-rose-50 rounded-2xl transition-all group"
+          className="w-full flex items-center gap-4 px-4 py-4 text-slate-400 font-bold text-sm hover:text-rose-500 hover:bg-rose-50 rounded-2xl transition-all group"
         >
           <div className="p-2 bg-transparent group-hover:bg-rose-100/50 rounded-xl transition-colors">
             <LogOut size={20} />
@@ -138,9 +135,9 @@ export default function Sidebar() {
         
         {/* Support Card UI */}
         <div className="bg-slate-50 rounded-2xl p-4 mt-4 border border-slate-100/50">
-          <p className="text-[10px] font-black text-slate-800 uppercase tracking-widest mb-1">Help Center</p>
-          <p className="text-[10px] font-bold text-slate-400 leading-tight">Need help with dashboard?</p>
-          <button className="mt-3 text-[10px] font-black text-blue-600 uppercase tracking-tighter hover:underline">Contact Support</button>
+          <p className="text-[10px] font-bold text-slate-800 uppercase tracking-widest mb-1">Help Center</p>
+          <p className="text-[10px] font-medium text-slate-400 leading-tight">Need help with dashboard?</p>
+          <button className="mt-3 text-[10px] font-bold text-blue-600 uppercase tracking-tighter hover:underline">Contact Support</button>
         </div>
       </div>
     </aside>

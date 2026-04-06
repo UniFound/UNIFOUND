@@ -2,6 +2,11 @@ import mongoose from "mongoose";
 
 const ticketSchema = new mongoose.Schema(
   {
+    ticketId: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     userId: {
       type: String,
       required: true,
@@ -29,14 +34,23 @@ const ticketSchema = new mongoose.Schema(
     description: { // optional, main message for ticket creation
       type: String,
     },
+    attachment: {
+      type: String, // Store image URL or file path
+      default: null,
+    },
     status: {
       type: String,
-      enum: ["Open", "Pending", "Resolved", "Closed"],
+      enum: ["Open", "In Progress", "Resolved", "Closed", "Rejected"],
       default: "Open",
+    },
+    rejectionReason: {
+      type: String,
+      default: null,
     },
     messages: [
       {
         senderId: { type: String, default: null },
+        senderType: { type: String, enum: ["User", "Admin"], default: "User" },
         text: String,
         autoReply: { type: Boolean, default: false },
         seen: { type: Boolean, default: false },
@@ -48,4 +62,6 @@ const ticketSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.model("Ticket", ticketSchema);
+const Ticket = mongoose.model("Ticket", ticketSchema);
+
+export default Ticket;
