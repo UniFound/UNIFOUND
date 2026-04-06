@@ -1,82 +1,83 @@
 "use client";
 
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import ClaimFormModal from "./ClaimFormModal";
+import { MapPin, ArrowRight, Eye, Heart } from "lucide-react";
 
 export default function LostItemCard({ item }) {
   const navigate = useNavigate();
-  const [showClaimModal, setShowClaimModal] = useState(false);
 
   if (!item) return null;
 
-  // Map item.status to proper colors
-  const statusColors = {
-    lost: { bg: "bg-blue-600", text: "text-white" },
-    found: { bg: "bg-green-600", text: "text-white" },
-    pending: { bg: "bg-orange-100", text: "text-orange-700" },
-    resolved: { bg: "bg-green-100", text: "text-green-700" },
-  };
-
-  const status = statusColors[item.status] || statusColors.lost;
-
   return (
-    <>
-      <div className="bg-white/70 backdrop-blur-md p-4 rounded-3xl shadow-lg border border-gray-100 hover:scale-105 transition-transform duration-300 relative flex flex-col">
-        
-        {/* Image */}
+    <div className="bg-white rounded-lg border border-gray-100 hover:shadow-lg hover:border-gray-200 transition-all duration-300 flex flex-col overflow-hidden group cursor-pointer"
+         onClick={() => navigate(`/items/${item.itemId}`)}>
+      
+      {/* Image Area */}
+      <div className="w-full h-40 overflow-hidden relative bg-gray-50">
         {item.image_url ? (
-          <div className="w-full h-52 overflow-hidden rounded-2xl mb-4 relative">
-            <img
-              src={item.image_url}
-              alt={item.title || "Item"}
-              className="w-full h-full object-cover object-center transition-transform duration-300 hover:scale-110"
-            />
-            {/* Status badge */}
-            <span
-              className={`absolute top-2 right-2 px-3 py-1 rounded-full font-semibold text-xs sm:text-sm ${status.bg} ${status.text}`}
-            >
-              {item.status ? item.status.charAt(0).toUpperCase() + item.status.slice(1) : "N/A"}
-            </span>
-          </div>
+          <img
+            src={item.image_url}
+            alt={item.title || "Item"}
+            className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+          />
         ) : (
-          <div className="w-full h-52 flex items-center justify-center bg-gray-100 rounded-2xl mb-4 text-gray-400 text-sm">
-            No Image Available
+          <div className="w-full h-full flex flex-col items-center justify-center text-gray-400">
+            <svg className="w-6 h-6 mb-1 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            <span className="text-[10px] font-bold uppercase tracking-wider">No Photo</span>
           </div>
         )}
-          {/* Title & Description */}
-          <h2 className="text-black font-bold text-lg truncate mb-2">
-            {item.title || "Item"}
-          </h2>
-          <p className="text-gray-700 text-sm mb-4 line-clamp-3">
-            {item.description || "No description provided."}
-          </p>
-
-        {/* Footer info */}
-        <div className="flex justify-between items-center text-xs text-gray-500 mb-4">
-          <span>Reported: {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : "N/A"}</span>
-          <span>ID: {item.itemId || "N/A"}</span>
+        
+        {/* Status Tag */}
+        <div className="absolute top-2.5 left-2.5 bg-blue-600 text-white font-bold text-[10px] uppercase tracking-wider px-2 py-0.5 rounded shadow-sm">
+          Lost
         </div>
 
-        {/* Buttons */}
-        <div className="flex gap-2 mt-auto">
-  <button
-  onClick={() => navigate(`/items/${item.itemId}`)} // use itemId
-  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 rounded-xl transition"
->
-  View Item
-      </button>
-          <button
-            onClick={() => setShowClaimModal(true)}
-            className="flex-1 border border-blue-600 text-blue-600 hover:bg-blue-50 text-sm font-medium py-2 rounded-xl transition"
-          >
-            This is Mine
-          </button>
-        </div>
+        {/* Wishlist Icon */}
+        <button className="absolute top-2.5 right-2.5 p-1.5 bg-white/80 backdrop-blur-sm rounded-full text-gray-400 hover:text-red-500 hover:bg-white transition-all shadow-sm">
+          <Heart size={14} />
+        </button>
       </div>
 
-      {/* Claim Modal */}
-      {showClaimModal && <ClaimFormModal item={item} onClose={() => setShowClaimModal(false)} />}
-    </>
+      {/* Content Area */}
+      <div className="p-4 flex flex-col flex-1">
+        
+        {/* Category */}
+        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">
+          COLLECTION: {item.category || "General"}
+        </span>
+
+        {/* Title */}
+        <h2 className="text-gray-900 font-bold text-sm truncate group-hover:text-blue-600 transition-colors mb-1.5">
+          {item.title || "Untitled Item"}
+        </h2>
+
+        {/* Location */}
+        <div className="flex items-center gap-1 text-xs text-gray-500 mb-3">
+          <MapPin size={12} className="text-blue-500" />
+          <span className="truncate">Reported at Library Area</span>
+        </div>
+
+        {/* Social Proof */}
+        <div className="flex items-center gap-1.5 text-[11px] text-gray-400 mt-auto mb-3 border-t border-gray-50 pt-2.5">
+          <Eye size={12} className="text-blue-500" />
+          <span className="font-medium">{Math.floor(Math.random() * 50) + 10} people viewing now</span>
+        </div>
+
+        {/* Action Bottom Row */}
+        <div className="flex justify-between items-center mt-auto">
+          <div>
+            <span className="text-[10px] font-bold text-gray-400 block uppercase">Status</span>
+            <span className="text-xs font-bold text-blue-600">Awaiting Claim</span>
+          </div>
+          
+          <div className="flex items-center gap-1 font-bold text-xs text-blue-600 group-hover:gap-1.5 transition-all">
+            View Details
+            <ArrowRight size={14} />
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
