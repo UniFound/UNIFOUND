@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { X, Info, Phone, MapPin, FileText, UploadCloud, FilePenLine, CheckCircle, ArrowLeft, PartyPopper } from "lucide-react";
+import { X, Info, Clock, MapPin, UploadCloud, FilePenLine, ArrowLeft, PartyPopper, Tag, Palette } from "lucide-react";
 import { supabase } from "../supabaseClient.js"; 
 
 const ClaimFormModal = ({ item, onClose }) => {
@@ -9,7 +9,10 @@ const ClaimFormModal = ({ item, onClose }) => {
     evidenceText: "",
     contactNumber: "",
     meetingLocation: "",
-    meetingTime: "",
+    location_other: "", // 👈 "Other" location එකක් දැම්මොත් save වෙන්න
+    meetingTime: "", 
+    category: "", 
+    color: "",    
   });
   
   const [selectedFile, setSelectedFile] = useState(null);
@@ -19,9 +22,24 @@ const ClaimFormModal = ({ item, onClose }) => {
   const [userData, setUserData] = useState(null);
   const [showPreview, setShowPreview] = useState(false);
   
-  // New State for Live Validations
   const [formErrors, setFormErrors] = useState({});
   const [submittedSuccessfully, setSubmittedSuccessfully] = useState(false);
+
+  // Colors & Categories (Report form එකේ ඒවාමයි)
+  const colorOptions = [
+    { name: "Black", hex: "#000000" },
+    { name: "White", hex: "#FFFFFF" },
+    { name: "Red", hex: "#EF4444" },
+    { name: "Blue", hex: "#3B82F6" },
+    { name: "Green", hex: "#10B981" },
+    { name: "Silver", hex: "#94A3B8" },
+    { name: "Gold", hex: "#F59E0B" },
+  ];
+
+  const categoryOptions = ["Laptop", "Mobile Phone", "Student ID", "Electronics", "Laptop Charger", "Backpack", "Other"];
+  
+  // Report form එකේ තියෙන locations ටිකම මෙතනටත් දැම්මා
+  const locationOptions = ["Basement", "Canteen", "New Building", "Main Building", "Near the Beach", "Library", "Anohana Canteen", "Office Area", "Other"];
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -43,20 +61,21 @@ const ClaimFormModal = ({ item, onClose }) => {
     if (formData.evidenceText && formData.evidenceText.length < 5) {
       errors.evidenceText = "Evidence note is too short.";
     }
+    if (formData.meetingLocation === "Other" && !formData.location_other) {
+      errors.meetingLocation = "Please specify location";
+    }
     setFormErrors(errors);
   }, [formData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // 1. Contact Number ekata numbers witharakma gahanna denna
     if (name === "contactNumber") {
-      if (value !== "" && !/^\d+$/.test(value)) return; // Block non-numeric characters
-      if (value.length > 10) return; // Block more than 10 digits
+      if (value !== "" && !/^\d+$/.test(value)) return; 
+      if (value.length > 10) return; 
     }
 
-    // 2. Meeting Location saha Evidence Note walata numbers block kirima
-    if (name === "meetingLocation" || name === "evidenceText") {
+    if (name === "evidenceText" || name === "location_other") {
       if (/\d/.test(value)) {
         setFormErrors(prev => ({ ...prev, [name]: "Numbers are not allowed here." }));
         return; 
@@ -95,7 +114,6 @@ const ClaimFormModal = ({ item, onClose }) => {
 
   const handleProceedToPreview = (e) => {
     e.preventDefault();
-    // Final check before preview
     if (Object.keys(formErrors).length === 0 && formData.description && formData.contactNumber) {
       setShowPreview(true);
     }
@@ -111,37 +129,48 @@ const ClaimFormModal = ({ item, onClose }) => {
       }
 
       const payload = {
-        ...formData,
+        itemId: item._id || item.id, 
+        userId: userData?.userId || userData?._id, 
+        lostItemId: null, 
+        description: formData.description,
+        evidenceText: formData.evidenceText,
         evidenceImage: imageUrl, 
-        itemId: item._id, 
-        userId: userData?.userId || userData?._id,
+        contactNumber: formData.contactNumber,
         email: userData?.email || "user@example.com",
+        // Other select කරලා තිබුණොත් custom location එක යනවා
+        meetingLocation: formData.meetingLocation === "Other" ? formData.location_other : formData.meetingLocation,
+        meetingTime: formData.meetingTime,
+        category: formData.category, 
+        color: formData.color,       
       };
 
+      console.log("🚀 [Frontend] Sending Payload:", payload);
       const response = await axios.post("http://localhost:5000/api/claims", payload);
-      
+
       if (response.status === 201 || response.status === 200) {
         setFormData({
             description: "",
             evidenceText: "",
             contactNumber: "",
             meetingLocation: "",
+            location_other: "",
             meetingTime: "",
+            category: "",
+            color: "",
         });
         setSelectedFile(null);
         setPreviewUrl(null);
-        setSubmittedSuccessfully(true);
+        setSubmittedSuccessfully(true); 
       }
     } catch (err) {
-      const errorMessage = err.response?.data?.message || "Failed to submit claim.";
-      setError(errorMessage);
+      console.error("🔥 Axios Error:", err);
+      setError(err.response?.data?.message || "Failed to submit claim.");
     } finally {
       setLoading(false);
     }
   };
 
-  // Helper to check if form is valid
-  const isFormInvalid = !formData.description || !formData.contactNumber || !formData.meetingLocation || !formData.evidenceText || Object.keys(formErrors).length > 0;
+  const isFormInvalid = !formData.description || !formData.contactNumber || !formData.meetingLocation || !formData.evidenceText || !formData.meetingTime || !formData.category || !formData.color || Object.keys(formErrors).length > 0;
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 backdrop-blur-md bg-black/40">
@@ -156,7 +185,7 @@ const ClaimFormModal = ({ item, onClose }) => {
                     </div>
                     <div>
                         <h2 className="text-xl font-bold text-gray-900">{item.title}</h2>
-                        <p className="text-xs text-blue-600 font-medium">Claiming Item: {item.itemId}</p>
+                        <p className="text-xs text-blue-600 font-medium">Claiming Item: {item.itemId || "N/A"}</p>
                     </div>
                 </div>
                 <button onClick={onClose} className="p-2 hover:bg-white rounded-full transition-colors">
@@ -178,10 +207,7 @@ const ClaimFormModal = ({ item, onClose }) => {
                 Our team will review your evidence and get back to you soon.
               </p>
             </div>
-            <button 
-              onClick={onClose}
-              className="w-full py-4 bg-gray-900 hover:bg-black text-white rounded-2xl font-bold shadow-lg transition-all active:scale-95"
-            >
+            <button onClick={onClose} className="w-full py-4 bg-gray-900 hover:bg-black text-white rounded-2xl font-bold shadow-lg transition-all active:scale-95">
               Close and Continue
             </button>
           </div>
@@ -198,17 +224,79 @@ const ClaimFormModal = ({ item, onClose }) => {
               {formErrors.description && <p className="text-[10px] text-red-500 font-bold italic ml-2">{formErrors.description}</p>}
             </div>
 
+            {/* Category Selection */}
+            <div className="space-y-2">
+              <label className="text-sm font-bold text-gray-700 flex items-center gap-1">
+                <Tag size={14} className="text-gray-500" /> Category *
+              </label>
+              <select name="category" value={formData.category} onChange={handleChange} className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:border-blue-500">
+                <option value="">Select Category</option>
+                {categoryOptions.map((cat) => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Color Selection */}
+            <div className="space-y-2">
+              <label className="text-sm font-bold text-gray-700 flex items-center gap-1">
+                <Palette size={14} className="text-gray-500" /> Item Color *
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {colorOptions.map((c) => (
+                  <button
+                    key={c.name}
+                    type="button"
+                    onClick={() => setFormData({ ...formData, color: c.name })}
+                    className={`flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-bold transition-all ${formData.color === c.name ? 'border-blue-500 bg-blue-50' : 'border-gray-200'}`}
+                  >
+                    <span className="w-3 h-3 rounded-full" style={{ backgroundColor: c.hex }}></span>
+                    {c.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="text-sm font-bold text-gray-700">Contact Number *</label>
                 <input type="text" name="contactNumber" required placeholder="07XXXXXXXX" className={`w-full p-3 bg-gray-50 border rounded-xl text-sm outline-none ${formErrors.contactNumber ? 'border-red-300' : 'border-gray-200 focus:border-blue-500'}`} onChange={handleChange} value={formData.contactNumber} />
                 {formErrors.contactNumber && <p className="text-[10px] text-red-500 font-bold italic">{formErrors.contactNumber}</p>}
               </div>
+              
+              {/* Meeting Location Dropdown (අලුතින් එකතු කළා) */}
               <div className="space-y-2">
-                <label className="text-sm font-bold text-gray-700">Meeting Location *</label>
-                <input type="text" name="meetingLocation" required placeholder="e.g. Library" className={`w-full p-3 bg-gray-50 border rounded-xl text-sm outline-none ${formErrors.meetingLocation ? 'border-red-300' : 'border-gray-200 focus:border-blue-500'}`} onChange={handleChange} value={formData.meetingLocation} />
+                <label className="text-sm font-bold text-gray-700 flex items-center gap-1">
+                   <MapPin size={14} className="text-gray-500" /> Meeting Location *
+                </label>
+                <select name="meetingLocation" value={formData.meetingLocation} onChange={handleChange} className={`w-full p-3 bg-gray-50 border rounded-xl text-sm outline-none focus:border-blue-500 ${formErrors.meetingLocation ? 'border-red-300' : 'border-gray-200'}`}>
+                  <option value="">Select Location</option>
+                  {locationOptions.map((loc) => (
+                    <option key={loc} value={loc}>{loc}</option>
+                  ))}
+                </select>
+                
+                {/* Location එක "Other" නම් වෙනම text box එකක් open වෙනවා */}
+                {formData.meetingLocation === "Other" && (
+                  <input type="text" name="location_other" required placeholder="Specify location..." className="mt-2 w-full p-3 bg-white border border-blue-200 rounded-xl text-sm outline-none focus:border-blue-500 shadow-sm" onChange={handleChange} value={formData.location_other} />
+                )}
                 {formErrors.meetingLocation && <p className="text-[10px] text-red-500 font-bold italic">{formErrors.meetingLocation}</p>}
               </div>
+            </div>
+
+            {/* DateTime Picker Input (අලුතින් එකතු කළා) */}
+            <div className="space-y-2">
+              <label className="text-sm font-bold text-gray-700 flex items-center gap-1">
+                <Clock size={14} className="text-gray-500" /> Preferred Meeting Date & Time *
+              </label>
+              <input 
+                type="datetime-local" 
+                name="meetingTime" 
+                required 
+                className="w-full p-3 bg-gray-50 border border-gray-200 focus:border-blue-500 rounded-xl text-sm outline-none cursor-pointer" 
+                onChange={handleChange} 
+                value={formData.meetingTime} 
+              />
             </div>
 
             <div className="space-y-2">
@@ -234,15 +322,12 @@ const ClaimFormModal = ({ item, onClose }) => {
               </div>
             </div>
 
-            <button 
-              type="submit" 
-              disabled={isFormInvalid}
-              className={`w-full py-4 rounded-2xl font-bold text-white shadow-lg transition-all active:scale-95 ${isFormInvalid ? 'bg-gray-300 cursor-not-allowed shadow-none' : 'bg-blue-600 hover:bg-blue-700'}`}
-            >
+            <button type="submit" disabled={isFormInvalid} className={`w-full py-4 rounded-2xl font-bold text-white shadow-lg transition-all active:scale-95 ${isFormInvalid ? 'bg-gray-300 cursor-not-allowed shadow-none' : 'bg-blue-600 hover:bg-blue-700'}`}>
               Review Claim Details
             </button>
           </form>
         ) : (
+          /* Preview Section */
           <div className="p-8 overflow-y-auto space-y-6 custom-scrollbar text-left">
               <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-xl">
                 <h3 className="text-sm font-bold text-yellow-800 flex items-center gap-2">
@@ -256,33 +341,45 @@ const ClaimFormModal = ({ item, onClose }) => {
                    <span className="text-[10px] uppercase tracking-wider font-bold text-gray-400">Explanation</span>
                    <p className="text-sm text-gray-700 bg-gray-50 p-3 rounded-xl border">{formData.description}</p>
                 </div>
-                <div className="grid grid-cols-2 gap-4 text-sm font-medium">
+                
+                <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-gray-400 block">Contact</span>
-                    {formData.contactNumber}
+                    <span className="text-[10px] uppercase tracking-wider font-bold text-gray-400">Category</span>
+                    <p className="font-medium text-gray-800">{formData.category}</p>
                   </div>
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-gray-400 block">Location</span>
-                    {formData.meetingLocation}
+                    <span className="text-[10px] uppercase tracking-wider font-bold text-gray-400">Color</span>
+                    <p className="font-medium text-gray-800">{formData.color}</p>
                   </div>
                 </div>
-                {previewUrl && (
-                  <img src={previewUrl} className="w-full h-32 object-cover rounded-xl border" alt="Preview" />
-                )}
+
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-[10px] uppercase tracking-wider font-bold text-gray-400">Contact</span>
+                    <p className="font-medium text-gray-800">{formData.contactNumber}</p>
+                  </div>
+                  <div>
+                    <span className="text-[10px] uppercase tracking-wider font-bold text-gray-400">Location</span>
+                    <p className="font-medium text-gray-800">
+                      {formData.meetingLocation === "Other" ? formData.location_other : formData.meetingLocation}
+                    </p>
+                  </div>
+                </div>
+
+                <div>
+                   <span className="text-[10px] uppercase tracking-wider font-bold text-gray-400">Meeting Date & Time</span>
+                   <p className="text-sm font-medium text-gray-800 bg-gray-50 p-3 rounded-xl border">
+                     {new Date(formData.meetingTime).toLocaleString()}
+                   </p>
+                </div>
               </div>
 
-              <div className="flex gap-3 pt-4">
-                <button onClick={() => setShowPreview(false)} disabled={loading} className="flex-1 py-3 rounded-xl font-bold text-gray-600 border hover:bg-gray-50 flex items-center justify-center gap-2">
-                  <ArrowLeft size={18} /> Edit
+              <div className="flex gap-4">
+                <button onClick={() => setShowPreview(false)} className="w-1/3 py-3 border border-gray-300 rounded-xl font-bold text-gray-600 hover:bg-gray-50 transition-all flex items-center justify-center gap-2">
+                  <ArrowLeft size={16} /> Back
                 </button>
-                <button 
-                  onClick={handleFinalSubmit}
-                  disabled={loading}
-                  className={`flex-[2] py-3 rounded-xl font-bold text-white shadow-lg flex items-center justify-center gap-2 ${
-                    loading ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700 active:scale-95"
-                  }`}
-                >
-                  {loading ? "Submitting..." : <><CheckCircle size={18} /> Confirm & Submit</>}
+                <button onClick={handleFinalSubmit} disabled={loading} className="w-2/3 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-lg shadow-blue-100 transition-all flex items-center justify-center">
+                  {loading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : "Submit Claim"}
                 </button>
               </div>
           </div>
