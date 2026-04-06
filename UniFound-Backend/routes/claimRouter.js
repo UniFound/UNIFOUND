@@ -5,6 +5,7 @@ import {
   getClaimById,
   updateClaim,
   deleteClaim,
+  updateClaimStatus,
 } from "../controllers/claimController.js";
 
 const router = express.Router();
@@ -23,5 +24,7 @@ router.put("/:id", updateClaim);
 
 // 🟢 Permanent delete claim by ID
 router.delete("/:id", deleteClaim);
+
+router.patch("/:id/status", updateClaimStatus);
 
 export default router;
