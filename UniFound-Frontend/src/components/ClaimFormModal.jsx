@@ -137,7 +137,6 @@ const ClaimFormModal = ({ item, onClose }) => {
         evidenceImage: imageUrl, 
         contactNumber: formData.contactNumber,
         email: userData?.email || "user@example.com",
-        // Other select කරලා තිබුණොත් custom location එක යනවා
         meetingLocation: formData.meetingLocation === "Other" ? formData.location_other : formData.meetingLocation,
         meetingTime: formData.meetingTime,
         category: formData.category, 
@@ -264,7 +263,7 @@ const ClaimFormModal = ({ item, onClose }) => {
                 {formErrors.contactNumber && <p className="text-[10px] text-red-500 font-bold italic">{formErrors.contactNumber}</p>}
               </div>
               
-              {/* Meeting Location Dropdown (අලුතින් එකතු කළා) */}
+              {/* Meeting Location Dropdown */}
               <div className="space-y-2">
                 <label className="text-sm font-bold text-gray-700 flex items-center gap-1">
                    <MapPin size={14} className="text-gray-500" /> Meeting Location *
@@ -276,7 +275,6 @@ const ClaimFormModal = ({ item, onClose }) => {
                   ))}
                 </select>
                 
-                {/* Location එක "Other" නම් වෙනම text box එකක් open වෙනවා */}
                 {formData.meetingLocation === "Other" && (
                   <input type="text" name="location_other" required placeholder="Specify location..." className="mt-2 w-full p-3 bg-white border border-blue-200 rounded-xl text-sm outline-none focus:border-blue-500 shadow-sm" onChange={handleChange} value={formData.location_other} />
                 )}
@@ -284,7 +282,7 @@ const ClaimFormModal = ({ item, onClose }) => {
               </div>
             </div>
 
-            {/* DateTime Picker Input (අලුතින් එකතු කළා) */}
+            {/* DateTime Picker Input */}
             <div className="space-y-2">
               <label className="text-sm font-bold text-gray-700 flex items-center gap-1">
                 <Clock size={14} className="text-gray-500" /> Preferred Meeting Date & Time *

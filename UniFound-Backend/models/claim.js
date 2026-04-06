@@ -60,6 +60,16 @@ const claimSchema = new mongoose.Schema(
       type: String,
     },
 
+    // ⬇️ ADD THESE TWO FIELDS ⬇️
+    category: {
+      type: String,
+      required: true, 
+    },
+    color: {
+      type: String,
+      required: true,
+    },
+
     status: {
       type: String,
       enum: ["Pending", "Under Review", "Approved", "Rejected", "On Hold"],
