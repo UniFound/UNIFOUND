@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import AdminClaims from "./AdminClaims";
 import AdminItems from "./AdminItems";
+import AdminTicketsPage from "./AdminTicketsPage";
 
 export default function AdminDashboard() {
   // Stat counts (පසුව Backend එකෙන් fetch කර මෙයට සම්බන්ධ කරන්න)
@@ -108,8 +109,7 @@ export default function AdminDashboard() {
             {/* --- ADMIN ROUTES --- */}
             <Route path="/claims" element={<AdminClaims />} />
             <Route path="/items" element={<AdminItems />} />
-            
-            
+            <Route path="/tickets" element={<AdminTicketsPage />} />
           </Routes>
         </main>
       </div>

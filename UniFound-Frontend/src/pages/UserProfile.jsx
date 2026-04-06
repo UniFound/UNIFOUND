@@ -37,7 +37,7 @@ export default function UserProfile() {
   const pages = [
     { name: "Overview", path: "/profile/overview", icon: <LayoutDashboard size={22} />, color: "text-blue-600", bg: "bg-blue-50", desc: "General account statistics" },
     { name: "Leaderboard", path: "/profile/leaderboard", icon: <Trophy size={22} />, color: "text-amber-600", bg: "bg-amber-50", desc: "Check your global ranking" },
-    { name: "Tickets", path: "/profile/tickets", icon: <Ticket size={22} />, color: "text-indigo-600", bg: "bg-indigo-50", desc: "Manage your active tickets" },
+    { name: "Tickets", path: "/tickets", icon: <Ticket size={22} />, color: "text-indigo-600", bg: "bg-indigo-50", desc: "Manage your active tickets" },
     { name: "Activity", path: "/profile/activity", icon: <Activity size={22} />, color: "text-emerald-600", bg: "bg-emerald-50", desc: "View your recent actions" },
     { name: "Analytics", path: "/profile/analytics", icon: <BarChart3 size={22} />, color: "text-rose-600", bg: "bg-rose-50", desc: "Data driven insights" },
     { name: "Settings", path: "/profile/settings", icon: <Settings size={22} />, color: "text-slate-600", bg: "bg-slate-100", desc: "Security and preferences" },

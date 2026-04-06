@@ -41,8 +41,7 @@ export default function Sidebar() {
     { 
       icon: <LifeBuoy size={20} />, 
       label: "Tickets", 
-      path: "/admin/tickets", 
-      badge: "2" 
+      path: "/admin/tickets" 
     },
     { 
       icon: <Settings size={20} />, 
