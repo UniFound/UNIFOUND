@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import AdminClaims from "./AdminClaims";
 import AdminItems from "./AdminItems";
+import AdminTicketsPage from "./AdminTicketsPage";
 import ClaimDetailsPage from "./ClaimDetailsPage";
 
 export default function AdminDashboard() {
@@ -109,6 +110,7 @@ export default function AdminDashboard() {
             {/* --- ADMIN ROUTES --- */}
             <Route path="/claims" element={<AdminClaims />} />
             <Route path="/items" element={<AdminItems />} />
+            <Route path="/tickets" element={<AdminTicketsPage />} />
             <Route path="/claims/:claimId" element={<ClaimDetailsPage />} />
             
             

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+import { Search } from 'lucide-react';
 import api from '../api/axios';
 
 export default function AdminTicketsPage() {
@@ -17,6 +16,7 @@ export default function AdminTicketsPage() {
   const [editMessage, setEditMessage] = useState({});
 
   const [filter, setFilter] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     fetchAllTickets();
@@ -115,36 +115,51 @@ export default function AdminTicketsPage() {
   };
 
   const filteredTickets = tickets.filter(ticket => {
-    if (filter === 'all') return true;
-    return ticket.status.toLowerCase() === filter.toLowerCase();
+    const matchesFilter = filter === 'all' || ticket.status.toLowerCase() === filter.toLowerCase();
+    const matchesSearch = searchQuery === '' || 
+      ticket.ticketId?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      ticket._id?.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    return matchesFilter && matchesSearch;
   });
 
   return (
-    <div className="bg-white text-gray-800 min-h-screen">
-      <Navbar />
+    <div className="space-y-8 animate-in fade-in duration-500 font-['Inter',_-apple-system,_.SFNSText-Regular,'Segoe_UI','Helvetica_Neue',sans-serif]">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Ticket Management</h1>
+        <p className="text-lg text-gray-600 max-w-2xl">Manage and respond to user support tickets.</p>
+      </div>
 
-      <div className="pt-24 pb-16">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Ticket Management</h1>
-            <p className="text-lg text-gray-600 max-w-2xl">Manage and respond to user support tickets.</p>
+      {/* Success/Error Messages */}
+      {success && (
+        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+          <p className="text-green-700 font-medium">{success}</p>
+        </div>
+      )}
+      {error && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-red-700 font-medium">{error}</p>
+        </div>
+      )}
+
+      {/* Search and Filters */}
+      <div className="mb-6 space-y-4">
+        {/* Search Bar */}
+        <div className="relative max-w-md">
+          <div className="absolute left-3 top-1/2 -translate-y-1/2">
+            <Search className="w-5 h-5 text-gray-400" />
           </div>
+          <input
+            type="text"
+            placeholder="Search by ticket ID (e.g., TIDMNB4SK1C0F52WC)..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-sm font-medium placeholder:text-gray-400 focus:bg-white focus:border-blue-300 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all duration-200"
+          />
+        </div>
 
-          {/* Success/Error Messages */}
-          {success && (
-            <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-              <p className="text-green-700 font-medium">{success}</p>
-            </div>
-          )}
-          {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-red-700 font-medium">{error}</p>
-            </div>
-          )}
-
-          {/* Filters */}
-          <div className="mb-6">
-            <div className="flex gap-2 flex-wrap">
+        {/* Status Filters */}
+        <div className="flex gap-2 flex-wrap">
               {['all', 'open', 'in progress', 'resolved', 'closed', 'rejected'].map(status => (
                 <button
                   key={status}
@@ -157,7 +172,7 @@ export default function AdminTicketsPage() {
                 </button>
               ))}
             </div>
-          </div>
+        </div>
 
           {/* Tickets List */}
           {filteredTickets.length === 0 ? (
@@ -458,10 +473,6 @@ export default function AdminTicketsPage() {
               ))}
             </div>
           )}
-        </div>
-      </div>
-
-      <Footer />
     </div>
   );
 }
