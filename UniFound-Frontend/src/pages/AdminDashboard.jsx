@@ -1,15 +1,9 @@
 import AdminLayout from "../pages/AdminLayout";
-import { TrendingUp, Users, Box, ShieldCheck, LifeBuoy, ArrowUpRight, ArrowDownRight, MoreHorizontal, FileText, FolderOpen, BarChart3 } from "lucide-react";
+import { TrendingUp, Users as UsersIcon, Box, ShieldCheck, LifeBuoy, ArrowUpRight, ArrowDownRight, MoreHorizontal, FileText, FolderOpen, BarChart3 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
-
-
-import { 
-  Users, Box, ShieldCheck, LifeBuoy, 
-  ArrowUpRight, ArrowDownRight, MoreHorizontal 
-} from "lucide-react";
 import AdminClaims from "./AdminClaims";
 import AdminItems from "./AdminItems";
 import AdminTicketsPage from "./AdminTicketsPage";
@@ -42,7 +36,7 @@ export default function AdminDashboard() {
                   {/* REFINED STATS GRID */}
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <StatCard 
-                      icon={<Users size={20} />} 
+                      icon={<UsersIcon size={20} />} 
                       color="blue"
                       label="Total Users" 
                       value={userCount} 
@@ -75,39 +69,35 @@ export default function AdminDashboard() {
                     />
                   </div>
 
-        {/* KEY MANAGEMENT CARDS */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <KeyCard 
-            icon={<FileText size={20} />} 
-            color="violet"
-            label="AUDIT LOGS" 
-            description="View system activities and logs"
-            link="/admin/audit"
-          />
-          <KeyCard 
-            icon={<FolderOpen size={20} />} 
-            color="amber"
-            label="CATEGORIES" 
-            description="Manage item categories"
-            link="/admin/categories"
-          />
-          <KeyCard 
-            icon={<BarChart3 size={20} />} 
-            color="cyan"
-            label="REPORTS" 
-            description="Generate and view reports"
-            link="/admin/reports"
-          />
-        </div>
+                  {/* KEY MANAGEMENT CARDS */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <KeyCard 
+                      icon={<FileText size={20} />} 
+                      color="violet"
+                      label="AUDIT LOGS" 
+                      description="View system activities and logs"
+                      link="/admin/audit"
+                    />
+                    <KeyCard 
+                      icon={<FolderOpen size={20} />} 
+                      color="amber"
+                      label="CATEGORIES" 
+                      description="Manage item categories"
+                      link="/admin/categories"
+                    />
+                    <KeyCard 
+                      icon={<BarChart3 size={20} />} 
+                      color="cyan"
+                      label="REPORTS" 
+                      description="Generate and view reports"
+                      link="/admin/reports"
+                    />
+                  </div>
 
-        {/* BOTTOM SECTION */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 bg-white rounded-[32px] p-8 shadow-sm border border-slate-100/50 relative overflow-hidden">
-             {/* Subtle pattern background for the chart area */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-full blur-3xl opacity-50 -mr-16 -mt-16"></div>
                   {/* BOTTOM SECTION */}
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div className="lg:col-span-2 bg-white rounded-[32px] p-8 shadow-sm border border-slate-100/50 relative overflow-hidden">
+                      {/* Subtle pattern background for the chart area */}
                       <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-full blur-3xl opacity-50 -mr-16 -mt-16"></div>
                       
                       <div className="flex items-center justify-between mb-10 relative z-10">
@@ -144,8 +134,6 @@ export default function AdminDashboard() {
             <Route path="/items" element={<AdminItems />} />
             <Route path="/tickets" element={<AdminTicketsPage />} />
             <Route path="/claims/:claimId" element={<ClaimDetailsPage />} />
-            
-            
           </Routes>
         </main>
       </div>
@@ -184,7 +172,6 @@ function StatCard({ icon, color, label, value, trend, isPositive }) {
 }
 
 function KeyCard({ icon, color, label, description, link }) {
-  // Color configuration for key cards - darker colors
   const theme = {
     violet: "bg-violet-100 border-violet-300 text-violet-800 hover:bg-violet-200 hover:border-violet-400",
     amber: "bg-amber-100 border-amber-300 text-amber-800 hover:bg-amber-200 hover:border-amber-400",
