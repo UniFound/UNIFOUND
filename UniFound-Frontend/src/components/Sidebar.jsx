@@ -5,6 +5,9 @@ import {
   Box, 
   ShieldCheck, 
   LifeBuoy, 
+  FileText, 
+  Tags, 
+  ClipboardList, 
   Settings, 
   LogOut 
 } from "lucide-react";
@@ -40,6 +43,21 @@ export default function Sidebar() {
       icon: <ShieldCheck size={20} />, 
       label: "Claims", 
       path: "/admin/claims" 
+    },
+    { 
+      icon: <Tags size={20} />, 
+      label: "Categories", 
+      path: "/admin/categories" 
+    },
+    { 
+      icon: <ClipboardList size={20} />, 
+      label: "Audit Logs", 
+      path: "/admin/audit" 
+    },
+    { 
+      icon: <FileText size={20} />, 
+      label: "Reports", 
+      path: "/admin/reports" 
     },
     { 
       icon: <LifeBuoy size={20} />, 
