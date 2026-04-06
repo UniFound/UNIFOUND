@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Save, X, Users, Mail, Lock, Shield, ToggleLeft } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
+import AdminLayout from "../pages/AdminLayout";
 
 const UserForm = () => {
   const navigate = useNavigate();
@@ -101,17 +102,35 @@ const UserForm = () => {
   
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
     
-    // Clear error for this field when user starts typing
-    if (errors[name]) {
-      setErrors(prev => ({
+    // Validation for full name field - only allow letters and spaces
+    if (name === 'fullName') {
+      const lettersOnly = value.replace(/[^a-zA-Z\s]/g, '');
+      setFormData(prev => ({
         ...prev,
-        [name]: ''
+        [name]: lettersOnly
       }));
+      
+      // Clear error for this field when user starts typing
+      if (errors[name]) {
+        setErrors(prev => ({
+          ...prev,
+          [name]: ''
+        }));
+      }
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+      
+      // Clear error for this field when user starts typing
+      if (errors[name]) {
+        setErrors(prev => ({
+          ...prev,
+          [name]: ''
+        }));
+      }
     }
   };
   
@@ -166,60 +185,21 @@ const UserForm = () => {
   };
   
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Navigation */}
-      <div className="w-full flex justify-center fixed top-4 z-50">
-        <div className="w-[92%] max-w-7xl flex items-center justify-between px-6 py-3
-          bg-white/70 backdrop-blur-xl border border-white/40
-          rounded-full shadow-lg">
-
-          {/* Logo */}
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">
-              U
-            </div>
-            <span className="font-semibold text-gray-800">
-              UniFound
-            </span>
-            <span className="ml-3 px-3 py-1 bg-blue-100 text-blue-600 text-xs rounded-full">Admin Control</span>
-          </div>
-
-          {/* Nav */}
-          <div className="hidden lg:flex items-center gap-6 text-sm text-gray-600">
-            <a href="/admin" className="text-blue-600 font-medium transition hover:text-blue-700">Dashboard</a>
-            <a href="/admin/users" className="transition hover:text-blue-600">Users</a>
-            <a href="/admin/categories" className="transition hover:text-blue-600">Categories</a>
-            <a href="/admin/analytics" className="transition hover:text-blue-600">Analytics</a>
-            <a href="/admin/audit" className="transition hover:text-blue-600">Audit Logs</a>
-            <a href="/admin/reports" className="transition hover:text-blue-600">Reports</a>
-          </div>
-
-          {/* Right */}
-          <div className="flex items-center gap-3">
-            <button className="text-sm text-gray-600 hover:text-blue-600">
-              Sign out
-            </button>
-            <button className="bg-blue-600 text-white px-4 py-1.5 rounded-full text-sm shadow hover:bg-blue-700 transition">
-              Admin →
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-8">
+    <AdminLayout>
+      <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
         {/* Page Header */}
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            <h1 className="font-black text-slate-900 text-3xl tracking-tight">
               {editingUserId ? 'Edit User' : 'Add New User'}
             </h1>
-            <p className="text-gray-600">
+            <p className="text-[10px] font-black text-slate-400 mt-1 uppercase tracking-[0.2em]">
               {editingUserId ? 'Update user information and permissions' : 'Create a new user account with appropriate permissions'}
             </p>
           </div>
           <button
             onClick={goBack}
-            className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+            className="bg-slate-100 hover:bg-slate-200 text-slate-800 px-6 py-3 rounded-2xl flex items-center space-x-2 transition-colors font-black text-xs uppercase tracking-widest"
           >
             <ArrowLeft className="h-4 w-4" />
             <span>Back to Users</span>
@@ -227,97 +207,97 @@ const UserForm = () => {
         </div>
 
         {/* User Form */}
-        <div className="bg-white border border-gray-200 rounded-xl p-8 shadow-sm">
-          <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="bg-white rounded-[32px] p-8 shadow-sm border border-slate-100/50">
+          <form onSubmit={handleSubmit} className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Full Name */}
               <div>
-                <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-2">
-                  Full Name <span className="text-red-600">*</span>
+                <label htmlFor="fullName" className="block text-[10px] font-black text-slate-600 uppercase tracking-[0.15em] mb-2">
+                  Full Name <span className="text-rose-600">*</span>
                 </label>
                 <div className="relative">
-                  <Users className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <Users className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
                   <input
                     type="text"
                     id="fullName"
                     name="fullName"
                     value={formData.fullName}
                     onChange={handleInputChange}
-                    className={`w-full pl-10 pr-4 py-3 bg-white border rounded-lg text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                      errors.fullName ? 'border-red-500' : 'border-gray-300'
+                    className={`w-full pl-12 pr-4 py-3 bg-slate-50/50 border rounded-2xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-medium ${
+                      errors.fullName ? 'border-rose-300' : 'border-slate-100'
                     }`}
                     placeholder="Enter full name"
                   />
                 </div>
                 {errors.fullName && (
-                  <p className="mt-1 text-sm text-red-600">{errors.fullName}</p>
+                  <p className="mt-1 text-[10px] font-black text-rose-600 uppercase tracking-[0.1em]">{errors.fullName}</p>
                 )}
               </div>
 
               {/* Email */}
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                  Email Address <span className="text-red-600">*</span>
+                <label htmlFor="email" className="block text-[10px] font-black text-slate-600 uppercase tracking-[0.15em] mb-2">
+                  Email Address <span className="text-rose-600">*</span>
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
                   <input
                     type="email"
                     id="email"
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className={`w-full pl-10 pr-4 py-3 bg-white border rounded-lg text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                      errors.email ? 'border-red-500' : 'border-gray-300'
+                    className={`w-full pl-12 pr-4 py-3 bg-slate-50/50 border rounded-2xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-medium ${
+                      errors.email ? 'border-rose-300' : 'border-slate-100'
                     }`}
                     placeholder="Enter email address"
                   />
                 </div>
                 {errors.email && (
-                  <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+                  <p className="mt-1 text-[10px] font-black text-rose-600 uppercase tracking-[0.1em]">{errors.email}</p>
                 )}
               </div>
 
               {/* Password (only for create) */}
               {!editingUserId && (
                 <div>
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                    Password <span className="text-red-600">*</span>
+                  <label htmlFor="password" className="block text-[10px] font-black text-slate-600 uppercase tracking-[0.15em] mb-2">
+                    Password <span className="text-rose-600">*</span>
                   </label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                    <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
                     <input
                       type="password"
                       id="password"
                       name="password"
                       value={formData.password}
                       onChange={handleInputChange}
-                      className={`w-full pl-10 pr-4 py-3 bg-white border rounded-lg text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                        errors.password ? 'border-red-500' : 'border-gray-300'
+                      className={`w-full pl-12 pr-4 py-3 bg-slate-50/50 border rounded-2xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-medium ${
+                        errors.password ? 'border-rose-300' : 'border-slate-100'
                       }`}
                       placeholder="Enter password"
                     />
                   </div>
                   {errors.password && (
-                    <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+                    <p className="mt-1 text-[10px] font-black text-rose-600 uppercase tracking-[0.1em]">{errors.password}</p>
                   )}
                 </div>
               )}
 
               {/* Role */}
               <div>
-                <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-2">
-                  Role <span className="text-red-600">*</span>
+                <label htmlFor="role" className="block text-[10px] font-black text-slate-600 uppercase tracking-[0.15em] mb-2">
+                  Role <span className="text-rose-600">*</span>
                 </label>
                 <div className="relative">
-                  <Shield className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <Shield className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
                   <select
                     id="role"
                     name="role"
                     value={formData.role}
                     onChange={handleInputChange}
-                    className={`w-full pl-10 pr-4 py-3 bg-white border rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none ${
-                      errors.role ? 'border-red-500' : 'border-gray-300'
+                    className={`w-full pl-12 pr-4 py-3 bg-slate-50/50 border rounded-2xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none font-medium ${
+                      errors.role ? 'border-rose-300' : 'border-slate-100'
                     }`}
                   >
                     <option value="" className="bg-white">Select Role</option>
@@ -326,24 +306,24 @@ const UserForm = () => {
                   </select>
                 </div>
                 {errors.role && (
-                  <p className="mt-1 text-sm text-red-600">{errors.role}</p>
+                  <p className="mt-1 text-[10px] font-black text-rose-600 uppercase tracking-[0.1em]">{errors.role}</p>
                 )}
               </div>
 
               {/* Status */}
               <div>
-                <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-2">
-                  Status <span className="text-red-600">*</span>
+                <label htmlFor="status" className="block text-[10px] font-black text-slate-600 uppercase tracking-[0.15em] mb-2">
+                  Status <span className="text-rose-600">*</span>
                 </label>
                 <div className="relative">
-                  <ToggleLeft className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <ToggleLeft className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
                   <select
                     id="status"
                     name="status"
                     value={formData.status}
                     onChange={handleInputChange}
-                    className={`w-full pl-10 pr-4 py-3 bg-white border rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none ${
-                      errors.status ? 'border-red-500' : 'border-gray-300'
+                    className={`w-full pl-12 pr-4 py-3 bg-slate-50/50 border rounded-2xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none font-medium ${
+                      errors.status ? 'border-rose-300' : 'border-slate-100'
                     }`}
                   >
                     <option value="" className="bg-white">Select Status</option>
@@ -352,17 +332,17 @@ const UserForm = () => {
                   </select>
                 </div>
                 {errors.status && (
-                  <p className="mt-1 text-sm text-red-600">{errors.status}</p>
+                  <p className="mt-1 text-[10px] font-black text-rose-600 uppercase tracking-[0.1em]">{errors.status}</p>
                 )}
               </div>
             </div>
 
             {/* Form Actions */}
-            <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+            <div className="flex justify-end space-x-4 pt-6 border-t border-slate-100">
               <button
                 type="button"
                 onClick={goBack}
-                className="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-lg flex items-center space-x-2 transition-colors"
+                className="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-2xl flex items-center space-x-2 transition-colors font-black text-xs uppercase tracking-widest"
               >
                 <X className="h-4 w-4" />
                 <span>Cancel</span>
@@ -370,7 +350,7 @@ const UserForm = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center space-x-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl flex items-center space-x-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-black text-xs uppercase tracking-widest shadow-lg shadow-blue-200"
               >
                 <Save className="h-4 w-4" />
                 <span>{isSubmitting ? 'Saving...' : (editingUserId ? 'Update User' : 'Create User')}</span>
@@ -380,21 +360,21 @@ const UserForm = () => {
         </div>
 
         {/* Additional Information */}
-        <div className="mt-6 bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-          <h3 className="text-gray-800 text-lg font-semibold mb-4">Role Permissions</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-gray-50 rounded-lg p-4">
-              <h4 className="text-blue-600 font-medium mb-2">Admin</h4>
-              <ul className="text-gray-600 text-sm space-y-1">
+        <div className="bg-white rounded-[32px] p-8 shadow-sm border border-slate-100/50">
+          <h3 className="font-black text-slate-900 text-lg tracking-tight mb-6">Role Permissions</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-slate-50/50 rounded-2xl p-6 border border-slate-100/50">
+              <h4 className="font-black text-blue-600 text-sm uppercase tracking-[0.15em] mb-4">Admin</h4>
+              <ul className="text-slate-600 text-sm space-y-2 font-medium">
                 <li>• Full system access</li>
                 <li>• Manage all users</li>
                 <li>• View analytics and reports</li>
                 <li>• System configuration</li>
               </ul>
             </div>
-            <div className="bg-gray-50 rounded-lg p-4">
-              <h4 className="text-purple-600 font-medium mb-2">User</h4>
-              <ul className="text-gray-600 text-sm space-y-1">
+            <div className="bg-slate-50/50 rounded-2xl p-6 border border-slate-100/50">
+              <h4 className="font-black text-purple-600 text-sm uppercase tracking-[0.15em] mb-4">User</h4>
+              <ul className="text-slate-600 text-sm space-y-2 font-medium">
                 <li>• Post lost & found items</li>
                 <li>• View own items</li>
                 <li>• Claim found items</li>
@@ -404,7 +384,7 @@ const UserForm = () => {
           </div>
         </div>
       </div>
-    </div>
+    </AdminLayout>
   );
 };
 

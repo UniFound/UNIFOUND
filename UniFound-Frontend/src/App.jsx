@@ -4,6 +4,8 @@ import LoginPage from "./pages/LoginPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import UserForm from "./pages/UserForm";
 import UsersPage from "./pages/Users";
+import ItemsPage from "./pages/ItemsPage";
+import ClaimsPage from "./pages/ClaimsPage";
 import Categories from "./pages/Categories";
 import Analytics from "./pages/Analytics";
 import AuditLogs from "./pages/AuditLogs";
@@ -23,8 +25,11 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/admindashboard" element={<AdminDashboard />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/users" element={<UsersPage />} />
         <Route path="/admin/user-form" element={<UserForm />} />
+        <Route path="/admin/items" element={<ItemsPage />} />
+        <Route path="/admin/claims" element={<ClaimsPage />} />
         <Route path="/admin/categories" element={<Categories />} />
         <Route path="/admin/analytics" element={<Analytics />} />
         <Route path="/admin/audit" element={<AuditLogs />} />
@@ -35,7 +40,6 @@ function App() {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/profile" element={<UserProfile/>} />
         <Route path="/items/:id" element={<ItemDetailsPage />} />
-        
         
 
         <Route path="/tickets" element={<TicketsPage />} />

@@ -24,7 +24,7 @@ export default function Sidebar() {
     { 
       icon: <LayoutDashboard size={20} />, 
       label: "Dashboard", 
-      path: "/admin/dashboard" 
+      path: "/admindashboard" 
     },
     { 
       icon: <Users size={20} />, 
