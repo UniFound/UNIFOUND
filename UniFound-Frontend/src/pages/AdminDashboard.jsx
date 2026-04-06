@@ -1,3 +1,5 @@
+import AdminLayout from "../pages/AdminLayout";
+import { TrendingUp, Users, Box, ShieldCheck, LifeBuoy, ArrowUpRight, ArrowDownRight, MoreHorizontal, FileText, FolderOpen, BarChart3 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
@@ -73,6 +75,36 @@ export default function AdminDashboard() {
                     />
                   </div>
 
+        {/* KEY MANAGEMENT CARDS */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <KeyCard 
+            icon={<FileText size={20} />} 
+            color="violet"
+            label="AUDIT LOGS" 
+            description="View system activities and logs"
+            link="/admin/audit"
+          />
+          <KeyCard 
+            icon={<FolderOpen size={20} />} 
+            color="amber"
+            label="CATEGORIES" 
+            description="Manage item categories"
+            link="/admin/categories"
+          />
+          <KeyCard 
+            icon={<BarChart3 size={20} />} 
+            color="cyan"
+            label="REPORTS" 
+            description="Generate and view reports"
+            link="/admin/reports"
+          />
+        </div>
+
+        {/* BOTTOM SECTION */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 bg-white rounded-[32px] p-8 shadow-sm border border-slate-100/50 relative overflow-hidden">
+             {/* Subtle pattern background for the chart area */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-full blur-3xl opacity-50 -mr-16 -mt-16"></div>
                   {/* BOTTOM SECTION */}
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div className="lg:col-span-2 bg-white rounded-[32px] p-8 shadow-sm border border-slate-100/50 relative overflow-hidden">
@@ -146,6 +178,32 @@ function StatCard({ icon, color, label, value, trend, isPositive }) {
       <div>
         <p className="text-[10px] font-bold opacity-70 uppercase tracking-[0.15em] mb-1">{label}</p>
         <p className="text-2xl font-bold text-slate-900 tracking-tighter">{value}</p>
+      </div>
+    </div>
+  );
+}
+
+function KeyCard({ icon, color, label, description, link }) {
+  // Color configuration for key cards - darker colors
+  const theme = {
+    violet: "bg-violet-100 border-violet-300 text-violet-800 hover:bg-violet-200 hover:border-violet-400",
+    amber: "bg-amber-100 border-amber-300 text-amber-800 hover:bg-amber-200 hover:border-amber-400",
+    cyan: "bg-cyan-100 border-cyan-300 text-cyan-800 hover:bg-cyan-200 hover:border-cyan-400",
+  }[color];
+
+  return (
+    <div 
+      className={`p-6 rounded-[30px] border transition-all duration-300 cursor-pointer group ${theme}`}
+      onClick={() => window.location.href = link}
+    >
+      <div className="flex items-center justify-center mb-4">
+        <div className={`p-4 rounded-2xl bg-white shadow-sm group-hover:scale-110 transition-transform`}>
+          {icon}
+        </div>
+      </div>
+      <div className="text-center">
+        <p className="text-sm font-black text-slate-900 tracking-tight mb-2">{label}</p>
+        <p className="text-[10px] font-medium text-slate-600 leading-tight">{description}</p>
       </div>
     </div>
   );
