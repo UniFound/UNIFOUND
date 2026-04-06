@@ -1,74 +1,104 @@
+"use client";
+
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
   Package, Clock, CheckCircle2, XCircle, MapPin, 
   Calendar, RefreshCw, ArrowLeft,
-  ChevronRight, Filter, Sparkles
+  ChevronRight, Filter, Sparkles, Plus, Tag, MessageSquare
 } from "lucide-react";
 import Navbar from "../components/Navbar";
 
 const ClaimHistory = () => {
-  const mockClaims = [
-    {
-      _id: "1",
-      claimId: "CLM-8821",
-      itemId: "ITM-001",
-      description: "My blue Nike backpack with a laptop inside",
-      meetingLocation: "Main Library - 2nd Floor",
-      status: "Approved",
-      createdAt: "2024-03-15T10:00:00Z",
-      evidenceImage: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&q=80"
-    },
-    {
-      _id: "2",
-      claimId: "CLM-9042",
-      itemId: "ITM-045",
-      description: "Silver Apple Watch with a black sports band",
-      meetingLocation: "Student Canteen",
-      status: "Pending",
-      createdAt: "2024-03-20T14:30:00Z",
-      evidenceImage: null
-    },
-    {
-      _id: "3",
-      claimId: "CLM-7712",
-      itemId: "ITM-102",
-      description: "Samsung Galaxy S23 with a clear case",
-      meetingLocation: "IT Faculty Office",
-      status: "Rejected",
-      createdAt: "2024-03-10T08:15:00Z",
-      evidenceImage: "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=400&q=80"
-    }
-  ];
-
-  const [claims, setClaims] = useState(mockClaims || []);
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  
+  // 🗂️ Handle Active Tab (Default is my-claims)
+  const [activeTab, setActiveTab] = useState("my-claims");
 
-  const fetchClaims = useCallback(async () => {
+  const [claims, setClaims] = useState([]);
+  const [reportedItems, setReportedItems] = useState([]);
+
+  const fetchData = useCallback(async () => {
     setLoading(true);
-    setTimeout(() => {
-      setClaims(mockClaims);
+    try {
+      const token = localStorage.getItem("token");
+      const userString = localStorage.getItem("user");
+      
+      let userId = null;
+      let email = null;
+      
+      if (userString) {
+        const parsedUser = JSON.parse(userString);
+        userId = parsedUser.userId; // e.g., "USR-b3791f25"
+        email = parsedUser.email;   // e.g., "nadeesha.perera@example.com"
+      }
+
+      const headers = {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      };
+
+      const BASE_URL = "http://localhost:5000/api"; 
+
+      // 1. Fetching user's claims using Query Parameters 🎯
+      if (userId) {
+        const claimsRes = await fetch(`${BASE_URL}/claims?userId=${userId}`, { headers });
+        const claimsData = await claimsRes.json();
+        
+        console.log("Real Claims Data:", claimsData);
+
+        if (claimsRes.ok) {
+          setClaims(claimsData || []);
+        }
+      }
+
+      // 2. Fetching user's reported items 🔒
+      if (userId) {
+        const itemsRes = await fetch(`${BASE_URL}/items/user-items/${userId}`, { headers });
+        const itemsData = await itemsRes.json();
+        if (itemsRes.ok) setReportedItems(itemsData.data || []);
+      }
+
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
       setLoading(false);
-    }, 1200);
+    }
   }, []);
 
-  // Card ekata ena theme colors (Light Pastel backgrounds)
+  // UseEffect to fetch data on component load
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  // Card Theme Color Helper
   const getStatusTheme = (status) => {
-    switch (status) {
-      case "Approved": 
+    const normalizedStatus = status ? status.toLowerCase() : "";
+    
+    switch (normalizedStatus) {
+      case "approved":
+      case "verified":
+      case "found": 
         return {
           cardBg: "bg-emerald-50/60", 
           borderColor: "border-emerald-100",
           accent: "text-emerald-600",
           badge: "bg-emerald-100 text-emerald-700"
         };
-      case "Rejected": 
+      case "rejected": 
         return {
           cardBg: "bg-rose-50/60", 
           borderColor: "border-rose-100",
           accent: "text-rose-600",
           badge: "bg-rose-100 text-rose-700"
+        };
+      case "lost": 
+        return {
+          cardBg: "bg-orange-50/60", 
+          borderColor: "border-orange-100",
+          accent: "text-orange-600",
+          badge: "bg-orange-100 text-orange-700"
         };
       default: 
         return {
@@ -81,150 +111,348 @@ const ClaimHistory = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] selection:bg-blue-100 text-slate-600 font-sans overflow-x-hidden">
+    <div className="h-screen w-screen bg-[#F8FAFC] selection:bg-blue-100 text-slate-600 font-sans overflow-hidden flex flex-col">
       <Navbar />
       
-      {/* Subtle Background Glows */}
-      <div className="fixed top-0 left-0 w-full h-full -z-10 overflow-hidden pointer-events-none opacity-40">
-        <div className="absolute top-[-10%] left-[-5%] w-[50%] h-[50%] bg-blue-100 blur-[120px] rounded-full" />
-        <div className="absolute bottom-[0%] right-[-5%] w-[40%] h-[40%] bg-indigo-50 blur-[100px] rounded-full" />
+      {/* 🌌 Ultra Modern Dynamic Background */}
+      <div className="fixed top-0 left-0 w-full h-full -z-10 overflow-hidden pointer-events-none opacity-50">
+        <div className="absolute top-[-10%] left-[-5%] w-[45%] h-[45%] bg-gradient-to-br from-blue-100 to-transparent blur-[120px] rounded-full" />
+        <div className="absolute bottom-[0%] right-[-5%] w-[40%] h-[40%] bg-gradient-to-tl from-indigo-50 to-transparent blur-[100px] rounded-full" />
       </div>
 
-      <div className="max-w-6xl mx-auto pt-36 pb-24 px-6 md:px-12 space-y-16">
+      {/* ⚡ Full-Height Split Screen Container */}
+      <div className="flex-1 flex flex-col xl:flex-row pt-20 overflow-hidden">
         
-        {/* Top Nav */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <button 
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-3 text-slate-500 hover:text-blue-600 transition-all group w-fit"
-          >
-            <div className="p-2 bg-white rounded-2xl shadow-sm border border-slate-200 group-hover:shadow-md transition-all">
-              <ArrowLeft size={16} />
-            </div>
-            <span className="tracking-widest text-[11px] uppercase font-bold">Return to panel</span>
-          </button>
+        {/* ================= 🔲 LEFT SIDEBAR PANEL (Fixed) ================= */}
+        <div className="w-full xl:w-[380px] xl:h-full bg-white/70 backdrop-blur-xl border-r border-slate-200/60 p-6 md:p-8 flex flex-col justify-between overflow-y-auto">
           
-          <div className="flex items-center gap-3">
-             <button className="flex items-center gap-2 px-4 py-2.5 bg-white text-slate-500 rounded-2xl border border-slate-200 hover:border-blue-300 transition-all text-xs font-bold shadow-sm">
-                <Filter size={14} /> Filter
-             </button>
-             <button 
-              onClick={fetchClaims}
-              disabled={loading}
-              className="flex items-center gap-2 px-6 py-2.5 bg-slate-900 text-white rounded-2xl hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 text-xs font-bold disabled:opacity-50"
-            >
-              <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
-              {loading ? "Syncing..." : "Sync History"}
+          {/* Top Section */}
+          <div className="space-y-6">
+            {/* Action Buttons */}
+            <div className="flex items-center justify-between gap-4">
+              <button 
+                onClick={() => navigate(-1)}
+                className="flex items-center gap-2.5 text-slate-500 hover:text-blue-600 transition-all group font-bold text-xs"
+              >
+                <div className="p-2 bg-white rounded-xl shadow-sm border border-slate-100 group-hover:border-blue-100 group-hover:text-blue-600 transition-all">
+                  <ArrowLeft size={14} />
+                </div>
+                <span>RETURN</span>
+              </button>
+
+              <button 
+                onClick={fetchData}
+                disabled={loading}
+                className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 text-xs font-bold disabled:opacity-50"
+              >
+                <RefreshCw size={12} className={loading ? "animate-spin" : ""} />
+                {loading ? "Syncing..." : "Refresh"}
+              </button>
+            </div>
+
+            {/* Hero Typography */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-3">
+                <div className="h-[2px] w-6 bg-blue-500" />
+                <span className="text-[10px] uppercase tracking-[0.3em] text-blue-500 font-black">History Log</span>
+              </div>
+              <h1 className="text-3xl font-bold text-slate-900 tracking-tight leading-snug">
+                Portal <span className="text-blue-600">History</span>.
+              </h1>
+              <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                Seamlessly track your submitted claims and items reported to the system.
+              </p>
+            </div>
+
+            <hr className="border-slate-100" />
+
+            {/* 🗂️ MODERN VERTICAL TABS */}
+            <div className="space-y-3">
+              <span className="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-black">Views</span>
+              
+              {/* Tab 1 */}
+              <button
+                onClick={() => setActiveTab("my-claims")}
+                className={`w-full flex items-center justify-between p-4 rounded-xl transition-all duration-300 ${
+                  activeTab === "my-claims"
+                    ? "bg-slate-900 text-white shadow-xl shadow-slate-900/10"
+                    : "bg-white text-slate-600 hover:bg-slate-50 border border-slate-100"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <Package size={16} className={activeTab === 'my-claims' ? 'text-blue-400' : 'text-slate-400'} />
+                  <span className="font-bold text-xs uppercase tracking-wider">My Claims</span>
+                </div>
+                <span className={`text-xs font-bold px-2.5 py-0.5 rounded-lg ${activeTab === 'my-claims' ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'}`}>
+                  {claims.length}
+                </span>
+              </button>
+
+              {/* Tab 2 */}
+              <button
+                onClick={() => setActiveTab("my-items")}
+                className={`w-full flex items-center justify-between p-4 rounded-xl transition-all duration-300 ${
+                  activeTab === "my-items"
+                    ? "bg-slate-900 text-white shadow-xl shadow-slate-900/10"
+                    : "bg-white text-slate-600 hover:bg-slate-50 border border-slate-100"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <Tag size={16} className={activeTab === 'my-items' ? 'text-blue-400' : 'text-slate-400'} />
+                  <span className="font-bold text-xs uppercase tracking-wider">Reported Items</span>
+                </div>
+                <span className={`text-xs font-bold px-2.5 py-0.5 rounded-lg ${activeTab === 'my-items' ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'}`}>
+                  {reportedItems.length}
+                </span>
+              </button>
+            </div>
+          </div>
+
+          {/* Bottom Section - Support */}
+          <div className="mt-8 p-5 bg-gradient-to-br from-blue-50 to-transparent border border-blue-100/50 rounded-2xl relative overflow-hidden group">
+            <div className="absolute -top-6 -right-6 opacity-[0.05] group-hover:rotate-12 transition-transform duration-700">
+              <Sparkles size={80} />
+            </div>
+            <h4 className="text-sm font-bold text-slate-900 tracking-tight">Need assistance?</h4>
+            <p className="text-xs text-slate-500 font-medium leading-relaxed mt-1">
+              Connect with our support team for verification issues.
+            </p>
+            <button className="mt-4 w-full px-4 py-2.5 bg-white border border-blue-200 text-blue-600 rounded-xl font-bold text-xs tracking-widest uppercase hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all shadow-sm">
+              Contact Admin
             </button>
           </div>
         </div>
 
-        {/* Hero Section */}
-        <div className="space-y-4">
-          <div className="flex items-center gap-3">
-             <div className="h-[2px] w-8 bg-blue-500" />
-             <span className="text-[10px] uppercase tracking-[0.3em] text-blue-500 font-black">History Log</span>
+        {/* ================= 📊 RIGHT CONTENT PANEL (Scrollable Bento Grid) ================= */}
+        <div className="flex-1 h-full overflow-y-auto bg-slate-50/50 p-6 md:p-8 xl:p-10">
+          
+          {/* Header Action Bar */}
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className="text-xl font-bold text-slate-900 tracking-tight">
+                {activeTab === 'my-claims' ? "Active & Past Claims" : "Your Reported Items"}
+              </h2>
+              <p className="text-xs text-slate-400 font-medium">Manage and view detailed status logs.</p>
+            </div>
+            <button className="flex items-center gap-2 px-4 py-2 bg-white text-slate-600 rounded-xl border border-slate-200 hover:border-blue-300 transition-all text-xs font-bold shadow-sm">
+              <Filter size={14} /> Filter List
+            </button>
           </div>
-          <h1 className="text-5xl md:text-7xl font-light text-slate-900 tracking-tight leading-tight">
-            Track your <span className="font-bold">claims</span>.
-          </h1>
-        </div>
 
-        {/* --- Claims List --- */}
-        <div className="space-y-8">
-          {claims.map((claim) => {
-            const theme = getStatusTheme(claim.status);
-            return (
-              <div 
-                key={claim._id} 
-                className={`group ${theme.cardBg} border-2 ${theme.borderColor} rounded-[3rem] p-6 md:p-10 transition-all duration-500 hover:shadow-2xl hover:shadow-slate-200/50 hover:-translate-y-1`}
-              >
-                <div className="flex flex-col md:flex-row items-center gap-10">
-                  {/* Image Container */}
-                  <div className="shrink-0 relative">
-                    <div className="w-32 h-32 md:w-44 md:h-44 rounded-[2.5rem] bg-white overflow-hidden shadow-inner border-4 border-white relative z-10">
-                      {claim.evidenceImage ? (
-                        <img src={claim.evidenceImage} alt="Item" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-slate-200 bg-slate-50">
-                          <Package size={48} strokeWidth={1} />
+          {/* --- Dynamic Content Grid --- */}
+          
+          {/* 1. MY CLAIMS GRID 🔥 */}
+          {activeTab === "my-claims" && (
+            claims.length === 0 ? (
+              <div className="flex flex-col items-center justify-center text-center h-[50vh] bg-white/80 backdrop-blur border border-slate-200/60 rounded-3xl p-12">
+                <Package size={50} strokeWidth={1} className="text-slate-300 mb-4" />
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">No claims found</p>
+                <p className="text-xs text-slate-400 mt-1">You haven't made any claims yet.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6">
+                {claims.map((claim) => {
+                  const theme = getStatusTheme(claim.status);
+                  const itemInfo = claim.itemData || {}; 
+                  
+                  const claimStatus = claim.status ? claim.status.toLowerCase() : "";
+
+                  return (
+                    <div 
+                      key={claim._id} 
+                      className={`group bg-white border border-slate-200/60 rounded-2xl p-6 transition-all duration-500 flex flex-col justify-between min-h-[290px] ${
+                        claimStatus === "rejected" 
+                          ? "opacity-75" 
+                          : "hover:shadow-2xl hover:shadow-slate-200/50 hover:-translate-y-1.5"
+                      }`}
+                    >
+                      <div>
+                        {/* Header */}
+                        <div className="flex items-center justify-between mb-4">
+                          <span className="text-[10px] tracking-widest px-2.5 py-1 bg-slate-50 text-slate-600 rounded-lg font-bold border border-slate-100">
+                            REF: {claim.claimId}
+                          </span>
+                          <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg font-bold text-[10px] tracking-widest ${theme.badge}`}>
+                             {claimStatus === "approved" || claimStatus === "verified" ? (
+                               <CheckCircle2 size={10} />
+                             ) : claimStatus === "rejected" ? (
+                               <XCircle size={10} />
+                             ) : (
+                               <Clock size={10} />
+                             )}
+                            {claim.status?.toUpperCase()}
+                          </div>
                         </div>
+
+                        {/* Title & Image */}
+                        <div className="flex gap-4 items-start mb-5">
+                          <div className="w-14 h-14 shrink-0 rounded-xl overflow-hidden border border-slate-100 bg-slate-50">
+                            {claim.evidenceImage || itemInfo.image_url ? (
+                              <img src={claim.evidenceImage || itemInfo.image_url} alt="Item" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-blue-300 bg-blue-50">
+                                <Package size={20} strokeWidth={1.5} />
+                              </div>
+                            )}
+                          </div>
+                          <div>
+                            <h3 className="text-base font-bold text-slate-900 tracking-tight group-hover:text-blue-600 transition-colors line-clamp-2">
+                              {itemInfo.title || "Item Claimed"}
+                            </h3>
+                            <p className="text-xs text-slate-400 mt-0.5 line-clamp-1">{claim.description}</p>
+                            <div className="flex items-center gap-1 text-slate-400 mt-1">
+                              <Calendar size={12} />
+                              <span className="text-[10px] font-bold">
+                                {claim.createdAt ? new Date(claim.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : "N/A"}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Location Specs Box */}
+                        <div className="p-3 bg-slate-50 rounded-xl space-y-1 mb-4 border border-slate-100/50">
+                          <p className="text-[8px] uppercase font-bold text-slate-400 tracking-widest">Meeting Point</p>
+                          <div className="flex items-center gap-1.5 text-slate-700">
+                            <MapPin size={12} className="text-blue-500" />
+                            <p className="font-bold text-xs truncate">{claim.meetingLocation}</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 🛠️ Dynamic Action Button Based on Status */}
+                      {claimStatus === "approved" || claimStatus === "verified" ? (
+                        <div className="flex flex-col gap-2">
+                          {/* 1. Chat with Finder Button */}
+                          <button 
+                            onClick={() => navigate(`/chat/${claim.claimId}`)}
+                            className="w-full py-2.5 bg-blue-600 text-white rounded-xl font-bold text-xs tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 flex items-center justify-center gap-2"
+                          >
+                            <MessageSquare size={12} />
+                            CHAT WITH FINDER
+                            <ChevronRight size={12} />
+                          </button>
+                          
+                          {/* 2. View Logs Button (අලුතින් එකතු කරපු) */}
+                          <button 
+                            onClick={() => navigate(`/claim-details/${claim.claimId}`)}
+                            className="w-full py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold text-xs tracking-widest transition-all flex items-center justify-center gap-2 hover:bg-slate-50 hover:text-slate-700 hover:border-slate-300"
+                          >
+                            VIEW LOGS
+                            <ChevronRight size={12} />
+                          </button>
+                        </div>
+                      ) : claimStatus === "rejected" ? (
+                        <button 
+                          onClick={() => navigate(`/claim-details/${claim.claimId}`)}
+                          className="w-full py-3 bg-white border border-slate-200 text-slate-400 rounded-xl font-bold text-xs tracking-widest transition-all flex items-center justify-center gap-2 hover:bg-slate-50 hover:text-slate-700 hover:border-slate-300"
+                        >
+                          VIEW LOGS
+                          <ChevronRight size={12} />
+                        </button>
+                      ) : (
+                        <button 
+                          onClick={() => navigate(`/claim-details/${claim.claimId}`)}
+                          className="w-full py-3 bg-white border border-slate-200 text-slate-700 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 rounded-xl font-bold text-xs tracking-widest transition-all duration-300 flex items-center justify-center gap-2"
+                        >
+                          VIEW LOGS
+                          <ChevronRight size={12} />
+                        </button>
                       )}
                     </div>
-                    {/* Subtle glow behind image */}
-                    <div className={`absolute inset-0 blur-3xl opacity-20 ${theme.accent} -z-10`} />
-                  </div>
-
-                  {/* Info Section */}
-                  <div className="flex-1 space-y-6 text-center md:text-left">
-                    <div className="flex flex-wrap justify-center md:justify-start items-center gap-4">
-                      <span className="text-[10px] tracking-widest px-4 py-1.5 bg-white text-slate-900 rounded-full font-black shadow-sm border border-slate-50">
-                        REF: {claim.claimId}
-                      </span>
-                      <div className={`flex items-center gap-2 px-4 py-1.5 rounded-full font-black text-[10px] tracking-widest shadow-sm ${theme.badge}`}>
-                         {claim.status === "Approved" ? <CheckCircle2 size={12} /> : claim.status === "Rejected" ? <XCircle size={12} /> : <Clock size={12} />}
-                        {claim.status?.toUpperCase()}
-                      </div>
-                    </div>
-                    
-                    <h3 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight leading-tight group-hover:text-blue-600 transition-colors">
-                      {claim.description}
-                    </h3>
-
-                    <div className="flex flex-wrap justify-center md:justify-start items-center gap-x-10 gap-y-3">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 bg-white rounded-xl shadow-sm text-blue-500">
-                          <MapPin size={18} />
-                        </div>
-                        <div>
-                          <p className="text-[10px] uppercase font-bold text-slate-400 tracking-widest">Location</p>
-                          <p className="text-slate-800 font-bold">{claim.meetingLocation}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 bg-white rounded-xl shadow-sm text-slate-400">
-                          <Calendar size={18} />
-                        </div>
-                        <div>
-                          <p className="text-[10px] uppercase font-bold text-slate-400 tracking-widest">Request Date</p>
-                          <p className="text-slate-800 font-bold">
-                            {claim.createdAt ? new Date(claim.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : "N/A"}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Action Button */}
-                  <button 
-                    onClick={() => navigate(`/claim-details/${claim.claimId}`)}
-                    className="w-full md:w-auto px-10 py-5 bg-white text-slate-900 rounded-[2rem] font-black text-xs tracking-widest hover:bg-slate-900 hover:text-white transition-all duration-300 shadow-sm border border-slate-100 flex items-center justify-center gap-3 group/btn"
-                  >
-                    VIEW LOGS
-                    <ChevronRight size={18} className="group-hover/btn:translate-x-1 transition-transform" />
-                  </button>
-                </div>
+                  )
+                })}
               </div>
-            );
-          })}
-        </div>
+            )
+          )}
 
-        {/* Support Section */}
-        <div className="p-12 bg-white border border-slate-100 rounded-[4rem] text-center space-y-6 shadow-sm relative overflow-hidden group">
-           <div className="absolute -top-10 -right-10 opacity-[0.03] group-hover:rotate-12 transition-transform duration-1000">
-             <Sparkles size={250} />
-           </div>
-           <h4 className="text-2xl font-bold text-slate-900 tracking-tight relative z-10">
-             Having trouble with your verification?
-           </h4>
-           <p className="text-slate-500 font-medium max-w-lg mx-auto relative z-10 leading-relaxed text-lg">
-             Our administrators are ready to help. Reach out to the <span className="text-blue-600 font-bold cursor-pointer hover:underline">Support Center</span> for assistance.
-           </p>
-           <button className="relative z-10 px-8 py-3.5 bg-slate-900 text-white rounded-2xl font-bold text-xs tracking-widest uppercase hover:shadow-2xl transition-all">
-             Contact Support Team
-           </button>
-        </div>
+          {/* 2. MY REPORTED ITEMS GRID 🔒 */}
+          {activeTab === "my-items" && (
+            reportedItems.length === 0 ? (
+              <div className="flex flex-col items-center justify-center text-center h-[50vh] bg-white/80 backdrop-blur border border-slate-200/60 rounded-3xl p-12">
+                <Package size={50} strokeWidth={1} className="text-slate-300 mb-4" />
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">No items found</p>
+                <p className="text-xs text-slate-400 mt-1 mb-4">You haven't reported any items yet.</p>
+                <button 
+                  onClick={() => navigate("/report")}
+                  className="px-4 py-2.5 bg-blue-600 text-white text-xs font-bold rounded-xl flex items-center gap-1 hover:bg-blue-700 shadow-lg shadow-blue-100 transition-all"
+                >
+                  <Plus size={14} /> Report an Item
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6">
+                {reportedItems.map((item) => {
+                  const theme = getStatusTheme(item.status);
+                  return (
+                    <div 
+                      key={item._id} 
+                      className="group bg-white border border-slate-200/60 rounded-2xl p-6 transition-all duration-500 hover:shadow-2xl hover:shadow-slate-200/50 hover:-translate-y-1.5 flex flex-col justify-between min-h-[290px]"
+                    >
+                      <div>
+                        {/* Header */}
+                        <div className="flex items-center justify-between mb-4">
+                          <span className="text-[10px] tracking-widest px-2.5 py-1 bg-slate-50 text-slate-600 rounded-lg font-bold border border-slate-100">
+                            ID: {item.itemId}
+                          </span>
+                          <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg font-bold text-[10px] tracking-widest ${theme.badge}`}>
+                             {item.status === 'found' ? <CheckCircle2 size={10} /> : <XCircle size={10} />}
+                            {item.status?.toUpperCase()}
+                          </div>
+                        </div>
 
+                        {/* Title & Image */}
+                        <div className="flex gap-4 items-start mb-5">
+                          <div className="w-14 h-14 shrink-0 rounded-xl overflow-hidden border border-slate-100 bg-slate-50">
+                            {item.image_url ? (
+                              <img src={item.image_url} alt="Item" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-blue-300 bg-blue-50">
+                                <Package size={20} strokeWidth={1.5} />
+                              </div>
+                            )}
+                          </div>
+                          <div>
+                            <h3 className="text-base font-bold text-slate-900 tracking-tight group-hover:text-blue-600 transition-colors line-clamp-2">
+                              {item.title}
+                            </h3>
+                            <div className="flex items-center gap-1.5 mt-1">
+                              <span className="text-[10px] font-bold px-2 py-0.5 bg-amber-50 text-amber-600 rounded-md flex items-center gap-1">
+                                <Tag size={10} /> {item.category}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Specs Box */}
+                        <div className="p-3 bg-slate-50 rounded-xl grid grid-cols-2 gap-2 mb-4 border border-slate-100/50">
+                          <div>
+                            <p className="text-[8px] uppercase font-bold text-slate-400 tracking-widest">Location</p>
+                            <p className="font-bold text-xs text-slate-700 truncate">{item.location}</p>
+                          </div>
+                          <div>
+                            <p className="text-[8px] uppercase font-bold text-slate-400 tracking-widest">Reported On</p>
+                            <p className="font-bold text-xs text-slate-700">
+                              {item.createdAt ? new Date(item.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : "N/A"}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Action Button */}
+                      <button 
+                        onClick={() => navigate(`/items/${item.itemId}`)}
+                        className="w-full py-3 bg-white border border-slate-200 text-slate-700 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 rounded-xl font-bold text-xs tracking-widest transition-all duration-300 flex items-center justify-center gap-2"
+                      >
+                        VIEW ITEM
+                        <ChevronRight size={12} />
+                      </button>
+                    </div>
+                  )
+                })}
+              </div>
+            )
+          )}
+        </div>
       </div>
     </div>
   );

@@ -3,71 +3,79 @@ import mongoose from "mongoose";
 const claimSchema = new mongoose.Schema(
   {
     claimId: {
-    type: String,
-    unique: true
-  },
-    // 🔗 Which item is being claimed
+      type: String,
+      unique: true
+    },
+    
+    // 🔗 Found Item එක (මේක MongoDB එකේම create වෙන _id එකක් නිසා ObjectId විදියටම තියෙන්න දෙන්න)
     itemId: {
-      type: String ,
-      ref: "item",
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: "item", 
       required: true,
     },
 
-    // 👤 Who is claiming
+    // 👤 [FIXED] Claim එක දාන User (User ගේ custom string ID එක)
     userId: {
-      type: String ,
-      ref: "User",
+      type: String, // 👈 ObjectId වෙනුවට String කළා
       required: true,
     },
 
-    // 📝 Main explanation why this item belongs to user
+    // 🔍 අර 90%ක් match වුණු Lost Item Report එකේ ID එක (මේකත් item එකක් නිසා ObjectId හරි)
+    lostItemId: {
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: "item",
+      default: null 
+    },
+
     description: {
       type: String,
       required: true,
     },
 
-    // 🧾 Evidence text (like "my ID inside wallet")
     evidenceText: {
       type: String,
       required: true,
     },
 
-    // 🖼 Evidence image (bill, photo, etc.)
     evidenceImage: {
-      type: String, // URL (Cloudinary / upload path)
+      type: String, 
       default: null,
     },
 
-    // 📞 Contact number
     contactNumber: {
       type: String,
       required: true,
     },
 
-    // 📧 Optional email
     email: {
       type: String,
     },
 
-    // 📍 Preferred meeting place
     meetingLocation: {
       type: String,
       required: true,
     },
 
-    // 🕒 Preferred meeting time
     meetingTime: {
       type: String,
     },
 
-    // 📌 Claim status
+    // ⬇️ ADD THESE TWO FIELDS ⬇️
+    category: {
+      type: String,
+      required: true, 
+    },
+    color: {
+      type: String,
+      required: true,
+    },
+
     status: {
       type: String,
       enum: ["Pending", "Under Review", "Approved", "Rejected", "On Hold"],
       default: "Pending",
     },
 
-    // 👮 Admin notes (optional)
     adminNote: {
       type: String,
       default: "",
@@ -80,13 +88,15 @@ const claimSchema = new mongoose.Schema(
           type: String,
           enum: ["Pending", "Under Review", "Approved", "Rejected", "On Hold"],
         },
-        updatedBy: { type: String , ref: "User" },
+        // 🚨 [FIXED] Update කරපු admin ගේ ID එකත් String එකක් කළා
+        updatedBy: { 
+          type: String // 👈 ObjectId වෙනුවට String කළා
+        }, 
         timestamp: { type: Date, default: Date.now },
         note: String,
       },
     ],
 
-    // ❌ Soft delete
     isDeleted: {
       type: Boolean,
       default: false,

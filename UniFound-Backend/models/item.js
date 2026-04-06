@@ -54,8 +54,12 @@ const itemSchema = new mongoose.Schema(
       required: true,
     },
     user_id: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: String,
       ref: "User",
+    },
+    isApproved: {
+      type: Boolean,
+      default: false, 
     },
     isDeleted: {
       type: Boolean,

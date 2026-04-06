@@ -106,7 +106,7 @@ export default function ReportItemPage() {
 
       await api.post("/items", payload);
 
-      setSuccess(`The ${activeTab} item has been reported successfully!`);
+      setSuccess(`Your report is submitted! It will appear on the feed after Admin approval.`);
       setFormData({ title: "", description: "", category: "", color: "", location: "", image: null, category_other: "", location_other: "" });
       setPreviewUrl(null);
     } catch (err) {
