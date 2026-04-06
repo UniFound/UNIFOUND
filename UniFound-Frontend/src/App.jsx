@@ -43,7 +43,7 @@ function App() {
         <Route path="/signup" element={<RegisterPage />} />
         <Route path="/myclaims" element={<ClaimHistory />} />
         <Route path="/tickets" element={<TicketsPage />} />
-        <Route path="/ticket/:ticketId" element={<TicketDetailsPage />} />
+        <Route path="/ticket/:ticketId" element={<TicketDetailsPage />} />  
       </Routes>
     </Router>
   );

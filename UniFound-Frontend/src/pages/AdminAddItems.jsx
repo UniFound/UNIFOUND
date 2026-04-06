@@ -70,11 +70,14 @@ export default function AdminAddItems({ isOpen, onClose, isEditing, initialData,
       }
 
       const user = JSON.parse(localStorage.getItem("user"));
+      
+      // ✅ මෙතැනට 'isAdmin: true' එකතු කරන ලදී. 
+      // එවිට Backend එකෙන් මෙය කෙලින්ම Approve කරනු ලබයි.
       const payload = { 
         ...newData,
         image_url: finalImageUrl, 
-        role: "admin",
         user_id: user?.userId,
+        isAdmin: true, 
         category: newData.category === "Other" ? newData.category_other : newData.category,
         location: newData.location === "Other" ? newData.location_other : newData.location,
       };
@@ -84,7 +87,7 @@ export default function AdminAddItems({ isOpen, onClose, isEditing, initialData,
         toast.success("Item updated successfully", { id: loadingToast });
       } else {
         await api.post("/items", payload);
-        toast.success("Item listed successfully", { id: loadingToast });
+        toast.success("Item listed and auto-approved", { id: loadingToast });
       }
 
       onSuccess();

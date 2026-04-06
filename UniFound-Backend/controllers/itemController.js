@@ -4,7 +4,7 @@ import Item from "../models/item.js";
 // CREATE ITEM (Supports Custom String User-ID)
 export const createItem = async (req, res) => {
   try {
-    const { title, description, category, color, status, location, image_url } = req.body;
+    const { title, description, category, color, status, location, image_url, isAdmin } = req.body;
 
     // Handle both user_id or userId formats from the frontend
     const incomingUserId = req.body.user_id || req.body.userId;
@@ -23,6 +23,8 @@ export const createItem = async (req, res) => {
     // Format new unique ID (e.g., ITEM001, ITEM002...)
     const itemId = `ITEM${String(newNumber).padStart(3, "0")}`;
 
+    const isApprovedValue = isAdmin === true ? true : false;
+
     // Create item without strict ObjectId validation to allow custom string IDs (e.g., "USR-123")
     const item = await Item.create({
       itemId,
@@ -34,6 +36,7 @@ export const createItem = async (req, res) => {
       location,
       image_url,
       user_id: incomingUserId || null,
+      isApproved: isApprovedValue,
     });
 
     res.status(201).json({
