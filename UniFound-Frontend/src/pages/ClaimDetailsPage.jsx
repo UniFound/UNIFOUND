@@ -4,7 +4,7 @@ import axios from "axios";
 import { 
   ArrowLeft, CheckCircle, XCircle, Clock, MapPin, 
   Tag, Calendar, Phone, Mail, User, ShieldCheck, 
-  AlertTriangle, FileText, Image, ClipboardCheck, Palette
+  AlertTriangle, FileText, Image, ClipboardCheck, Palette, MessageCircle
 } from "lucide-react";
 
 const ClaimDetailsPage = () => {
@@ -55,6 +55,10 @@ const ClaimDetailsPage = () => {
     } finally {
       setUpdating(false);
     }
+  };
+
+  const handleChatWithFinder = () => {
+    navigate(`/chat/${claimId}`);
   };
 
   const formatDateTime = (dateTimeStr) => {

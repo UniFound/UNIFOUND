@@ -20,6 +20,7 @@ import AdminClaims from "./pages/AdminClaims";
 import RegisterPage from "./pages/Register";
 import ClaimHistory from "./pages/ClaimHistory";
 import AutoMatchView from "./pages/AutoMatchView";
+import ChatPage from "./pages/ChatPage";
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
         <Route path="/items/:id" element={<ItemDetailsPage />} />
         <Route path="/signup" element={<RegisterPage />} />
         <Route path="/myclaims" element={<ClaimHistory />} />
+        <Route path="/chat/:claimId" element={<ChatPage />} />
         <Route path="/tickets" element={<TicketsPage />} />
         <Route path="/ticket/:ticketId" element={<TicketDetailsPage />} />
       </Routes>
