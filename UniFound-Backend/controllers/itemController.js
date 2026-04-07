@@ -35,7 +35,7 @@ export const createItem = async (req, res) => {
       status,
       location,
       image_url,
-      user_id: incomingUserId || null,
+      user_id: incomingUserId ,
       isApproved: isApprovedValue,
     });
 
