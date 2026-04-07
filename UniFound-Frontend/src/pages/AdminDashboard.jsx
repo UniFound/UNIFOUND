@@ -1,14 +1,10 @@
 import AdminLayout from "../pages/AdminLayout";
-import { TrendingUp, Users as UsersIcon, Box, ShieldCheck, LifeBuoy, ArrowUpRight, ArrowDownRight, MoreHorizontal, FileText, FolderOpen, BarChart3 } from "lucide-react";
+import { TrendingUp, Users as UsersIcon, Box , ShieldCheck, LifeBuoy, ArrowUpRight, ArrowDownRight, MoreHorizontal, FileText, FolderOpen, BarChart3 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 
-import { 
-  Users, Box, ShieldCheck, LifeBuoy, 
-  ArrowUpRight, ArrowDownRight, MoreHorizontal 
-} from "lucide-react";
 import AdminClaims from "./AdminClaims";
 import AdminItems from "./AdminItems";
 import AdminTicketsPage from "./AdminTicketsPage";
