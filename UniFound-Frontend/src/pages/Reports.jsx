@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { FileText, Download, Calendar, Filter, TrendingUp, Users, Package, CheckCircle, Clock, BarChart3, PieChart, Activity, Printer, Mail } from 'lucide-react';
+import { FileText, Download, Calendar, Filter, TrendingUp, Users, Package, CheckCircle, Clock, BarChart3, PieChart, Activity, Printer, Mail, Trash2, Edit } from 'lucide-react';
+import AdminLayout from './AdminLayout';
 
 const Reports = () => {
   const [selectedReport, setSelectedReport] = useState('overview');
@@ -191,89 +192,50 @@ const Reports = () => {
   };
   
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Navigation */}
-      <div className="w-full flex justify-center fixed top-4 z-50">
-        <div className="w-[92%] max-w-7xl flex items-center justify-between px-6 py-3
-          bg-white/70 backdrop-blur-xl border border-white/40
-          rounded-full shadow-lg">
-
-          {/* Logo */}
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">
-              U
-            </div>
-            <span className="font-semibold text-gray-800">
-              UniFound
-            </span>
-            <span className="ml-3 px-3 py-1 bg-blue-100 text-blue-600 text-xs rounded-full">Admin Control</span>
-          </div>
-
-          {/* Nav */}
-          <div className="hidden lg:flex items-center gap-6 text-sm text-gray-600">
-            <a href="/admin" className="transition hover:text-blue-600">Dashboard</a>
-            <a href="/admin/users" className="transition hover:text-blue-600">Users</a>
-            <a href="/admin/categories" className="transition hover:text-blue-600">Categories</a>
-            <a href="/admin/analytics" className="transition hover:text-blue-600">Analytics</a>
-            <a href="/admin/audit" className="transition hover:text-blue-600">Audit Logs</a>
-            <a href="/admin/reports" className="text-blue-600 font-medium transition hover:text-blue-700">Reports</a>
-          </div>
-
-          {/* Right */}
-          <div className="flex items-center gap-3">
-            <button className="text-sm text-gray-600 hover:text-blue-600">
-              Sign out
-            </button>
-            <button className="bg-blue-600 text-white px-4 py-1.5 rounded-full text-sm shadow hover:bg-blue-700 transition">
-              Admin →
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-8">
+    <AdminLayout>
+      <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
         {/* Page Header */}
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Reports</h1>
-            <p className="text-gray-600">Generate and manage system reports</p>
+            <h1 className="font-black text-slate-900 text-2xl tracking-tight">Reports</h1>
+            <p className="text-[10px] font-black text-slate-400 mt-1 uppercase tracking-[0.2em]">Generate and Manage System Reports</p>
           </div>
         </div>
 
         {/* Report Generation */}
-        <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm mb-8">
-          <h3 className="text-gray-800 text-lg font-semibold mb-6">Generate New Report</h3>
+        <div className="bg-white rounded-[32px] p-8 shadow-sm border border-slate-100/50">
+          <h3 className="font-black text-slate-900 text-lg tracking-tight mb-6">Generate New Report</h3>
           
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Report Types */}
             <div className="lg:col-span-2">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {reportTypes.map((report) => {
                   const Icon = report.icon;
                   return (
                     <div
                       key={report.id}
                       onClick={() => setSelectedReport(report.id)}
-                      className={`p-4 border rounded-xl cursor-pointer transition-all ${
+                      className={`p-6 border-2 rounded-2xl cursor-pointer transition-all duration-300 group ${
                         selectedReport === report.id
-                          ? 'border-blue-500 bg-blue-50'
-                          : 'border-gray-200 hover:border-gray-300'
+                          ? 'border-blue-500 bg-blue-50/50 shadow-lg shadow-blue-100/50'
+                          : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50/30'
                       }`}
                     >
-                      <div className="flex items-start space-x-3">
-                        <div className={`p-2 rounded-lg ${
-                          selectedReport === report.id ? 'bg-blue-100' : 'bg-gray-100'
+                      <div className="flex items-start space-x-4">
+                        <div className={`p-3 rounded-xl transition-all ${
+                          selectedReport === report.id ? 'bg-blue-100 shadow-lg' : 'bg-slate-100 group-hover:bg-slate-200'
                         }`}>
-                          <Icon className={`h-5 w-5 ${
-                            selectedReport === report.id ? 'text-blue-600' : 'text-gray-600'
+                          <Icon className={`h-6 w-6 transition-colors ${
+                            selectedReport === report.id ? 'text-blue-600' : 'text-slate-600 group-hover:text-slate-700'
                           }`} />
                         </div>
                         <div className="flex-1">
-                          <h4 className="font-medium text-gray-800">{report.name}</h4>
-                          <p className="text-sm text-gray-600 mt-1">{report.description}</p>
-                          <div className="flex flex-wrap gap-1 mt-2">
+                          <h4 className="font-black text-slate-900 tracking-tight">{report.name}</h4>
+                          <p className="text-slate-600 text-sm mt-2 leading-relaxed">{report.description}</p>
+                          <div className="flex flex-wrap gap-2 mt-3">
                             {report.metrics.slice(0, 2).map((metric, index) => (
-                              <span key={index} className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
+                              <span key={index} className="text-[10px] font-black text-slate-600 bg-slate-100 px-3 py-1.5 rounded-xl">
                                 {metric}
                               </span>
                             ))}
@@ -287,13 +249,13 @@ const Reports = () => {
             </div>
             
             {/* Report Options */}
-            <div className="space-y-4">
+            <div className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Date Range</label>
+                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] mb-2">Date Range</label>
                 <select
                   value={dateRange}
                   onChange={(e) => setDateRange(e.target.value)}
-                  className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                 >
                   <option value="today">Today</option>
                   <option value="week">This Week</option>
@@ -305,16 +267,16 @@ const Reports = () => {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Format</label>
-                <div className="grid grid-cols-2 gap-2">
+                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] mb-2">Format</label>
+                <div className="grid grid-cols-1 gap-3">
                   {['pdf', 'excel', 'csv'].map((fmt) => (
                     <button
                       key={fmt}
                       onClick={() => setFormat(fmt)}
-                      className={`px-4 py-2 rounded-lg border-2 font-medium transition-colors ${
+                      className={`px-4 py-3 rounded-2xl border-2 font-black text-xs uppercase tracking-wider transition-all ${
                         format === fmt
-                          ? 'border-blue-500 bg-blue-50 text-blue-600'
-                          : 'border-gray-200 hover:border-gray-300 text-gray-700'
+                          ? 'border-blue-500 bg-blue-50 text-blue-600 shadow-lg'
+                          : 'border-slate-200 hover:border-slate-300 text-slate-700 hover:bg-slate-50'
                       }`}
                     >
                       {fmt.toUpperCase()}
@@ -323,48 +285,48 @@ const Reports = () => {
                 </div>
               </div>
               
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-3">
                 <input
                   type="checkbox"
                   id="emailReport"
                   checked={emailReport}
                   onChange={(e) => setEmailReport(e.target.checked)}
-                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4"
                 />
-                <label htmlFor="emailReport" className="text-sm text-gray-700">
+                <label htmlFor="emailReport" className="text-slate-700 font-medium text-sm">
                   Email report when ready
                 </label>
               </div>
               
               {emailReport && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Recipient Email</label>
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] mb-2">Recipient Email</label>
                   <input
                     type="email"
                     value={recipientEmail}
                     onChange={(e) => setRecipientEmail(e.target.value)}
                     placeholder="Enter email address"
-                    className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                   />
                 </div>
               )}
               
               <button
                 onClick={handleGenerateReport}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center justify-center space-x-2 transition-colors"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-4 rounded-2xl flex items-center justify-center space-x-2 transition-all duration-300 shadow-lg shadow-blue-100/50 hover:shadow-blue-200/60"
               >
                 <Download className="h-4 w-4" />
-                <span>Generate Report</span>
+                <span className="font-black text-xs uppercase tracking-wider">Generate Report</span>
               </button>
             </div>
           </div>
         </div>
 
         {/* Recent Reports */}
-        <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm mb-8">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-gray-800 text-lg font-semibold">Recent Reports</h3>
-            <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+        <div className="bg-white rounded-[32px] shadow-sm border border-slate-100/50 overflow-hidden">
+          <div className="flex justify-between items-center p-8 border-b border-slate-100">
+            <h3 className="font-black text-slate-900 text-lg tracking-tight">Recent Reports</h3>
+            <button className="text-blue-600 hover:text-blue-700 font-black text-xs uppercase tracking-wider transition-colors">
               View All
             </button>
           </div>
@@ -372,50 +334,52 @@ const Reports = () => {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-200">
-                  <th className="text-left py-3 px-4 text-gray-600 font-medium text-sm">Report Name</th>
-                  <th className="text-left py-3 px-4 text-gray-600 font-medium text-sm">Type</th>
-                  <th className="text-left py-3 px-4 text-gray-600 font-medium text-sm">Generated</th>
-                  <th className="text-left py-3 px-4 text-gray-600 font-medium text-sm">Format</th>
-                  <th className="text-left py-3 px-4 text-gray-600 font-medium text-sm">Size</th>
-                  <th className="text-left py-3 px-4 text-gray-600 font-medium text-sm">Actions</th>
+                <tr className="bg-slate-50/50 border-b border-slate-100">
+                  <th className="text-left py-4 px-6 text-slate-600 font-black text-[10px] uppercase tracking-[0.15em]">Report Name</th>
+                  <th className="text-left py-4 px-6 text-slate-600 font-black text-[10px] uppercase tracking-[0.15em]">Type</th>
+                  <th className="text-left py-4 px-6 text-slate-600 font-black text-[10px] uppercase tracking-[0.15em]">Generated</th>
+                  <th className="text-left py-4 px-6 text-slate-600 font-black text-[10px] uppercase tracking-[0.15em]">Format</th>
+                  <th className="text-left py-4 px-6 text-slate-600 font-black text-[10px] uppercase tracking-[0.15em]">Size</th>
+                  <th className="text-left py-4 px-6 text-slate-600 font-black text-[10px] uppercase tracking-[0.15em]">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {recentReports.map((report) => (
-                  <tr key={report.id} className="border-b border-gray-200 hover:bg-gray-50 transition-colors">
-                    <td className="py-3 px-4">
+                  <tr key={report.id} className="border-b border-slate-50 hover:bg-slate-50/30 transition-colors">
+                    <td className="py-4 px-6">
                       <div className="flex items-center space-x-3">
-                        <FileText className="h-4 w-4 text-gray-400" />
-                        <span className="text-gray-800">{report.name}</span>
+                        <div className="p-2 bg-slate-100 rounded-xl">
+                          <FileText className="h-4 w-4 text-slate-600" />
+                        </div>
+                        <span className="text-slate-800 font-medium">{report.name}</span>
                       </div>
                     </td>
-                    <td className="py-3 px-4 text-gray-600">{report.type}</td>
-                    <td className="py-3 px-4 text-gray-600 text-sm">{report.generatedAt}</td>
-                    <td className="py-3 px-4">
-                      <span className="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded">
+                    <td className="py-4 px-6 text-slate-600 text-sm font-medium">{report.type}</td>
+                    <td className="py-4 px-6 text-slate-600 text-sm font-medium">{report.generatedAt}</td>
+                    <td className="py-4 px-6">
+                      <span className="px-3 py-1.5 text-[10px] font-black bg-slate-100 text-slate-600 rounded-xl">
                         {report.format}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-gray-600">{report.size}</td>
-                    <td className="py-3 px-4">
+                    <td className="py-4 px-6 text-slate-600 text-sm font-medium">{report.size}</td>
+                    <td className="py-4 px-6">
                       <div className="flex space-x-2">
                         <button
                           onClick={() => downloadReport(report.id)}
-                          className="p-1 text-blue-600 hover:text-blue-700 transition-colors"
+                          className="p-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-xl transition-all"
                           title="Download"
                         >
                           <Download className="h-4 w-4" />
                         </button>
                         <button
-                          className="p-1 text-gray-600 hover:text-gray-700 transition-colors"
+                          className="p-2 text-slate-600 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-all"
                           title="Print"
                         >
                           <Printer className="h-4 w-4" />
                         </button>
                         <button
                           onClick={() => deleteReport(report.id)}
-                          className="p-1 text-red-600 hover:text-red-700 transition-colors"
+                          className="p-2 text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-xl transition-all"
                           title="Delete"
                         >
                           <Trash2 className="h-4 w-4" />
@@ -428,60 +392,8 @@ const Reports = () => {
             </table>
           </div>
         </div>
-
-        {/* Scheduled Reports */}
-        <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-gray-800 text-lg font-semibold">Scheduled Reports</h3>
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition-colors">
-              Add Schedule
-            </button>
-          </div>
-          
-          <div className="space-y-4">
-            {scheduledReports.map((schedule) => (
-              <div key={schedule.id} className="border border-gray-200 rounded-lg p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-3">
-                      <h4 className="font-medium text-gray-800">{schedule.name}</h4>
-                      <span className={`px-2 py-1 text-xs rounded ${
-                        schedule.enabled ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-600'
-                      }`}>
-                        {schedule.enabled ? 'Active' : 'Inactive'}
-                      </span>
-                    </div>
-                    <div className="mt-2 flex items-center space-x-4 text-sm text-gray-600">
-                      <span>Frequency: {schedule.frequency}</span>
-                      <span>Next run: {schedule.nextRun}</span>
-                      <span>Format: {schedule.format}</span>
-                    </div>
-                    <div className="mt-1 text-sm text-gray-600">
-                      Recipients: {schedule.recipients.join(', ')}
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <button
-                      onClick={() => toggleScheduledReport(schedule.id)}
-                      className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
-                        schedule.enabled
-                          ? 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                          : 'bg-blue-100 hover:bg-blue-200 text-blue-700'
-                      }`}
-                    >
-                      {schedule.enabled ? 'Disable' : 'Enable'}
-                    </button>
-                    <button className="p-1 text-gray-600 hover:text-gray-700 transition-colors">
-                      <Edit className="h-4 w-4" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
-    </div>
+    </AdminLayout>
   );
 };
 
