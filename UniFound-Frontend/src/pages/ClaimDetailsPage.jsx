@@ -2,10 +2,23 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { 
-  ArrowLeft, CheckCircle, XCircle, Clock, MapPin, 
-  Tag, Phone, Mail, User, ShieldCheck, 
-  Image, ClipboardCheck, Palette,
-  Zap, ChevronRight, Fingerprint, BarChart3, ExternalLink
+  ArrowLeft, CheckCircle, XCircle, Clock, MapPin, Tag,
+Calendar,
+Phone,
+Mail,
+User,
+ShieldCheck,
+AlertTriangle,
+FileText,
+Image,
+ClipboardCheck,
+Palette,
+MessageCircle,
+Zap,
+ChevronRight,
+Fingerprint,
+BarChart3,
+ExternalLink
 } from "lucide-react";
 
 const ClaimDetailsPage = () => {
@@ -54,11 +67,34 @@ const ClaimDetailsPage = () => {
     }
   };
 
-  if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-[#F8FAFC]">
-      <div className="relative flex items-center justify-center">
-        <div className="w-16 h-16 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin"></div>
-        <div className="absolute text-[10px] font-bold text-blue-600 animate-pulse">FIX</div>
+  const handleChatWithFinder = () => {
+    navigate(`/chat/${claimId}`);
+  };
+
+  const formatDateTime = (dateTimeStr) => {
+    if (!dateTimeStr) return "N/A";
+    try {
+      const dateObj = new Date(dateTimeStr);
+      return dateObj.toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+      });
+    } catch (e) {
+      return dateTimeStr;
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#F8F9FA]">
+        <div className="text-center">
+          <div className="w-14 h-14 border-4 border-t-blue-600 border-gray-200 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-500 font-bold text-sm">Loading Claim Details...</p>
+        </div>
       </div>
     </div>
   );

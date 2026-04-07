@@ -8,10 +8,11 @@ import userRouter from "./routes/userRouter.js";
 import claimRouter from "./routes/claimRouter.js";
 import itemRouter from "./routes/itemRouter.js";
 import conversationRoutes from "./routes/conversationRoutes.js";
-import messageRoutes from "./routes/messageRoutes.js";
+import messageRouter from "./routes/messageRouter.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import ticketRouter from "./routes/ticketRouter.js";
-import adminUserRoutes from "./routes/adminUserRoutes.js"; // 
+import adminUserRoutes from "./routes/adminUserRoutes.js";
+import chatRouter from "./routes/chatRouter.js"; // 
 
 dotenv.config();
 
@@ -43,9 +44,10 @@ app.use("/api/admin-users", adminUserRoutes); // ✅ NEW (Admin User Management)
 app.use("/api/claims", claimRouter);
 app.use("/api/items", itemRouter);
 app.use("/api/conversations", conversationRoutes);
-app.use("/api/messages", messageRoutes);
+app.use("/api/messages", messageRouter); 
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/tickets", ticketRouter);
+app.use("/api/chats", chatRouter);
 
 // Root route
 app.get("/", (req, res) => {

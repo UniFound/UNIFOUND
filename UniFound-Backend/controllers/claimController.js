@@ -229,8 +229,45 @@ export const deleteClaim = async (req, res) => {
 // 🔹 Update Claim Status
 export const updateClaimStatus = async (req, res) => {
   try {
-    const updatedClaim = await Claim.findByIdAndUpdate(req.params.id, { status: req.body.status }, { new: true });
+    const updatedClaim = await Claim.findByIdAndUpdate(req.params.id, { status: req.body.status }, { new: true }).populate("itemId");
     if (!updatedClaim) return res.status(404).json({ message: "Claim not found" });
+
+    // Create chat room when claim is approved
+    if (req.body.status === "Approved" || req.body.status === "Verified") {
+      try {
+        // Import Chat model
+        const Chat = await import("../models/chat.js");
+        const ChatModel = Chat.default;
+
+        // Check if chat already exists
+        const existingChat = await ChatModel.findOne({ claimId: updatedClaim.claimId });
+        
+        if (!existingChat) {
+          // Extract participant IDs
+          const claimerId = String(updatedClaim.userId || '').trim();
+          const finderId = String(updatedClaim.itemId?.user_id || '').trim();
+
+          if (claimerId && finderId) {
+            // Create new chat room
+            const newChat = await ChatModel.create({
+              claimId: updatedClaim.claimId,
+              participants: [claimerId, finderId],
+              lastMessage: "",
+            });
+
+            console.log(` Chat room created for claim ${updatedClaim.claimId}:`, newChat);
+          } else {
+            console.warn(` Missing participant IDs for claim ${updatedClaim.claimId}`);
+          }
+        } else {
+          console.log(` Chat room already exists for claim ${updatedClaim.claimId}`);
+        }
+      } catch (chatError) {
+        console.error("Failed to create chat room:", chatError);
+        // Don't fail the status update if chat creation fails
+      }
+    }
+
     res.status(200).json(updatedClaim);
   } catch (error) {
     res.status(500).json({ message: "Error updating status", error });
