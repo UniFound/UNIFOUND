@@ -3,7 +3,6 @@ import { Route, Routes } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 
-
 import { 
   Users, Box, ShieldCheck, LifeBuoy, 
   ArrowUpRight, ArrowDownRight, MoreHorizontal 
@@ -14,13 +13,22 @@ import AdminTicketsPage from "./AdminTicketsPage";
 import ClaimDetailsPage from "./ClaimDetailsPage";
 
 export default function AdminDashboard() {
-
   const [userCount, setUserCount] = useState("12,423");
   const [foundCount, setFoundCount] = useState("1,221");
   const [claimCount, setClaimCount] = useState("423");
 
+  // Chart එක සඳහා sample data ටිකක්
+  const weeklyData = [
+    { day: "Mon", val: "65%", color: "bg-blue-400" },
+    { day: "Tue", val: "85%", color: "bg-blue-500" },
+    { day: "Wed", val: "45%", color: "bg-slate-300" },
+    { day: "Thu", val: "95%", color: "bg-indigo-500" },
+    { day: "Fri", val: "75%", color: "bg-blue-500" },
+    { day: "Sat", val: "35%", color: "bg-slate-300" },
+    { day: "Sun", val: "60%", color: "bg-blue-400" },
+  ];
+
   return (
-    /* Font එක Inter, Segoe UI, සහ sans-serif ලෙස වඩාත් පැහැදිලි එකකට වෙනස් කර ඇත */
     <div className="flex min-h-screen bg-[#F8FAFF] font-['Inter',_-apple-system,_.SFNSText-Regular,'Segoe_UI','Helvetica_Neue',sans-serif] text-[#1E293B]">
       {/* Sidebar - Fixed Left */}
       <Sidebar />
@@ -75,21 +83,58 @@ export default function AdminDashboard() {
 
                   {/* BOTTOM SECTION */}
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div className="lg:col-span-2 bg-white rounded-[32px] p-8 shadow-sm border border-slate-100/50 relative overflow-hidden">
+                    {/* ENHANCED PLATFORM ANALYTICS */}
+                    <div className="lg:col-span-2 bg-white rounded-[32px] p-8 shadow-sm border border-slate-100/50 relative overflow-hidden flex flex-col">
                       <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-full blur-3xl opacity-50 -mr-16 -mt-16"></div>
                       
-                      <div className="flex items-center justify-between mb-10 relative z-10">
+                      <div className="flex items-center justify-between mb-12 relative z-10">
                         <div>
                           <h3 className="font-bold text-slate-900 text-lg tracking-tight">Platform Analytics</h3>
-                          <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-[0.2em]">Activity Overview</p>
+                          <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-[0.2em]">Weekly Activity Overview</p>
                         </div>
-                        <button className="p-2.5 bg-slate-50 hover:bg-slate-100 rounded-xl transition-colors">
-                          <MoreHorizontal size={20} className="text-slate-400" />
-                        </button>
+                        <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 rounded-full border border-emerald-100">
+                            <span className="relative flex h-2 w-2">
+                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                            </span>
+                            <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">Live Updates</span>
+                          </div>
+                          <button className="p-2.5 bg-slate-50 hover:bg-slate-100 rounded-xl transition-colors">
+                            <MoreHorizontal size={20} className="text-slate-400" />
+                          </button>
+                        </div>
                       </div>
                       
-                      <div className="h-[340px] bg-slate-50/50 rounded-[24px] border border-slate-100 flex items-center justify-center">
-                         <p className="text-slate-400 font-medium italic text-sm tracking-widest opacity-60 underline decoration-blue-500/30 decoration-4 underline-offset-8">Visual Data Stream</p>
+                      {/* Interactive Bar Chart */}
+                      <div className="flex-1 flex items-end justify-between gap-2 px-4 pb-4 relative z-10 min-h-[250px]">
+                        {weeklyData.map((item, idx) => (
+                          <div key={idx} className="flex-1 flex flex-col items-center gap-4 group">
+                            <div className="w-full relative flex items-end justify-center h-48">
+                              {/* Hover Value Tooltip */}
+                              <div className="absolute -top-10 scale-0 group-hover:scale-100 transition-all duration-200 bg-slate-900 text-white text-[10px] font-bold py-1.5 px-2.5 rounded-lg z-20 shadow-xl shadow-slate-200 after:content-[''] after:absolute after:top-full after:left-1/2 after:-ml-1 after:border-4 after:border-transparent after:border-t-slate-900">
+                                {item.val}
+                              </div>
+                              {/* The Bar */}
+                              <div 
+                                style={{ height: item.val }} 
+                                className={`w-full max-w-[32px] ${item.color} rounded-t-xl rounded-b-md transition-all duration-700 ease-out group-hover:brightness-110 group-hover:shadow-lg group-hover:shadow-blue-100 cursor-pointer relative overflow-hidden`}
+                              >
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                              </div>
+                            </div>
+                            <span className="text-[11px] font-bold text-slate-400 group-hover:text-slate-900 transition-colors uppercase tracking-tighter">
+                              {item.day}
+                            </span>
+                          </div>
+                        ))}
+                        
+                        {/* Background Grid Lines */}
+                        <div className="absolute inset-x-0 top-0 h-48 flex flex-col justify-between pointer-events-none opacity-40">
+                          <div className="border-t border-dashed border-slate-200 w-full"></div>
+                          <div className="border-t border-dashed border-slate-200 w-full"></div>
+                          <div className="border-t border-dashed border-slate-200 w-full"></div>
+                        </div>
                       </div>
                     </div>
 
@@ -98,7 +143,7 @@ export default function AdminDashboard() {
                       <div className="absolute top-10 right-10 opacity-10 rotate-12"><ShieldCheck size={120} /></div>
                       <h2 className="text-2xl font-bold mb-4 leading-tight tracking-tight">Ready to verify new claims?</h2>
                       <p className="text-blue-100/80 text-sm font-medium mb-8 leading-relaxed">Check the latest item ownership proofs submitted by users today.</p>
-                      <button className="bg-white text-blue-600 py-4 rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-blue-50 transition-colors shadow-lg shadow-blue-900/20">
+                      <button className="bg-white text-blue-600 py-4 rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-blue-50 transition-all shadow-lg shadow-blue-900/20 active:scale-95">
                         Review Now
                       </button>
                     </div>
@@ -112,8 +157,6 @@ export default function AdminDashboard() {
             <Route path="/items" element={<AdminItems />} />
             <Route path="/tickets" element={<AdminTicketsPage />} />
             <Route path="/claims/:claimId" element={<ClaimDetailsPage />} />
-            
-            
           </Routes>
         </main>
       </div>
