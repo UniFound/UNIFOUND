@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Search, Filter, Calendar, User, Shield, AlertTriangle, CheckCircle, XCircle, Clock, ChevronLeft, ChevronRight, Download, Eye } from 'lucide-react';
+import AdminLayout from './AdminLayout';
 
 const AuditLogs = () => {
   const [logs, setLogs] = useState([
@@ -195,80 +196,41 @@ const AuditLogs = () => {
   };
   
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Navigation */}
-      <div className="w-full flex justify-center fixed top-4 z-50">
-        <div className="w-[92%] max-w-7xl flex items-center justify-between px-6 py-3
-          bg-white/70 backdrop-blur-xl border border-white/40
-          rounded-full shadow-lg">
-
-          {/* Logo */}
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">
-              U
-            </div>
-            <span className="font-semibold text-gray-800">
-              UniFound
-            </span>
-            <span className="ml-3 px-3 py-1 bg-blue-100 text-blue-600 text-xs rounded-full">Admin Control</span>
-          </div>
-
-          {/* Nav */}
-          <div className="hidden lg:flex items-center gap-6 text-sm text-gray-600">
-            <a href="/admin" className="transition hover:text-blue-600">Dashboard</a>
-            <a href="/admin/users" className="transition hover:text-blue-600">Users</a>
-            <a href="/admin/categories" className="transition hover:text-blue-600">Categories</a>
-            <a href="/admin/analytics" className="transition hover:text-blue-600">Analytics</a>
-            <a href="/admin/audit" className="text-blue-600 font-medium transition hover:text-blue-700">Audit Logs</a>
-            <a href="/admin/reports" className="transition hover:text-blue-600">Reports</a>
-          </div>
-
-          {/* Right */}
-          <div className="flex items-center gap-3">
-            <button className="text-sm text-gray-600 hover:text-blue-600">
-              Sign out
-            </button>
-            <button className="bg-blue-600 text-white px-4 py-1.5 rounded-full text-sm shadow hover:bg-blue-700 transition">
-              Admin →
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-8">
+    <AdminLayout>
+      <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
         {/* Page Header */}
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Audit Logs</h1>
-            <p className="text-gray-600">System activity and security monitoring</p>
+            <h1 className="font-black text-slate-900 text-2xl tracking-tight">Audit Logs</h1>
+            <p className="text-[10px] font-black text-slate-400 mt-1 uppercase tracking-[0.2em]">System Activity Monitoring</p>
           </div>
           <button
             onClick={exportLogs}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl flex items-center space-x-2 transition-all duration-300 shadow-lg shadow-blue-100/50 hover:shadow-blue-200/60"
           >
             <Download className="h-4 w-4" />
-            <span>Export Logs</span>
+            <span className="font-black text-xs uppercase tracking-wider">Export Logs</span>
           </button>
         </div>
 
         {/* Search and Filters */}
-        <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-white rounded-[32px] p-8 shadow-sm border border-slate-100/50">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
               <input
                 type="text"
                 placeholder="Search logs..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-12 pr-4 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               />
             </div>
             
             <select
               value={actionFilter}
               onChange={(e) => setActionFilter(e.target.value)}
-              className="px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="px-4 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
             >
               <option value="">All Actions</option>
               {actionTypes.map(action => (
@@ -279,7 +241,7 @@ const AuditLogs = () => {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="px-4 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
             >
               <option value="">All Status</option>
               <option value="success">Success</option>
@@ -291,14 +253,14 @@ const AuditLogs = () => {
               type="date"
               value={dateFilter}
               onChange={(e) => setDateFilter(e.target.value)}
-              className="px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="px-4 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
             />
           </div>
           
-          <div className="flex justify-end mt-4">
+          <div className="flex justify-end mt-6">
             <button
               onClick={resetFilters}
-              className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-800 transition-colors"
+              className="px-6 py-3 bg-slate-100 hover:bg-slate-200 rounded-2xl text-slate-800 font-black text-xs uppercase tracking-wider transition-all"
             >
               Reset Filters
             </button>
@@ -306,49 +268,51 @@ const AuditLogs = () => {
         </div>
 
         {/* Logs Table */}
-        <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+        <div className="bg-white rounded-[32px] shadow-sm border border-slate-100/50 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="bg-gray-50 border-b border-gray-200">
-                  <th className="text-left py-3 px-4 text-gray-600 font-medium text-sm">Timestamp</th>
-                  <th className="text-left py-3 px-4 text-gray-600 font-medium text-sm">User</th>
-                  <th className="text-left py-3 px-4 text-gray-600 font-medium text-sm">Action</th>
-                  <th className="text-left py-3 px-4 text-gray-600 font-medium text-sm">Resource</th>
-                  <th className="text-left py-3 px-4 text-gray-600 font-medium text-sm">Status</th>
-                  <th className="text-left py-3 px-4 text-gray-600 font-medium text-sm">Actions</th>
+                <tr className="bg-slate-50/50 border-b border-slate-100">
+                  <th className="text-left py-4 px-6 text-slate-600 font-black text-[10px] uppercase tracking-[0.15em]">Timestamp</th>
+                  <th className="text-left py-4 px-6 text-slate-600 font-black text-[10px] uppercase tracking-[0.15em]">User</th>
+                  <th className="text-left py-4 px-6 text-slate-600 font-black text-[10px] uppercase tracking-[0.15em]">Action</th>
+                  <th className="text-left py-4 px-6 text-slate-600 font-black text-[10px] uppercase tracking-[0.15em]">Resource</th>
+                  <th className="text-left py-4 px-6 text-slate-600 font-black text-[10px] uppercase tracking-[0.15em]">Status</th>
+                  <th className="text-left py-4 px-6 text-slate-600 font-black text-[10px] uppercase tracking-[0.15em]">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {currentLogs.map((log) => (
-                  <tr key={log.id} className="border-b border-gray-200 hover:bg-gray-50 transition-colors">
-                    <td className="py-3 px-4 text-gray-600 text-sm">{log.timestamp}</td>
-                    <td className="py-3 px-4">
-                      <div className="flex items-center space-x-2">
-                        <User className="h-4 w-4 text-gray-400" />
-                        <span className="text-gray-800">{log.user}</span>
+                  <tr key={log.id} className="border-b border-slate-50 hover:bg-slate-50/30 transition-colors">
+                    <td className="py-4 px-6 text-slate-600 text-sm font-medium">{log.timestamp}</td>
+                    <td className="py-4 px-6">
+                      <div className="flex items-center space-x-3">
+                        <div className="p-2 bg-slate-100 rounded-xl">
+                          <User className="h-4 w-4 text-slate-600" />
+                        </div>
+                        <span className="text-slate-800 font-medium">{log.user}</span>
                       </div>
                     </td>
-                    <td className="py-3 px-4">
-                      <span className={`px-2 py-1 text-xs rounded-full ${getActionBadge(log.action)}`}>
+                    <td className="py-4 px-6">
+                      <span className={`px-3 py-1.5 text-[10px] font-black rounded-xl ${getActionBadge(log.action)}`}>
                         {log.action.replace('_', ' ')}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-gray-600 text-sm max-w-xs truncate" title={log.resource}>
+                    <td className="py-4 px-6 text-slate-600 text-sm max-w-xs truncate font-medium" title={log.resource}>
                       {log.resource}
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="py-4 px-6">
                       <div className="flex items-center space-x-2">
                         {getStatusIcon(log.status)}
-                        <span className={`px-2 py-1 text-xs rounded-full ${getStatusBadge(log.status)}`}>
+                        <span className={`px-3 py-1.5 text-[10px] font-black rounded-xl ${getStatusBadge(log.status)}`}>
                           {log.status}
                         </span>
                       </div>
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="py-4 px-6">
                       <button
                         onClick={() => setShowLogDetails(log)}
-                        className="p-1 text-blue-600 hover:text-blue-700 transition-colors"
+                        className="p-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-xl transition-all"
                         title="View Details"
                       >
                         <Eye className="h-4 w-4" />
@@ -361,15 +325,15 @@ const AuditLogs = () => {
           </div>
           
           {/* Pagination */}
-          <div className="flex justify-between items-center p-4 border-t border-gray-200">
-            <div className="text-gray-600 text-sm">
+          <div className="flex justify-between items-center p-6 border-t border-slate-100">
+            <div className="text-slate-600 text-sm font-medium">
               Showing {indexOfFirstLog + 1} to {Math.min(indexOfLastLog, filteredLogs.length)} of {filteredLogs.length} logs
             </div>
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className="p-2 bg-white hover:bg-gray-50 border border-gray-300 rounded-lg text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="p-3 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl text-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
                 <ChevronLeft className="h-4 w-4" />
               </button>
@@ -377,11 +341,11 @@ const AuditLogs = () => {
                 <button
                   key={index}
                   onClick={() => setCurrentPage(index + 1)}
-                  className={`w-10 h-10 rounded-lg ${
+                  className={`w-10 h-10 rounded-xl font-black text-sm ${
                     currentPage === index + 1
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-white text-gray-800 hover:bg-gray-50 border border-gray-300'
-                  } transition-colors`}
+                      ? 'bg-blue-600 text-white shadow-lg shadow-blue-100/50'
+                      : 'bg-white text-slate-800 hover:bg-slate-50 border border-slate-200'
+                  } transition-all`}
                 >
                   {index + 1}
                 </button>
@@ -389,7 +353,7 @@ const AuditLogs = () => {
               <button
                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                 disabled={currentPage === totalPages}
-                className="p-2 bg-white hover:bg-gray-50 border border-gray-300 rounded-lg text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="p-3 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl text-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
                 <ChevronRight className="h-4 w-4" />
               </button>
@@ -401,38 +365,38 @@ const AuditLogs = () => {
       {/* Log Details Modal */}
       {showLogDetails && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white border border-gray-200 rounded-xl p-6 max-w-2xl w-full mx-4 shadow-lg max-h-[80vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-gray-800 text-lg font-semibold">Log Details</h3>
+          <div className="bg-white rounded-[32px] p-8 max-w-2xl w-full mx-4 shadow-xl border border-slate-100/50 max-h-[80vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="font-black text-slate-900 text-xl tracking-tight">Log Details</h3>
               <button
                 onClick={() => setShowLogDetails(null)}
-                className="text-gray-400 hover:text-gray-600"
+                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-all"
               >
                 ×
               </button>
             </div>
             
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Timestamp</label>
-                  <p className="text-gray-800">{showLogDetails.timestamp}</p>
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] mb-2">Timestamp</label>
+                  <p className="text-slate-800 font-medium">{showLogDetails.timestamp}</p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">User</label>
-                  <p className="text-gray-800">{showLogDetails.user}</p>
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] mb-2">User</label>
+                  <p className="text-slate-800 font-medium">{showLogDetails.user}</p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Action</label>
-                  <span className={`inline-block px-2 py-1 text-xs rounded-full ${getActionBadge(showLogDetails.action)}`}>
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] mb-2">Action</label>
+                  <span className={`inline-block px-3 py-1.5 text-[10px] font-black rounded-xl ${getActionBadge(showLogDetails.action)}`}>
                     {showLogDetails.action.replace('_', ' ')}
                   </span>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] mb-2">Status</label>
                   <div className="flex items-center space-x-2">
                     {getStatusIcon(showLogDetails.status)}
-                    <span className={`px-2 py-1 text-xs rounded-full ${getStatusBadge(showLogDetails.status)}`}>
+                    <span className={`px-3 py-1.5 text-[10px] font-black rounded-xl ${getStatusBadge(showLogDetails.status)}`}>
                       {showLogDetails.status}
                     </span>
                   </div>
@@ -440,31 +404,31 @@ const AuditLogs = () => {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Resource</label>
-                <p className="text-gray-800">{showLogDetails.resource}</p>
+                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] mb-2">Resource</label>
+                <p className="text-slate-800 font-medium">{showLogDetails.resource}</p>
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Details</label>
-                <p className="text-gray-800">{showLogDetails.details}</p>
+                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] mb-2">Details</label>
+                <p className="text-slate-800 font-medium">{showLogDetails.details}</p>
               </div>
               
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">IP Address</label>
-                  <p className="text-gray-800 font-mono text-sm">{showLogDetails.ipAddress}</p>
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] mb-2">IP Address</label>
+                  <p className="text-slate-800 font-mono text-sm bg-slate-50 p-3 rounded-xl">{showLogDetails.ipAddress}</p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">User Agent</label>
-                  <p className="text-gray-800 text-sm break-all">{showLogDetails.userAgent}</p>
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] mb-2">User Agent</label>
+                  <p className="text-slate-800 text-sm bg-slate-50 p-3 rounded-xl break-all">{showLogDetails.userAgent}</p>
                 </div>
               </div>
             </div>
             
-            <div className="flex justify-end mt-6">
+            <div className="flex justify-end mt-8">
               <button
                 onClick={() => setShowLogDetails(null)}
-                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-800 transition-colors"
+                className="px-6 py-3 bg-slate-100 hover:bg-slate-200 rounded-2xl text-slate-800 font-black text-xs uppercase tracking-wider transition-all"
               >
                 Close
               </button>
@@ -472,7 +436,7 @@ const AuditLogs = () => {
           </div>
         </div>
       )}
-    </div>
+    </AdminLayout>
   );
 };
 
