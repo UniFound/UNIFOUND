@@ -15,7 +15,7 @@ export default function ItemCard({ item }) {
     <>
       <div 
         className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-blue-100 transition-all duration-300 relative flex flex-col group cursor-pointer min-h-[380px]"
-        onClick={() => navigate(`/item/${item._id}`)}
+        onClick={() => navigate(`/items/${item._id}`)}
       >
         
         {/* Image Area */}
@@ -65,15 +65,16 @@ export default function ItemCard({ item }) {
 
         {/* Buttons */}
         <div className="flex gap-2">
-          {/* 2. 'View Details' click කරාම card redirect එකම වෙන නිසා නිකන්ම navigate වෙන්න දුන්නා */}
           <button
-            onClick={() => navigate(`/item/${item._id}`)}
+            onClick={(e) => {
+              e.stopPropagation(); 
+              navigate(`/items/${item._id}`);
+            }}
             className="flex-1 bg-white border border-gray-200 hover:border-blue-600 hover:text-blue-600 text-gray-700 text-xs font-bold py-2.5 rounded-lg transition-all flex items-center justify-center gap-1.5"
           >
             View Details
           </button>
           
-          {/* 3. මෙතන 'e.stopPropagation()' එක දැම්මේ claim modal එක open වෙද්දී details page එකට යන එක නවත්තන්න */}
           <button
             onClick={(e) => {
               e.stopPropagation(); 
