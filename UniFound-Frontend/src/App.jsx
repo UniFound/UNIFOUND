@@ -20,6 +20,7 @@ import AdminClaims from "./pages/AdminClaims";
 import RegisterPage from "./pages/Register";
 import ClaimHistory from "./pages/ClaimHistory";
 import AutoMatchView from "./pages/AutoMatchView";
+import ClaimTracking from "./pages/ClaimTracking";
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
         <Route path="/myclaims" element={<ClaimHistory />} />
         <Route path="/tickets" element={<TicketsPage />} />
         <Route path="/ticket/:ticketId" element={<TicketDetailsPage />} />
+        <Route path="/claim-details/:id" element={<ClaimTracking />} />
       </Routes>
     </Router>
   );
