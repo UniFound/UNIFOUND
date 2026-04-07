@@ -3,22 +3,22 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { 
   ArrowLeft, CheckCircle, XCircle, Clock, MapPin, Tag,
-Calendar,
-Phone,
-Mail,
-User,
-ShieldCheck,
-AlertTriangle,
-FileText,
-Image,
-ClipboardCheck,
-Palette,
-MessageCircle,
-Zap,
-ChevronRight,
-Fingerprint,
-BarChart3,
-ExternalLink
+  Calendar,
+  Phone,
+  Mail,
+  User,
+  ShieldCheck,
+  AlertTriangle,
+  FileText,
+  Image,
+  ClipboardCheck,
+  Palette,
+  MessageCircle,
+  Zap,
+  ChevronRight,
+  Fingerprint,
+  BarChart3,
+  ExternalLink
 } from "lucide-react";
 
 const ClaimDetailsPage = () => {
@@ -96,8 +96,8 @@ const ClaimDetailsPage = () => {
           <p className="text-gray-500 font-bold text-sm">Loading Claim Details...</p>
         </div>
       </div>
-    </div>
-  );
+    );
+  }
 
   if (error || !claim) return <div className="min-h-screen flex items-center justify-center text-red-500 font-semibold">{error}</div>;
 
