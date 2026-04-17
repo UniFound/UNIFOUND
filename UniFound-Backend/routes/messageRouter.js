@@ -1,24 +1,18 @@
-// routes/messageRoutes.js
 import express from "express";
 import {
   sendMessage,
   getMessages,
-  updateMessage,
+  editMessage,
   deleteMessage,
+  updateMessageStatus
 } from "../controllers/messageController.js";
 
 const router = express.Router();
 
-// send message
 router.post("/", sendMessage);
-
-// get messages by conversation
-router.get("/:conversationId", getMessages);
-
-// edit message
-router.put("/:id", updateMessage);
-
-// delete message
+router.get("/:chatId", getMessages);
+router.put("/:id", editMessage);
 router.delete("/:id", deleteMessage);
+router.patch("/:id/status", updateMessageStatus);
 
 export default router;
