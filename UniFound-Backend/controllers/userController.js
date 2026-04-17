@@ -27,7 +27,7 @@ export const getUser = async (req, res) => {
 
 export const createUser = async (req, res) => {
   try {
-    const { firstName, lastName, email, password, type, profilePicture } = req.body;
+    const { firstName, lastName, email, password, type, profilePicture, role, status } = req.body;
 
     // 1️⃣ Check if email already exists
     const existingUser = await User.findOne({ email });
@@ -57,6 +57,10 @@ export const createUser = async (req, res) => {
       type: type || "customer", // default customer
       profilePicture: profilePicture || ""
     });
+    
+    // Add role and status if provided (for admin users)
+    if (role) user.role = role;
+    if (status) user.status = status;
 
     await user.save();
 
@@ -83,12 +87,69 @@ export const createUser = async (req, res) => {
   }
 };
 
+export const updateUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { firstName, lastName, email, role, status } = req.body;
+
+    // Find user by userId
+    const user = await User.findOne({ userId });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
+    }
+
+    // Update fields if provided
+    if (firstName) user.firstName = firstName;
+    if (lastName) user.lastName = lastName;
+    if (email) {
+      // Check if email already exists for another user
+      const existingUser = await User.findOne({ email, userId: { $ne: userId } });
+      if (existingUser) {
+        return res.status(400).json({
+          success: false,
+          message: "Email already registered."
+        });
+      }
+      user.email = email;
+    }
+    if (role) user.role = role;
+    if (status) user.status = status;
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "User updated successfully",
+      user: {
+        userId: user.userId,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        type: user.type,
+        role: user.role,
+        status: user.status,
+        profilePicture: user.profilePicture
+      }
+    });
+
+  } catch (error) {
+    console.error("Error updating user:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to update user"
+    });
+  }
+};
+
 export const deleteUser = async (req, res) => {
   try {
-    const { email } = req.params;
+    const { userId } = req.params;
 
-    // Delete user by email
-    const result = await User.deleteOne({ email });
+    // Delete user by userId
+    const result = await User.deleteOne({ userId });
 
     if (result.deletedCount === 0) {
       return res.status(404).json({
@@ -110,6 +171,7 @@ export const deleteUser = async (req, res) => {
     });
   }
 };
+
 
 
 export const loginUser = async (req, res) => {
@@ -216,53 +278,3 @@ export const getUserByEmail = async (req, res) => {
     });
   }
 };
-
-// export const createUser = async (req, res) => {
-//   try {
-//     const { firstName, lastName, email, password, type, profilePicture } = req.body;
-
-//     // 1️⃣ Check if email already exists
-//     const existingUser = await User.findOne({ email });
-//     if (existingUser) {
-//       return res.status(400).json({ message: "Email already registered" });
-//     }
-
-//     // 2️⃣ Hash password
-//     const hashedPassword = bcrypt.hashSync(password, 10);
-
-//     // 3️⃣ Generate sequential userId (USR-001, USR-002, etc.)
-//     let lastUser = await User.findOne().sort({ createdAt: -1 }); // last inserted user
-//     let lastIdNumber = lastUser ? parseInt(lastUser.userId.split("-")[1]) : 0;
-//     const newIdNumber = (lastIdNumber + 1).toString().padStart(3, "0");
-//     const userId = `USR-${newIdNumber}`;
-
-//     // 4️⃣ Create user
-//     const user = new User({
-//       userId,
-//       firstName,
-//       lastName,
-//       email,
-//       password: hashedPassword,
-//       type: type || "customer",
-//       profilePicture: profilePicture || ""
-//     });
-
-//     await user.save();
-
-//     // 5️⃣ Response
-//     res.status(201).json({
-//       message: "User created successfully",
-//       user: {
-//         userId: user.userId,
-//         firstName: user.firstName,
-//         lastName: user.lastName,
-//         email: user.email,
-//         type: user.type
-//       }
-//     });
-
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: "User creation failed" });
-//   }
-// };

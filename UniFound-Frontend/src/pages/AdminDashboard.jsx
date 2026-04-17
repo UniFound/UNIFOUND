@@ -8,12 +8,63 @@ import AdminClaims from "./AdminClaims";
 import AdminItems from "./AdminItems";
 import AdminTicketsPage from "./AdminTicketsPage";
 import ClaimDetailsPage from "./ClaimDetailsPage";
+import ClaimsPieChart from "../components/ClaimsPieChart";
 
 export default function AdminDashboard() {
+  const [userCount, setUserCount] = useState("0");
+  const [foundCount, setFoundCount] = useState("0");
+  const [claimCount, setClaimCount] = useState("0");
+  const [ticketCount, setTicketCount] = useState("0");
+  const [loading, setLoading] = useState(true);
 
-  const [userCount, setUserCount] = useState("12,423");
-  const [foundCount, setFoundCount] = useState("1,221");
-  const [claimCount, setClaimCount] = useState("423");
+  useEffect(() => {
+    // Fetch real data from API
+    const fetchDashboardData = async () => {
+      try {
+        // Fetch users count
+        const usersResponse = await fetch('http://localhost:5000/api/admin-users');
+        const usersData = await usersResponse.json();
+        if (usersData && Array.isArray(usersData)) {
+          setUserCount(usersData.length.toString());
+        } else if (usersData.users && Array.isArray(usersData.users)) {
+          setUserCount(usersData.users.length.toString());
+        }
+
+        // Fetch items count
+        const itemsResponse = await fetch('http://localhost:5000/api/items');
+        const itemsData = await itemsResponse.json();
+        if (itemsData && Array.isArray(itemsData)) {
+          setFoundCount(itemsData.length.toString());
+        } else if (itemsData.items && Array.isArray(itemsData.items)) {
+          setFoundCount(itemsData.items.length.toString());
+        }
+
+        // Fetch claims count
+        const claimsResponse = await fetch('http://localhost:5000/api/claims');
+        const claimsData = await claimsResponse.json();
+        if (claimsData && Array.isArray(claimsData)) {
+          setClaimCount(claimsData.length.toString());
+        } else if (claimsData.claims && Array.isArray(claimsData.claims)) {
+          setClaimCount(claimsData.claims.length.toString());
+        }
+
+        // Fetch tickets count
+        const ticketsResponse = await fetch('http://localhost:5000/api/tickets');
+        const ticketsData = await ticketsResponse.json();
+        if (ticketsData && Array.isArray(ticketsData)) {
+          setTicketCount(ticketsData.length.toString());
+        } else if (ticketsData.tickets && Array.isArray(ticketsData.tickets)) {
+          setTicketCount(ticketsData.tickets.length.toString());
+        }
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
 
   return (
     /* Font එක Inter, Segoe UI, සහ sans-serif ලෙස වඩාත් පැහැදිලි එකකට වෙනස් කර ඇත */
@@ -63,34 +114,9 @@ export default function AdminDashboard() {
                       icon={<LifeBuoy size={20} />} 
                       color="rose"
                       label="Open Tickets" 
-                      value="18" 
+                      value={ticketCount} 
                       trend="-2%" 
                       isPositive={false}
-                    />
-                  </div>
-
-                  {/* KEY MANAGEMENT CARDS */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <KeyCard 
-                      icon={<FileText size={20} />} 
-                      color="violet"
-                      label="AUDIT LOGS" 
-                      description="View system activities and logs"
-                      link="/admin/audit"
-                    />
-                    <KeyCard 
-                      icon={<FolderOpen size={20} />} 
-                      color="amber"
-                      label="CATEGORIES" 
-                      description="Manage item categories"
-                      link="/admin/categories"
-                    />
-                    <KeyCard 
-                      icon={<BarChart3 size={20} />} 
-                      color="cyan"
-                      label="REPORTS" 
-                      description="Generate and view reports"
-                      link="/admin/reports"
                     />
                   </div>
 
@@ -110,9 +136,7 @@ export default function AdminDashboard() {
                         </button>
                       </div>
                       
-                      <div className="h-[340px] bg-slate-50/50 rounded-[24px] border border-slate-100 flex items-center justify-center">
-                         <p className="text-slate-400 font-medium italic text-sm tracking-widest opacity-60 underline decoration-blue-500/30 decoration-4 underline-offset-8">Visual Data Stream</p>
-                      </div>
+                      <ClaimsPieChart />
                     </div>
 
                     {/* SIDE PROMO CARD */}

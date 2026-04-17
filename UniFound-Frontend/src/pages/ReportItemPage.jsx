@@ -6,8 +6,11 @@ import uploadMediaToSupabase from "../supabaseClient.js";
 import api from "../api/axios.js";
 import { Upload, MapPin, Tag, Palette, Type, AlignLeft, CheckCircle2, AlertCircle, X } from "lucide-react";
 
+const API_BASE_URL = 'http://localhost:5000/api';
+
 export default function ReportItemPage() {
   const [activeTab, setActiveTab] = useState("lost");
+  const [categories, setCategories] = useState([]);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -35,8 +38,23 @@ export default function ReportItemPage() {
     { name: "Gold", hex: "#F59E0B" },
   ];
 
-  const categoryOptions = ["Laptop", "Mobile Phone", "Student ID", "Electronics", "Laptop Charger", "Backpack", "Other"];
   const locationOptions = ["Basement", "Canteen", "New Building", "Main Building", "Near the Beach", "Library", "Anohana Canteen", "Office Area", "Other"];
+
+  // Fetch categories from backend
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/categories/active`);
+      const data = await response.json();
+      setCategories(data.data || []);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
+
+  // Load categories on component mount
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   // --- Live Validation Logic ---
   useEffect(() => {
@@ -212,9 +230,10 @@ export default function ReportItemPage() {
                     className="w-full pl-12 pr-10 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-500 transition-all appearance-none cursor-pointer hover:bg-white"
                   >
                     <option value="">Select Category</option>
-                    {categoryOptions.map((cat) => (
-                      <option key={cat} value={cat}>{cat}</option>
+                    {categories.map((cat) => (
+                      <option key={cat._id} value={cat.name}>{cat.name}</option>
                     ))}
+                    <option value="Other">Other</option>
                   </select>
                   <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
                     <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 4l4 4 4-4"/></svg>

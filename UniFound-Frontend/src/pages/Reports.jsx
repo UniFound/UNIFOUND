@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FileText, Download, Calendar, Filter, TrendingUp, Users, Package, CheckCircle, Clock, BarChart3, PieChart, Activity, Printer, Mail, Trash2, Edit } from 'lucide-react';
+import { FileText, Download, Calendar, Filter, TrendingUp, Users, Package, CheckCircle, Clock, BarChart3, PieChart, Activity, Printer, Mail, Trash2, Edit, Tag, XCircle, AlertCircle } from 'lucide-react';
 import AdminLayout from './AdminLayout';
 
 const Reports = () => {
@@ -13,9 +13,9 @@ const Reports = () => {
     {
       id: 'overview',
       name: 'System Overview',
-      description: 'Comprehensive system performance and statistics',
+      description: 'Summary of total users, found items, claims and open tickets',
       icon: BarChart3,
-      metrics: ['Total Users', 'Active Items', 'Resolution Rate', 'System Health']
+      metrics: ['Total Users', 'Found Items', 'Total Claims', 'Open Tickets']
     },
     {
       id: 'users',
@@ -32,25 +32,18 @@ const Reports = () => {
       metrics: ['Items by Category', 'Resolution Times', 'Success Rates', 'Trending Items']
     },
     {
-      id: 'performance',
-      name: 'Performance Report',
-      description: 'System performance and response times',
-      icon: Activity,
-      metrics: ['Response Times', 'Server Load', 'Database Performance', 'Error Rates']
+      id: 'categories',
+      name: 'Categories Report',
+      description: 'Analysis of item categories and their distribution',
+      icon: Tag,
+      metrics: ['Category Distribution', 'Most Common Items', 'Category Trends', 'Unclaimed by Category']
     },
     {
-      id: 'financial',
-      name: 'Financial Summary',
-      description: 'Cost analysis and financial impact',
-      icon: TrendingUp,
-      metrics: ['Operational Costs', 'Value Recovered', 'ROI Analysis', 'Cost Savings']
-    },
-    {
-      id: 'compliance',
-      name: 'Compliance Report',
-      description: 'Security and regulatory compliance metrics',
-      icon: CheckCircle,
-      metrics: ['Security Incidents', 'Audit Compliance', 'Data Protection', 'Policy Adherence']
+      id: 'claims',
+      name: 'Claims Approval/Rejected Report',
+      description: 'Detailed analysis of claims approval and rejection rates',
+      icon: AlertCircle,
+      metrics: ['Approval Rate', 'Rejection Rate', 'Processing Time', 'Rejection Reasons']
     }
   ];
   
@@ -161,10 +154,110 @@ const Reports = () => {
     return newReport;
   };
   
-  const handleGenerateReport = () => {
-    const report = generateReport();
-    // In a real app, this would trigger actual report generation
-    alert(`Generating ${report.name} in ${format.toUpperCase()} format...`);
+  const handleGenerateReport = async () => {
+    try {
+      const report = generateReport();
+      
+      // Create report content based on the selected report type and format
+      const reportContent = generateReportContent(selectedReport, dateRange, format);
+      
+      // Create blob with appropriate MIME type based on format
+      const mimeType = format === 'pdf' ? 'text/plain' : 
+                     format === 'excel' ? 'text/html' : 
+                     'text/csv';
+      
+      const blob = new Blob([reportContent], { type: mimeType });
+      
+      // Create download link
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${report.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.${format}`;
+      
+      // Trigger download
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Clean up
+      window.URL.revokeObjectURL(url);
+      
+      // Show success message
+      console.log(`Report ${report.name} downloaded successfully`);
+      
+    } catch (error) {
+      console.error('Error generating report:', error);
+      alert('Error generating report. Please try again.');
+    }
+  };
+
+  const generateReportContent = (reportType, dateRange, format) => {
+    const timestamp = new Date().toLocaleString();
+    const reportName = reportTypes.find(r => r.id === reportType)?.name;
+    
+    // Generate sample data
+    const totalUsers = Math.floor(Math.random() * 1000) + 100;
+    const foundItems = Math.floor(Math.random() * 500) + 50;
+    const totalClaims = Math.floor(Math.random() * 300) + 30;
+    const openTickets = Math.floor(Math.random() * 100) + 10;
+    
+    if (format === 'csv') {
+      // Generate CSV content
+      const headers = ['Metric', 'Value'];
+      const rows = [
+        ['Report Name', reportName],
+        ['Generated', timestamp],
+        ['Date Range', dateRange],
+        ['Total Users', totalUsers],
+        ['Found Items', foundItems],
+        ['Total Claims', totalClaims],
+        ['Open Tickets', openTickets]
+      ];
+      
+      return [headers, ...rows].map(row => row.join(',')).join('\n');
+    } else if (format === 'excel') {
+      // Generate simple HTML table that can be opened in Excel
+      return `
+        <html>
+          <head>
+            <title>${reportName}</title>
+            <style>
+              table { border-collapse: collapse; width: 100%; }
+              th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+              th { background-color: #f2f2f2; }
+            </style>
+          </head>
+          <body>
+            <h2>${reportName}</h2>
+            <p><strong>Generated:</strong> ${timestamp}</p>
+            <p><strong>Date Range:</strong> ${dateRange}</p>
+            <table>
+              <tr><th>Metric</th><th>Value</th></tr>
+              <tr><td>Total Users</td><td>${totalUsers}</td></tr>
+              <tr><td>Found Items</td><td>${foundItems}</td></tr>
+              <tr><td>Total Claims</td><td>${totalClaims}</td></tr>
+              <tr><td>Open Tickets</td><td>${openTickets}</td></tr>
+            </table>
+          </body>
+        </html>
+      `;
+    } else {
+      // For PDF, generate a simple text file for now
+      // In a real implementation, you'd use a PDF library like jsPDF
+      return `
+Report: ${reportName}
+Generated: ${timestamp}
+Date Range: ${dateRange}
+=====================================
+
+Total Users: ${totalUsers}
+Found Items: ${foundItems}
+Total Claims: ${totalClaims}
+Open Tickets: ${openTickets}
+
+Report generated successfully.
+      `;
+    }
   };
   
   const handleEmailReport = () => {
@@ -322,77 +415,7 @@ const Reports = () => {
           </div>
         </div>
 
-        {/* Recent Reports */}
-        <div className="bg-white rounded-[32px] shadow-sm border border-slate-100/50 overflow-hidden">
-          <div className="flex justify-between items-center p-8 border-b border-slate-100">
-            <h3 className="font-black text-slate-900 text-lg tracking-tight">Recent Reports</h3>
-            <button className="text-blue-600 hover:text-blue-700 font-black text-xs uppercase tracking-wider transition-colors">
-              View All
-            </button>
-          </div>
-          
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="bg-slate-50/50 border-b border-slate-100">
-                  <th className="text-left py-4 px-6 text-slate-600 font-black text-[10px] uppercase tracking-[0.15em]">Report Name</th>
-                  <th className="text-left py-4 px-6 text-slate-600 font-black text-[10px] uppercase tracking-[0.15em]">Type</th>
-                  <th className="text-left py-4 px-6 text-slate-600 font-black text-[10px] uppercase tracking-[0.15em]">Generated</th>
-                  <th className="text-left py-4 px-6 text-slate-600 font-black text-[10px] uppercase tracking-[0.15em]">Format</th>
-                  <th className="text-left py-4 px-6 text-slate-600 font-black text-[10px] uppercase tracking-[0.15em]">Size</th>
-                  <th className="text-left py-4 px-6 text-slate-600 font-black text-[10px] uppercase tracking-[0.15em]">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {recentReports.map((report) => (
-                  <tr key={report.id} className="border-b border-slate-50 hover:bg-slate-50/30 transition-colors">
-                    <td className="py-4 px-6">
-                      <div className="flex items-center space-x-3">
-                        <div className="p-2 bg-slate-100 rounded-xl">
-                          <FileText className="h-4 w-4 text-slate-600" />
-                        </div>
-                        <span className="text-slate-800 font-medium">{report.name}</span>
-                      </div>
-                    </td>
-                    <td className="py-4 px-6 text-slate-600 text-sm font-medium">{report.type}</td>
-                    <td className="py-4 px-6 text-slate-600 text-sm font-medium">{report.generatedAt}</td>
-                    <td className="py-4 px-6">
-                      <span className="px-3 py-1.5 text-[10px] font-black bg-slate-100 text-slate-600 rounded-xl">
-                        {report.format}
-                      </span>
-                    </td>
-                    <td className="py-4 px-6 text-slate-600 text-sm font-medium">{report.size}</td>
-                    <td className="py-4 px-6">
-                      <div className="flex space-x-2">
-                        <button
-                          onClick={() => downloadReport(report.id)}
-                          className="p-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-xl transition-all"
-                          title="Download"
-                        >
-                          <Download className="h-4 w-4" />
-                        </button>
-                        <button
-                          className="p-2 text-slate-600 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-all"
-                          title="Print"
-                        >
-                          <Printer className="h-4 w-4" />
-                        </button>
-                        <button
-                          onClick={() => deleteReport(report.id)}
-                          className="p-2 text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-xl transition-all"
-                          title="Delete"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+              </div>
     </AdminLayout>
   );
 };

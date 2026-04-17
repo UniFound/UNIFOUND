@@ -5,13 +5,15 @@ import dotenv from "dotenv";
 
 // Routes
 import userRouter from "./routes/userRouter.js";
+import adminUserRouter from "./routes/adminUserRouter.js";
 import claimRouter from "./routes/claimRouter.js";
 import itemRouter from "./routes/itemRouter.js";
+import categoryRouter from "./routes/categoryRouter.js";
 import conversationRoutes from "./routes/conversationRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import ticketRouter from "./routes/ticketRouter.js";
-import adminUserRoutes from "./routes/adminUserRoutes.js"; // 
+import auditLogRoutes from "./routes/auditLogRoutes.js";
 
 dotenv.config();
 
@@ -39,17 +41,19 @@ connectDB();
 
 // Routes
 app.use("/api/users", userRouter);
-app.use("/api/admin-users", adminUserRoutes); // ✅ NEW (Admin User Management)
+app.use("/api/admin-users", adminUserRouter);
 app.use("/api/claims", claimRouter);
 app.use("/api/items", itemRouter);
+app.use("/api/categories", categoryRouter);
 app.use("/api/conversations", conversationRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/tickets", ticketRouter);
+app.use("/api/audit-logs", auditLogRoutes);
 
 // Root route
 app.get("/", (req, res) => {
-  res.send("UniFound Backend is Running & DB Connected! 🚀");
+  res.send("UniFound Backend is Running & DB Connected! ");
 });
 
 // Server Port
