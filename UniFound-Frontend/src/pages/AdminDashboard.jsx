@@ -1,9 +1,10 @@
 import AdminLayout from "../pages/AdminLayout";
-import { TrendingUp, Users as UsersIcon, Box, ShieldCheck, LifeBuoy, ArrowUpRight, ArrowDownRight, MoreHorizontal, FileText, FolderOpen, BarChart3 } from "lucide-react";
+import { TrendingUp, Users as UsersIcon, Box , ShieldCheck, LifeBuoy, ArrowUpRight, ArrowDownRight, MoreHorizontal, FileText, FolderOpen, BarChart3 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
+
 import AdminClaims from "./AdminClaims";
 import AdminItems from "./AdminItems";
 import AdminTicketsPage from "./AdminTicketsPage";
@@ -66,8 +67,18 @@ export default function AdminDashboard() {
     fetchDashboardData();
   }, []);
 
+  // Chart එක සඳහා sample data ටිකක්
+  const weeklyData = [
+    { day: "Mon", val: "65%", color: "bg-blue-400" },
+    { day: "Tue", val: "85%", color: "bg-blue-500" },
+    { day: "Wed", val: "45%", color: "bg-slate-300" },
+    { day: "Thu", val: "95%", color: "bg-indigo-500" },
+    { day: "Fri", val: "75%", color: "bg-blue-500" },
+    { day: "Sat", val: "35%", color: "bg-slate-300" },
+    { day: "Sun", val: "60%", color: "bg-blue-400" },
+  ];
+
   return (
-    /* Font එක Inter, Segoe UI, සහ sans-serif ලෙස වඩාත් පැහැදිලි එකකට වෙනස් කර ඇත */
     <div className="flex min-h-screen bg-[#F8FAFF] font-['Inter',_-apple-system,_.SFNSText-Regular,'Segoe_UI','Helvetica_Neue',sans-serif] text-[#1E293B]">
       {/* Sidebar - Fixed Left */}
       <Sidebar />
@@ -122,18 +133,27 @@ export default function AdminDashboard() {
 
                   {/* BOTTOM SECTION */}
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div className="lg:col-span-2 bg-white rounded-[32px] p-8 shadow-sm border border-slate-100/50 relative overflow-hidden">
-                      {/* Subtle pattern background for the chart area */}
+                    {/* ENHANCED PLATFORM ANALYTICS */}
+                    <div className="lg:col-span-2 bg-white rounded-[32px] p-8 shadow-sm border border-slate-100/50 relative overflow-hidden flex flex-col">
                       <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-full blur-3xl opacity-50 -mr-16 -mt-16"></div>
                       
-                      <div className="flex items-center justify-between mb-10 relative z-10">
+                      <div className="flex items-center justify-between mb-12 relative z-10">
                         <div>
                           <h3 className="font-bold text-slate-900 text-lg tracking-tight">Platform Analytics</h3>
-                          <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-[0.2em]">Activity Overview</p>
+                          <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-[0.2em]">Weekly Activity Overview</p>
                         </div>
-                        <button className="p-2.5 bg-slate-50 hover:bg-slate-100 rounded-xl transition-colors">
-                          <MoreHorizontal size={20} className="text-slate-400" />
-                        </button>
+                        <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 rounded-full border border-emerald-100">
+                            <span className="relative flex h-2 w-2">
+                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                            </span>
+                            <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">Live Updates</span>
+                          </div>
+                          <button className="p-2.5 bg-slate-50 hover:bg-slate-100 rounded-xl transition-colors">
+                            <MoreHorizontal size={20} className="text-slate-400" />
+                          </button>
+                        </div>
                       </div>
                       
                       <ClaimsPieChart />
@@ -144,7 +164,7 @@ export default function AdminDashboard() {
                       <div className="absolute top-10 right-10 opacity-10 rotate-12"><ShieldCheck size={120} /></div>
                       <h2 className="text-2xl font-bold mb-4 leading-tight tracking-tight">Ready to verify new claims?</h2>
                       <p className="text-blue-100/80 text-sm font-medium mb-8 leading-relaxed">Check the latest item ownership proofs submitted by users today.</p>
-                      <button className="bg-white text-blue-600 py-4 rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-blue-50 transition-colors shadow-lg shadow-blue-900/20">
+                      <button className="bg-white text-blue-600 py-4 rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-blue-50 transition-all shadow-lg shadow-blue-900/20 active:scale-95">
                         Review Now
                       </button>
                     </div>

@@ -10,7 +10,7 @@ export default function LostItemCard({ item }) {
 
   return (
     <div className="bg-white rounded-lg border border-gray-100 hover:shadow-lg hover:border-gray-200 transition-all duration-300 flex flex-col overflow-hidden group cursor-pointer"
-         onClick={() => navigate(`/items/${item.itemId}`)}>
+         onClick={() => navigate(`/items/${item._id}`)}>
       
       {/* Image Area */}
       <div className="w-full h-40 overflow-hidden relative bg-gray-50">

@@ -69,7 +69,17 @@ export default function ChatBox({ claimId, messages, onSendMessage, onEditMessag
   }
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 w-96 bg-white border border-gray-200 rounded-lg shadow-2xl">
+    <div 
+      className="fixed bg-white border border-gray-200 rounded-lg shadow-2xl"
+      style={{
+        position: 'fixed',
+        bottom: '80px',
+        right: '24px',
+        width: '384px',
+        maxHeight: '600px',
+        zIndex: 9998
+      }}
+    >
       {/* Header */}
       <div className="bg-linear-to-r from-blue-500 to-blue-600 text-white p-4 rounded-t-lg flex items-center justify-between">
         <div>
