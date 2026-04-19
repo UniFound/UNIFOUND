@@ -1,22 +1,23 @@
 import express from "express";
-import { createUser, deleteUser, getUser, getUserByEmail, loginUser } from "../controllers/userController.js";
+import { 
+  getUser, 
+  createUser, 
+  updateUser,
+  deleteUser, 
+  loginUser, 
+  getUserByEmail 
+} from "../controllers/userController.js";
 
+const router = express.Router();
 
-const userRouter = express.Router();
+// Public routes
+router.post("/login", loginUser);
+router.post("/register", createUser);
 
-// Create/Register a user
-userRouter.post("/register", createUser);
+// Protected routes (add middleware as needed)
+router.get("/", getUser);
+router.get("/:email", getUserByEmail);
+router.put("/:userId", updateUser);
+router.delete("/:userId", deleteUser);
 
-// Get all users
-userRouter.get("/", getUser);
-
-// Get user by email
-userRouter.get("/email/:email", getUserByEmail);
-
-// Delete user by email
-userRouter.delete("/:email", deleteUser); // changed param from :name to :email
-
-// Login user
-userRouter.post("/login", loginUser);
-
-export default userRouter;
+export default router;

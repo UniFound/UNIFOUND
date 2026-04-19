@@ -12,7 +12,6 @@ const UsersPage = () => {
   
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
@@ -37,7 +36,7 @@ const UsersPage = () => {
   const deleteUser = async (userId) => {
     try {
       await axios.delete(`http://localhost:5000/api/admin-users/${userId}`);
-      setUsers(users.filter(user => user._id !== userId));
+      setUsers(users.filter(user => user.userId !== userId));
       setShowDeleteModal(false);
       setUserToDelete(null);
     } catch (err) {
@@ -48,13 +47,13 @@ const UsersPage = () => {
   
   const toggleUserStatus = async (userId) => {
     try {
-      const user = users.find(u => u._id === userId);
+      const user = users.find(u => u.userId === userId);
       const newStatus = user.status === 'active' ? 'inactive' : 'active';
       
       await axios.put(`http://localhost:5000/api/admin-users/${userId}`, { status: newStatus });
       
       setUsers(users.map(u => 
-        u._id === userId 
+        u.userId === userId 
           ? { ...u, status: newStatus }
           : u
       ));
@@ -73,7 +72,7 @@ const UsersPage = () => {
   const totalUsers = users.length;
   const activeUsers = users.filter(user => user.status === 'active').length;
   const adminUsers = users.filter(user => user.role === 'admin').length;
-  const suspendedUsers = users.filter(user => user.status === 'suspended').length;
+  const suspendedUsers = users.filter(user => user.status === 'inactive').length;
   
   const handleDeleteUser = (user) => {
     setUserToDelete(user);
@@ -82,18 +81,18 @@ const UsersPage = () => {
   
   const confirmDelete = () => {
     if (userToDelete) {
-      deleteUser(userToDelete._id);
+      deleteUser(userToDelete.userId);
     }
   };
   
   // Filter users
   const filteredUsers = users.filter(user => {
-    const matchesSearch = (user.fullName || user.name || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
+    const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim();
+    const matchesSearch = fullName.toLowerCase().includes(searchTerm.toLowerCase()) || 
                          user.email.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesRole = !roleFilter || user.role === roleFilter;
-    const matchesStatus = !statusFilter || user.status === statusFilter;
     
-    return matchesSearch && matchesRole && matchesStatus;
+    return matchesSearch && matchesRole;
   });
   
   // Pagination
@@ -105,7 +104,6 @@ const UsersPage = () => {
   const resetFilters = () => {
     setSearchTerm('');
     setRoleFilter('');
-    setStatusFilter('');
     setCurrentPage(1);
   };
   
@@ -190,18 +188,9 @@ const UsersPage = () => {
                 onChange={(e) => setRoleFilter(e.target.value)}
                 className="px-4 py-3 bg-slate-50/50 border border-slate-100 rounded-2xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-medium"
               >
-                <option value="">All Roles</option>
+                <option value="">All Types</option>
                 <option value="admin">Admin</option>
-                <option value="user">User</option>
-              </select>
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-3 bg-slate-50/50 border border-slate-100 rounded-2xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-medium"
-              >
-                <option value="">All Status</option>
-                <option value="active">Active</option>
-                <option value="suspended">Suspended</option>
+                <option value="customer">Customer</option>
               </select>
               <button
                 onClick={resetFilters}
@@ -262,19 +251,18 @@ const UsersPage = () => {
                       <th className="text-left py-4 px-6 text-slate-600 font-black text-[10px] uppercase tracking-[0.15em]">Email</th>
                       <th className="text-left py-4 px-6 text-slate-600 font-black text-[10px] uppercase tracking-[0.15em]">Role</th>
                       <th className="text-left py-4 px-6 text-slate-600 font-black text-[10px] uppercase tracking-[0.15em]">Status</th>
-                      <th className="text-left py-4 px-6 text-slate-600 font-black text-[10px] uppercase tracking-[0.15em]">Items Found</th>
                       <th className="text-left py-4 px-6 text-slate-600 font-black text-[10px] uppercase tracking-[0.15em]">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {currentUsers.map((user) => (
-                      <tr key={user._id} className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">
+                      <tr key={user.userId} className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">
                         <td className="py-4 px-6">
                           <div className="flex items-center space-x-3">
                             <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center">
                               <User className="h-5 w-5 text-slate-600" />
                             </div>
-                            <span className="text-slate-800 font-medium">{user.fullName || user.name}</span>
+                            <span className="text-slate-800 font-medium">{`${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Unknown'}</span>
                           </div>
                         </td>
                         <td className="py-4 px-6 text-slate-600">{user.email}</td>
@@ -282,8 +270,6 @@ const UsersPage = () => {
                           <span className={`px-3 py-1 text-[10px] font-black rounded-full ${
                             user.role === 'admin' 
                               ? 'bg-blue-50 text-blue-600' 
-                              : user.role === 'manager'
-                              ? 'bg-purple-50 text-purple-600'
                               : 'bg-slate-50 text-slate-600'
                           }`}>
                             {user.role}
@@ -291,27 +277,26 @@ const UsersPage = () => {
                         </td>
                         <td className="py-4 px-6">
                           <span className={`px-3 py-1 text-[10px] font-black rounded-full ${
-                            user.status === 'active' 
-                              ? 'bg-emerald-50 text-emerald-600' 
+                            user.status === 'active'
+                              ? 'bg-emerald-50 text-emerald-600'
                               : 'bg-rose-50 text-rose-600'
                           }`}>
                             {user.status}
                           </span>
                         </td>
-                        <td className="py-4 px-6 text-slate-600">{user.itemsFound || 0}</td>
                         <td className="py-4 px-6">
                           <div className="flex space-x-2">
                             <button 
-                              onClick={() => editUser(user._id)}
+                              onClick={() => editUser(user.userId)}
                               className="p-2 text-blue-600 hover:text-blue-700 transition-colors"
                               title="Edit"
                             >
                               <Edit className="h-4 w-4" />
                             </button>
                             <button 
-                              onClick={() => toggleUserStatus(user._id)}
+                              onClick={() => toggleUserStatus(user.userId)}
                               className="p-2 text-yellow-600 hover:text-yellow-700 transition-colors"
-                              title={user.status === 'active' ? 'Disable' : 'Enable'}
+                              title={user.status === 'active' ? 'Deactivate' : 'Activate'}
                             >
                               <Ban className="h-4 w-4" />
                             </button>
@@ -390,7 +375,7 @@ const UsersPage = () => {
               <p className="text-slate-600 mb-2">Are you sure you want to delete this user? This action cannot be undone.</p>
               <p className="text-slate-600">
                 <strong>User: </strong>
-                <span className="text-slate-800">{userToDelete?.name}</span>
+                <span className="text-slate-800">{`${userToDelete?.firstName || ''} ${userToDelete?.lastName || ''}`.trim() || 'Unknown'}</span>
               </p>
             </div>
             <div className="flex justify-end space-x-3">

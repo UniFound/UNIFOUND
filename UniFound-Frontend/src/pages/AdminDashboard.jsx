@@ -9,11 +9,63 @@ import AdminClaims from "./AdminClaims";
 import AdminItems from "./AdminItems";
 import AdminTicketsPage from "./AdminTicketsPage";
 import ClaimDetailsPage from "./ClaimDetailsPage";
+import ClaimsPieChart from "../components/ClaimsPieChart";
 
 export default function AdminDashboard() {
-  const [userCount, setUserCount] = useState("12,423");
-  const [foundCount, setFoundCount] = useState("1,221");
-  const [claimCount, setClaimCount] = useState("423");
+  const [userCount, setUserCount] = useState("0");
+  const [foundCount, setFoundCount] = useState("0");
+  const [claimCount, setClaimCount] = useState("0");
+  const [ticketCount, setTicketCount] = useState("0");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Fetch real data from API
+    const fetchDashboardData = async () => {
+      try {
+        // Fetch users count
+        const usersResponse = await fetch('http://localhost:5000/api/admin-users');
+        const usersData = await usersResponse.json();
+        if (usersData && Array.isArray(usersData)) {
+          setUserCount(usersData.length.toString());
+        } else if (usersData.users && Array.isArray(usersData.users)) {
+          setUserCount(usersData.users.length.toString());
+        }
+
+        // Fetch items count
+        const itemsResponse = await fetch('http://localhost:5000/api/items');
+        const itemsData = await itemsResponse.json();
+        if (itemsData && Array.isArray(itemsData)) {
+          setFoundCount(itemsData.length.toString());
+        } else if (itemsData.items && Array.isArray(itemsData.items)) {
+          setFoundCount(itemsData.items.length.toString());
+        }
+
+        // Fetch claims count
+        const claimsResponse = await fetch('http://localhost:5000/api/claims');
+        const claimsData = await claimsResponse.json();
+        if (claimsData && Array.isArray(claimsData)) {
+          setClaimCount(claimsData.length.toString());
+        } else if (claimsData.claims && Array.isArray(claimsData.claims)) {
+          setClaimCount(claimsData.claims.length.toString());
+        }
+
+        // Fetch tickets count
+        const ticketsResponse = await fetch('http://localhost:5000/api/tickets');
+        const ticketsData = await ticketsResponse.json();
+        if (ticketsData && Array.isArray(ticketsData)) {
+          setTicketCount(ticketsData.length.toString());
+        } else if (ticketsData.tickets && Array.isArray(ticketsData.tickets)) {
+          setTicketCount(ticketsData.tickets.length.toString());
+        }
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
 
   // Chart එක සඳහා sample data ටිකක්
   const weeklyData = [
@@ -73,34 +125,9 @@ export default function AdminDashboard() {
                       icon={<LifeBuoy size={20} />} 
                       color="rose"
                       label="Open Tickets" 
-                      value="18" 
+                      value={ticketCount} 
                       trend="-2%" 
                       isPositive={false}
-                    />
-                  </div>
-
-                  {/* KEY MANAGEMENT CARDS */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <KeyCard 
-                      icon={<FileText size={20} />} 
-                      color="violet"
-                      label="AUDIT LOGS" 
-                      description="View system activities and logs"
-                      link="/admin/audit"
-                    />
-                    <KeyCard 
-                      icon={<FolderOpen size={20} />} 
-                      color="amber"
-                      label="CATEGORIES" 
-                      description="Manage item categories"
-                      link="/admin/categories"
-                    />
-                    <KeyCard 
-                      icon={<BarChart3 size={20} />} 
-                      color="cyan"
-                      label="REPORTS" 
-                      description="Generate and view reports"
-                      link="/admin/reports"
                     />
                   </div>
 
@@ -129,36 +156,7 @@ export default function AdminDashboard() {
                         </div>
                       </div>
                       
-                      {/* Interactive Bar Chart */}
-                      <div className="flex-1 flex items-end justify-between gap-2 px-4 pb-4 relative z-10 min-h-[250px]">
-                        {weeklyData.map((item, idx) => (
-                          <div key={idx} className="flex-1 flex flex-col items-center gap-4 group">
-                            <div className="w-full relative flex items-end justify-center h-48">
-                              {/* Hover Value Tooltip */}
-                              <div className="absolute -top-10 scale-0 group-hover:scale-100 transition-all duration-200 bg-slate-900 text-white text-[10px] font-bold py-1.5 px-2.5 rounded-lg z-20 shadow-xl shadow-slate-200 after:content-[''] after:absolute after:top-full after:left-1/2 after:-ml-1 after:border-4 after:border-transparent after:border-t-slate-900">
-                                {item.val}
-                              </div>
-                              {/* The Bar */}
-                              <div 
-                                style={{ height: item.val }} 
-                                className={`w-full max-w-[32px] ${item.color} rounded-t-xl rounded-b-md transition-all duration-700 ease-out group-hover:brightness-110 group-hover:shadow-lg group-hover:shadow-blue-100 cursor-pointer relative overflow-hidden`}
-                              >
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                              </div>
-                            </div>
-                            <span className="text-[11px] font-bold text-slate-400 group-hover:text-slate-900 transition-colors uppercase tracking-tighter">
-                              {item.day}
-                            </span>
-                          </div>
-                        ))}
-                        
-                        {/* Background Grid Lines */}
-                        <div className="absolute inset-x-0 top-0 h-48 flex flex-col justify-between pointer-events-none opacity-40">
-                          <div className="border-t border-dashed border-slate-200 w-full"></div>
-                          <div className="border-t border-dashed border-slate-200 w-full"></div>
-                          <div className="border-t border-dashed border-slate-200 w-full"></div>
-                        </div>
-                      </div>
+                      <ClaimsPieChart />
                     </div>
 
                     {/* SIDE PROMO CARD */}

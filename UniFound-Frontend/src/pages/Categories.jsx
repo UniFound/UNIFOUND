@@ -1,18 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Search, Filter, Package, Tag, ChevronLeft, ChevronRight } from 'lucide-react';
 import AdminLayout from './AdminLayout';
 
+const API_BASE_URL = 'http://localhost:5000/api';
+
 const Categories = () => {
-  const [categories, setCategories] = useState([
-    { id: 1, name: 'Electronics', description: 'Phones, laptops, tablets, and other electronic devices', itemCount: 45, color: 'blue', icon: '💻' },
-    { id: 2, name: 'Clothing', description: 'Shirts, pants, jackets, and accessories', itemCount: 38, color: 'purple', icon: '👕' },
-    { id: 3, name: 'Books', description: 'Textbooks, notebooks, and reading materials', itemCount: 62, color: 'green', icon: '📚' },
-    { id: 4, name: 'Accessories', description: 'Jewelry, watches, bags, and personal items', itemCount: 29, color: 'yellow', icon: '👜' },
-    { id: 5, name: 'Documents', description: 'IDs, cards, certificates, and papers', itemCount: 18, color: 'red', icon: '📄' },
-    { id: 6, name: 'Sports Equipment', description: 'Sports gear, equipment, and accessories', itemCount: 15, color: 'indigo', icon: '⚽' },
-    { id: 7, name: 'Keys', description: 'Room keys, car keys, and keycards', itemCount: 22, color: 'gray', icon: '🔑' },
-    { id: 8, name: 'Other', description: 'Items that don\'t fit in other categories', itemCount: 12, color: 'pink', icon: '📦' }
-  ]);
+  const [categories, setCategories] = useState([]);
   
   const [searchTerm, setSearchTerm] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
@@ -40,6 +33,22 @@ const Categories = () => {
   
   const iconOptions = ['💻', '👕', '📚', '👜', '📄', '⚽', '🔑', '📦', '🎧', '📱', '⌚', '🎒', '🔐', '💳', '🧢', '👟'];
   
+  // Fetch categories from backend
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/categories`);
+      const data = await response.json();
+      setCategories(data.data || []);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
+
+  // Load categories on component mount
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
   // Filter categories
   const filteredCategories = categories.filter(category =>
     category.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -52,16 +61,28 @@ const Categories = () => {
   const currentCategories = filteredCategories.slice(indexOfFirstCategory, indexOfLastCategory);
   const totalPages = Math.ceil(filteredCategories.length / itemsPerPage);
   
-  const handleAddCategory = () => {
+  // Add category to backend
+  const handleAddCategory = async () => {
     if (formData.name && formData.description) {
-      const newCategory = {
-        id: categories.length + 1,
-        ...formData,
-        itemCount: 0
-      };
-      setCategories([...categories, newCategory]);
-      setFormData({ name: '', description: '', color: 'blue', icon: '📦' });
-      setShowAddModal(false);
+      try {
+        const response = await fetch(`${API_BASE_URL}/categories`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
+        
+        if (response.ok) {
+          await fetchCategories(); // Refresh categories list
+          setFormData({ name: '', description: '', color: 'blue', icon: '📦' });
+          setShowAddModal(false);
+        } else {
+          console.error('Error adding category');
+        }
+      } catch (error) {
+        console.error('Error adding category:', error);
+      }
     }
   };
   
@@ -76,22 +97,48 @@ const Categories = () => {
     setShowAddModal(true);
   };
   
-  const handleUpdateCategory = () => {
+  // Update category in backend
+  const handleUpdateCategory = async () => {
     if (editingCategory && formData.name && formData.description) {
-      setCategories(categories.map(cat =>
-        cat.id === editingCategory.id
-          ? { ...cat, ...formData }
-          : cat
-      ));
-      setFormData({ name: '', description: '', color: 'blue', icon: '📦' });
-      setShowAddModal(false);
-      setEditingCategory(null);
+      try {
+        const response = await fetch(`${API_BASE_URL}/categories/${editingCategory._id || editingCategory.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
+        
+        if (response.ok) {
+          await fetchCategories(); // Refresh categories list
+          setFormData({ name: '', description: '', color: 'blue', icon: '📦' });
+          setShowAddModal(false);
+          setEditingCategory(null);
+        } else {
+          console.error('Error updating category');
+        }
+      } catch (error) {
+        console.error('Error updating category:', error);
+      }
     }
   };
   
-  const handleDeleteCategory = (categoryId) => {
+  // Delete category from backend
+  const handleDeleteCategory = async (categoryId) => {
     if (window.confirm('Are you sure you want to delete this category?')) {
-      setCategories(categories.filter(cat => cat.id !== categoryId));
+      try {
+        const response = await fetch(`${API_BASE_URL}/categories/${categoryId}`, {
+          method: 'DELETE',
+        });
+        
+        if (response.ok) {
+          await fetchCategories(); // Refresh categories list
+        } else {
+          console.error('Error deleting category');
+        }
+      } catch (error) {
+        console.error('Error deleting category:', error);
+      }
     }
   };
   
@@ -135,7 +182,7 @@ const Categories = () => {
         {/* Categories Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {currentCategories.map((category) => (
-            <div key={category.id} className="bg-white rounded-[32px] p-8 shadow-sm border border-slate-100/50 hover:shadow-lg transition-all duration-300 group">
+            <div key={category._id || category.id} className="bg-white rounded-[32px] p-8 shadow-sm border border-slate-100/50 hover:shadow-lg transition-all duration-300 group">
               <div className="flex items-start justify-between mb-6">
                 <div className="flex items-center space-x-4">
                   <div className="text-4xl group-hover:scale-110 transition-transform">{category.icon}</div>
@@ -154,7 +201,7 @@ const Categories = () => {
                     <Edit className="h-4 w-4" />
                   </button>
                   <button
-                    onClick={() => handleDeleteCategory(category.id)}
+                    onClick={() => handleDeleteCategory(category._id || category.id)}
                     className="p-2 text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-xl transition-all"
                   >
                     <Trash2 className="h-4 w-4" />

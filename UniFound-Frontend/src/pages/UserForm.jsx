@@ -10,10 +10,11 @@ const UserForm = () => {
   const editingUserId = location.state?.userId;
   
   const [formData, setFormData] = useState({
-    fullName: '',
+    firstName: '',
+    lastName: '',
     email: '',
     password: '',
-    role: '',
+    role: 'customer',
     status: 'active'
   });
   
@@ -31,10 +32,11 @@ const UserForm = () => {
     try {
       setLoading(true);
       const users = await axios.get('http://localhost:5000/api/admin-users');
-      const user = users.data.users?.find(u => u._id === editingUserId) || users.data?.find(u => u._id === editingUserId);
+      const user = users.data.users?.find(u => u.userId === editingUserId) || users.data?.find(u => u.userId === editingUserId);
       if (user) {
         setFormData({
-          fullName: user.fullName || user.name,
+          firstName: user.firstName || '',
+          lastName: user.lastName || '',
           email: user.email,
           password: '',
           role: user.role,
@@ -51,11 +53,18 @@ const UserForm = () => {
   const validateForm = async () => {
     const newErrors = {};
     
-    // Validate full name
-    if (!formData.fullName.trim()) {
-      newErrors.fullName = 'Full name is required';
-    } else if (formData.fullName.trim().length < 2) {
-      newErrors.fullName = 'Full name must be at least 2 characters';
+    // Validate first name
+    if (!formData.firstName.trim()) {
+      newErrors.firstName = 'First name is required';
+    } else if (formData.firstName.trim().length < 2) {
+      newErrors.firstName = 'First name must be at least 2 characters';
+    }
+    
+    // Validate last name
+    if (!formData.lastName.trim()) {
+      newErrors.lastName = 'Last name is required';
+    } else if (formData.lastName.trim().length < 2) {
+      newErrors.lastName = 'Last name must be at least 2 characters';
     }
     
     // Validate email
@@ -68,7 +77,7 @@ const UserForm = () => {
       // Check if email already exists (for new users)
       try {
         const users = await axios.get('http://localhost:5000/api/admin-users');
-        const existingUser = users.data.users?.find(u => u.email === formData.email && u._id !== editingUserId) || users.data?.find(u => u.email === formData.email && u._id !== editingUserId);
+        const existingUser = users.data.users?.find(u => u.email === formData.email && u.userId !== editingUserId) || users.data?.find(u => u.email === formData.email && u.userId !== editingUserId);
         if (existingUser) {
           newErrors.email = 'Email already exists';
         }
@@ -103,8 +112,8 @@ const UserForm = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     
-    // Validation for full name field - only allow letters and spaces
-    if (name === 'fullName') {
+    // Validation for name fields - only allow letters and spaces
+    if (name === 'firstName' || name === 'lastName') {
       const lettersOnly = value.replace(/[^a-zA-Z\s]/g, '');
       setFormData(prev => ({
         ...prev,
@@ -148,7 +157,8 @@ const UserForm = () => {
       if (editingUserId) {
         // Update existing user
         await axios.put(`http://localhost:5000/api/admin-users/${editingUserId}`, {
-          fullName: formData.fullName,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
           email: formData.email,
           role: formData.role,
           status: formData.status
@@ -156,7 +166,8 @@ const UserForm = () => {
       } else {
         // Create new user
         await axios.post('http://localhost:5000/api/admin-users', {
-          fullName: formData.fullName,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
           email: formData.email,
           password: formData.password,
           role: formData.role,
@@ -210,27 +221,51 @@ const UserForm = () => {
         <div className="bg-white rounded-[32px] p-8 shadow-sm border border-slate-100/50">
           <form onSubmit={handleSubmit} className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Full Name */}
+              {/* First Name */}
               <div>
-                <label htmlFor="fullName" className="block text-[10px] font-black text-slate-600 uppercase tracking-[0.15em] mb-2">
-                  Full Name <span className="text-rose-600">*</span>
+                <label htmlFor="firstName" className="block text-[10px] font-black text-slate-600 uppercase tracking-[0.15em] mb-2">
+                  First Name <span className="text-rose-600">*</span>
                 </label>
                 <div className="relative">
                   <Users className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
                   <input
                     type="text"
-                    id="fullName"
-                    name="fullName"
-                    value={formData.fullName}
+                    id="firstName"
+                    name="firstName"
+                    value={formData.firstName}
                     onChange={handleInputChange}
                     className={`w-full pl-12 pr-4 py-3 bg-slate-50/50 border rounded-2xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-medium ${
-                      errors.fullName ? 'border-rose-300' : 'border-slate-100'
+                      errors.firstName ? 'border-rose-300' : 'border-slate-100'
                     }`}
-                    placeholder="Enter full name"
+                    placeholder="Enter first name"
                   />
                 </div>
-                {errors.fullName && (
-                  <p className="mt-1 text-[10px] font-black text-rose-600 uppercase tracking-[0.1em]">{errors.fullName}</p>
+                {errors.firstName && (
+                  <p className="mt-1 text-[10px] font-black text-rose-600 uppercase tracking-[0.1em]">{errors.firstName}</p>
+                )}
+              </div>
+
+              {/* Last Name */}
+              <div>
+                <label htmlFor="lastName" className="block text-[10px] font-black text-slate-600 uppercase tracking-[0.15em] mb-2">
+                  Last Name <span className="text-rose-600">*</span>
+                </label>
+                <div className="relative">
+                  <Users className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
+                  <input
+                    type="text"
+                    id="lastName"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleInputChange}
+                    className={`w-full pl-12 pr-4 py-3 bg-slate-50/50 border rounded-2xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-medium ${
+                      errors.lastName ? 'border-rose-300' : 'border-slate-100'
+                    }`}
+                    placeholder="Enter last name"
+                  />
+                </div>
+                {errors.lastName && (
+                  <p className="mt-1 text-[10px] font-black text-rose-600 uppercase tracking-[0.1em]">{errors.lastName}</p>
                 )}
               </div>
 
@@ -300,9 +335,9 @@ const UserForm = () => {
                       errors.role ? 'border-rose-300' : 'border-slate-100'
                     }`}
                   >
-                    <option value="" className="bg-white">Select Role</option>
-                    <option value="admin" className="bg-white">Admin</option>
-                    <option value="user" className="bg-white">User</option>
+                    <option value="">Select Role</option>
+                    <option value="admin">Admin</option>
+                    <option value="customer">Customer</option>
                   </select>
                 </div>
                 {errors.role && (
@@ -335,6 +370,7 @@ const UserForm = () => {
                   <p className="mt-1 text-[10px] font-black text-rose-600 uppercase tracking-[0.1em]">{errors.status}</p>
                 )}
               </div>
+
             </div>
 
             {/* Form Actions */}
