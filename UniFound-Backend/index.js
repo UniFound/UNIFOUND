@@ -14,7 +14,6 @@ import messageRouter from "./routes/messageRouter.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import ticketRouter from "./routes/ticketRouter.js";
 import auditLogRoutes from "./routes/auditLogRoutes.js";
-import adminUserRoutes from "./routes/adminUserRoutes.js";
 import chatRouter from "./routes/chatRouter.js"; // 
 
 dotenv.config();
