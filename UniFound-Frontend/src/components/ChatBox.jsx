@@ -47,7 +47,7 @@ export default function ChatBox({ claimId, messages, onSendMessage, onEditMessag
   const getMessageStatus = (message) => {
     if (message.senderId === currentUser?.id) {
       if (message.seen) {
-        return { text: 'Seen', color: 'text-black', bgColor: 'bg-green-100', icon: CheckCheck };
+        return { text: 'Seen', color: 'text-black', bgColor: 'bg-blue-100', icon: CheckCheck };
       } else if (message.delivered) {
         return { text: 'Delivered', color: 'text-black', bgColor: 'bg-blue-100', icon: Check };
       } else {
@@ -55,7 +55,7 @@ export default function ChatBox({ claimId, messages, onSendMessage, onEditMessag
       }
     } else {
       if (message.seen) {
-        return { text: 'Seen', color: 'text-black', bgColor: 'bg-green-100', icon: CheckCheck };
+        return { text: 'Seen', color: 'text-black', bgColor: 'bg-blue-100', icon: CheckCheck };
       } else if (message.delivered) {
         return { text: 'Delivered', color: 'text-black', bgColor: 'bg-blue-100', icon: Check };
       } else {
@@ -81,7 +81,7 @@ export default function ChatBox({ claimId, messages, onSendMessage, onEditMessag
       }}
     >
       {/* Header */}
-      <div className="bg-linear-to-r from-blue-500 to-blue-600 text-white p-4 rounded-t-lg flex items-center justify-between">
+      <div className="bg-blue-400 hover:bg-blue-500 text-white p-4 rounded-t-lg flex items-center justify-between">
         <div>
           <h3 className="text-lg font-semibold">Claim Chat</h3>
           <p className="text-sm opacity-90">Claim ID: {claimId}</p>
@@ -106,7 +106,7 @@ export default function ChatBox({ claimId, messages, onSendMessage, onEditMessag
               {/* Avatar */}
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-semibold text-sm ${
                 message.senderId === currentUser?.id 
-                  ? 'bg-green-600' 
+                  ? 'bg-blue-500' 
                   : message.senderId === otherUser?.id 
                     ? 'bg-blue-600' 
                     : 'bg-gray-500'
@@ -121,9 +121,9 @@ export default function ChatBox({ claimId, messages, onSendMessage, onEditMessag
               {/* Message Bubble */}
               <div className={`max-w-xs lg:max-w-md px-3 py-2 rounded-2xl ${
                 message.senderId === currentUser?.id 
-                  ? 'bg-green-100 text-black' 
+                  ? 'bg-blue-100 text-black' 
                   : message.senderId === otherUser?.id 
-                    ? 'bg-blue-100 text-black' 
+                    ? 'bg-gray-100 text-black' 
                     : 'bg-gray-100 text-black'
               }`}>
                 <div className="flex items-start justify-between gap-2">
@@ -140,7 +140,7 @@ export default function ChatBox({ claimId, messages, onSendMessage, onEditMessag
                         />
                         <button
                           onClick={handleSaveEdit}
-                          className="text-green-600 hover:text-green-700 text-sm font-medium"
+                          className="text-blue-600 hover:text-blue-700 text-sm font-medium"
                         >
                           Save
                         </button>
@@ -212,7 +212,7 @@ export default function ChatBox({ claimId, messages, onSendMessage, onEditMessag
           <button
             onClick={handleSend}
             disabled={!newMessage.trim()}
-            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Send size={20} />
           </button>

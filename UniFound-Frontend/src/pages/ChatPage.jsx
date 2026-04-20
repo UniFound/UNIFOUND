@@ -235,7 +235,7 @@ const ChatPage = () => {
   const getMessageStatus = (message) => {
     if (message.senderId === userId) {
       if (message.seen) {
-        return { text: 'Seen', color: 'text-black', bgColor: 'bg-green-100', icon: CheckCheck };
+        return { text: 'Seen', color: 'text-black', bgColor: 'bg-blue-100', icon: CheckCheck };
       } else if (message.delivered) {
         return { text: 'Delivered', color: 'text-black', bgColor: 'bg-blue-100', icon: Check };
       } else {
@@ -243,7 +243,7 @@ const ChatPage = () => {
       }
     } else {
       if (message.seen) {
-        return { text: 'Seen', color: 'text-black', bgColor: 'bg-green-100', icon: CheckCheck };
+        return { text: 'Seen', color: 'text-black', bgColor: 'bg-blue-100', icon: CheckCheck };
       } else if (message.delivered) {
         return { text: 'Delivered', color: 'text-black', bgColor: 'bg-blue-100', icon: Check };
       } else {
@@ -257,7 +257,7 @@ const ChatPage = () => {
       <div className="w-full max-w-2xl h-[90vh] max-h-[800px] flex flex-col bg-white rounded-2xl shadow-xl overflow-hidden">
       
       {/* 🔹 Header - Same as ChatBox */}
-      <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-4 flex items-center justify-between">
+      <div className="bg-blue-400 hover:bg-blue-500 text-white p-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate(-1)}
@@ -284,7 +284,7 @@ const ChatPage = () => {
               {/* Avatar */}
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-semibold text-sm ${
                 message.senderId === userId 
-                  ? 'bg-green-600' 
+                  ? 'bg-blue-500' 
                   : 'bg-blue-600'
               }`}>
                 {message.senderId === userId ? 'Y' : 'F'}
@@ -293,8 +293,8 @@ const ChatPage = () => {
               {/* Message Bubble */}
               <div className={`max-w-xs lg:max-w-md px-3 py-2 rounded-2xl ${
                 message.senderId === userId 
-                  ? 'bg-green-100 text-black' 
-                  : 'bg-blue-100 text-black'
+                  ? 'bg-blue-100 text-black' 
+                  : 'bg-gray-100 text-black'
               }`}>
                 <div className="flex items-start justify-between gap-2">
                   {/* Message Content */}
@@ -310,7 +310,7 @@ const ChatPage = () => {
                         />
                         <button
                           onClick={() => handleEditMessage(message._id, editText)}
-                          className="text-green-600 hover:text-green-700 text-sm font-medium"
+                          className="text-blue-600 hover:text-blue-700 text-sm font-medium"
                         >
                           Save
                         </button>
@@ -388,7 +388,7 @@ const ChatPage = () => {
           <button
             onClick={handleSend}
             disabled={!text.trim()}
-            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Send size={20} />
           </button>
