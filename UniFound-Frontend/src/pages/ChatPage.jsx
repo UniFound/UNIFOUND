@@ -232,26 +232,6 @@ const ChatPage = () => {
     return new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
-  const getMessageStatus = (message) => {
-    if (message.senderId === userId) {
-      if (message.seen) {
-        return { text: 'Seen', color: 'text-black', bgColor: 'bg-blue-100', icon: CheckCheck };
-      } else if (message.delivered) {
-        return { text: 'Delivered', color: 'text-black', bgColor: 'bg-blue-100', icon: Check };
-      } else {
-        return { text: 'Sent', color: 'text-black', bgColor: 'bg-gray-100', icon: Send };
-      }
-    } else {
-      if (message.seen) {
-        return { text: 'Seen', color: 'text-black', bgColor: 'bg-blue-100', icon: CheckCheck };
-      } else if (message.delivered) {
-        return { text: 'Delivered', color: 'text-black', bgColor: 'bg-blue-100', icon: Check };
-      } else {
-        return { text: 'Received', color: 'text-black', bgColor: 'bg-gray-100', icon: null };
-      }
-    }
-  };
-
   return (
     <div className="min-h-screen bg-blue-50 flex items-center justify-center p-4">
       <div className="w-full max-w-2xl h-[90vh] max-h-[800px] flex flex-col bg-white rounded-2xl shadow-xl overflow-hidden">
@@ -272,109 +252,109 @@ const ChatPage = () => {
         </div>
       </div>
 
-      {/* 🔹 Messages Area - Using ChatBox styling */}
+      {/* Messages Area */}
       <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50">
         {messages.map((message) => {
-          const status = getMessageStatus(message);
           return (
             <div
               key={message._id}
               className={`flex ${message.senderId === userId ? 'justify-end' : 'justify-start'} mb-3`}
             >
-              {/* Avatar */}
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-semibold text-sm ${
-                message.senderId === userId 
-                  ? 'bg-blue-500' 
-                  : 'bg-blue-600'
-              }`}>
-                {message.senderId === userId ? 'Y' : 'F'}
-              </div>
+              {/* Avatar for other user (left side) */}
+              {message.senderId !== userId && (
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-semibold text-sm bg-blue-600`}>
+                  F
+                </div>
+              )}
 
               {/* Message Bubble */}
-              <div className={`max-w-xs lg:max-w-md px-3 py-2 rounded-2xl ${
-                message.senderId === userId 
-                  ? 'bg-blue-100 text-black' 
-                  : 'bg-gray-100 text-black'
-              }`}>
-                <div className="flex items-start justify-between gap-2">
-                  {/* Message Content */}
-                  <div className="flex-1">
-                    {editingMessage === message._id ? (
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="text"
-                          value={editText}
-                          onChange={(e) => setEditText(e.target.value)}
-                          className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm text-black"
-                          onKeyPress={(e) => e.key === 'Enter' && handleEditMessage(message._id, editText)}
-                        />
-                        <button
-                          onClick={() => handleEditMessage(message._id, editText)}
-                          className="text-blue-600 hover:text-blue-700 text-sm font-medium"
-                        >
-                          Save
-                        </button>
+              <div 
+                className={`group relative max-w-xs lg:max-w-md px-4 py-3 rounded-[20px] shadow-sm hover:shadow-md transition-all duration-300 ${
+                  message.senderId === userId 
+                    ? 'bg-gradient-to-br from-blue-50 to-blue-100 text-black ml-auto' 
+                    : 'bg-gradient-to-br from-gray-50 to-gray-100 text-black mr-auto'
+                }`}
+              >
+                {/* Hover Action Icons - Top Right Corner */}
+                {message.senderId === userId && (
+                  <div className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-90 group-hover:scale-100">
+                    <div className="flex gap-1 bg-white rounded-full shadow-lg p-1">
+                      <button
+                        onClick={() => {
+                          setEditingMessage(message._id);
+                          setEditText(message.text);
+                        }}
+                        className="p-1.5 text-blue-500 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all duration-200"
+                        title="Edit message"
+                      >
+                        <Edit2 size={14} />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteMessage(message._id)}
+                        className="p-1.5 text-red-500 hover:text-red-600 hover:bg-red-50 rounded-full transition-all duration-200"
+                        title="Delete message"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Message Content */}
+                <div className="pr-8">
+                  {editingMessage === message._id ? (
+                    <div className="flex flex-col gap-2">
+                      <input
+                        type="text"
+                        value={editText}
+                        onChange={(e) => setEditText(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-black focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white/80 backdrop-blur-sm"
+                        onKeyPress={(e) => e.key === 'Enter' && handleEditMessage(message._id, editText)}
+                        autoFocus
+                      />
+                      <div className="flex gap-2 justify-end">
                         <button
                           onClick={() => {
                             setEditingMessage(null);
                             setEditText("");
                           }}
-                          className="text-gray-500 hover:text-gray-700 text-sm font-medium ml-2"
+                          className="px-3 py-1 text-xs text-gray-600 hover:text-gray-800 hover:bg-gray-200 rounded-md transition-all duration-200"
                         >
                           Cancel
                         </button>
-                      </div>
-                    ) : (
-                      <p className="text-sm break-words text-black">{message.text}</p>
-                    )}
-                  </div>
-
-                  {/* Status and Actions */}
-                  <div className="flex items-center gap-2 mt-1">
-                    {/* Status Icon */}
-                    {status && (
-                      <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${status.bgColor}`}>
-                        {status.icon && <status.icon size={12} />}
-                        <span className={status.color}>{status.text}</span>
-                      </div>
-                    )}
-
-                    {/* Time */}
-                    <span className="text-xs text-gray-500">
-                      {formatTime(message.createdAt)}
-                    </span>
-
-                    {/* Edit/Delete Actions */}
-                    {message.senderId === userId && (
-                      <div className="flex gap-1">
                         <button
-                          onClick={() => {
-                            setEditingMessage(message._id);
-                            setEditText(message.text);
-                          }}
-                          className="text-gray-500 hover:text-gray-700"
-                          title="Edit message"
+                          onClick={() => handleEditMessage(message._id, editText)}
+                          className="px-3 py-1 text-xs text-white bg-blue-500 hover:bg-blue-600 rounded-md transition-all duration-200 shadow-sm"
                         >
-                          <Edit2 size={14} />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteMessage(message._id)}
-                          className="text-red-500 hover:text-red-700"
-                          title="Delete message"
-                        >
-                          <Trash2 size={14} />
+                          Save
                         </button>
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  ) : (
+                    <p className="text-sm leading-relaxed break-words text-gray-800">{message.text}</p>
+                  )}
+                </div>
+
+                {/* Time - Bottom Right */}
+                <div className="mt-2 text-right">
+                  <span className="text-xs text-gray-500 opacity-75">
+                    {formatTime(message.createdAt)}
+                  </span>
                 </div>
               </div>
+
+              {/* Avatar for current user (right side) */}
+              {message.senderId === userId && (
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-semibold text-sm bg-blue-500 ml-2`}>
+                  Y
+                </div>
+              )}
             </div>
           );
         })}
       </div>
 
-      {/* 🔹 Input Area - Same as ChatBox */}
+      {/* Input Area */}
       <div className="border-t border-gray-200 p-4 bg-white">
         <div className="flex gap-2">
           <input
@@ -397,6 +377,7 @@ const ChatPage = () => {
     </div>
   </div>
 );
+
 };
 
 export default ChatPage;
