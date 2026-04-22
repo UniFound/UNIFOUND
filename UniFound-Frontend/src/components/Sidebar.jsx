@@ -7,7 +7,6 @@ import {
   LifeBuoy, 
   FileText, 
   Tags, 
-  ClipboardList, 
   Settings, 
   LogOut 
 } from "lucide-react";
@@ -45,11 +44,6 @@ export default function Sidebar() {
       icon: <Tags size={20} />, 
       label: "Categories", 
       path: "/admin/categories" 
-    },
-    { 
-      icon: <ClipboardList size={20} />, 
-      label: "Audit Logs", 
-      path: "/admin/audit" 
     },
     { 
       icon: <FileText size={20} />, 

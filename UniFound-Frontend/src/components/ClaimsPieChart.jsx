@@ -28,7 +28,7 @@ const ClaimsPieChart = () => {
         
         if (data && Array.isArray(data)) {
           const total = data.length;
-          const verified = data.filter(claim => claim.status === 'Approved').length;
+          const verified = data.filter(claim => claim.status === 'Verified').length;
           const pending = data.filter(claim => claim.status === 'Pending').length;
           const rejected = data.filter(claim => claim.status === 'Rejected').length;
           const underReview = data.filter(claim => claim.status === 'Under Review').length;
@@ -57,16 +57,16 @@ const ClaimsPieChart = () => {
       {
         data: [claimsData.verified, claimsData.pending, claimsData.underReview, claimsData.rejected],
         backgroundColor: [
-          'rgba(34, 197, 94, 0.8)',  // emerald-500
-          'rgba(59, 130, 246, 0.8)', // blue-500
-          'rgba(251, 146, 60, 0.8)', // orange-400
-          'rgba(239, 68, 68, 0.8)',  // red-500
+          'rgba(59, 130, 246, 0.85)',  // blue-500 - Verified Claims
+          'rgba(148, 163, 184, 0.85)', // slate-400 - Pending Claims
+          'rgba(251, 191, 36, 0.85)',  // amber-400 - Under Review
+          'rgba(244, 63, 94, 0.85)',   // rose-500 - Rejected Claims
         ],
         borderColor: [
-          'rgba(34, 197, 94, 1)',
           'rgba(59, 130, 246, 1)',
-          'rgba(251, 146, 60, 1)',
-          'rgba(239, 68, 68, 1)',
+          'rgba(148, 163, 184, 1)',
+          'rgba(251, 191, 36, 1)',
+          'rgba(244, 63, 94, 1)',
         ],
         borderWidth: 2,
         hoverOffset: 4,

@@ -25,38 +25,55 @@ export default function AdminDashboard() {
         // Fetch users count
         const usersResponse = await fetch('http://localhost:5000/api/admin-users');
         const usersData = await usersResponse.json();
-        if (usersData && Array.isArray(usersData)) {
-          setUserCount(usersData.length.toString());
-        } else if (usersData.users && Array.isArray(usersData.users)) {
-          setUserCount(usersData.users.length.toString());
+        let users = usersData;
+        if (usersData.users && Array.isArray(usersData.users)) {
+          users = usersData.users;
         }
+        setUserCount(users.length.toString());
 
         // Fetch items count
         const itemsResponse = await fetch('http://localhost:5000/api/items');
         const itemsData = await itemsResponse.json();
-        if (itemsData && Array.isArray(itemsData)) {
-          setFoundCount(itemsData.length.toString());
+        let items = itemsData;
+        if (itemsData.data && Array.isArray(itemsData.data)) {
+          items = itemsData.data;
         } else if (itemsData.items && Array.isArray(itemsData.items)) {
-          setFoundCount(itemsData.items.length.toString());
+          items = itemsData.items;
         }
+        
+        // Filter for found items only (not deleted)
+        const foundItems = items.filter(item => 
+          item.status === 'found' && !item.isDeleted
+        );
+        setFoundCount(foundItems.length.toString());
 
         // Fetch claims count
         const claimsResponse = await fetch('http://localhost:5000/api/claims');
         const claimsData = await claimsResponse.json();
-        if (claimsData && Array.isArray(claimsData)) {
-          setClaimCount(claimsData.length.toString());
-        } else if (claimsData.claims && Array.isArray(claimsData.claims)) {
-          setClaimCount(claimsData.claims.length.toString());
+        let claims = claimsData;
+        if (claimsData.claims && Array.isArray(claimsData.claims)) {
+          claims = claimsData.claims;
         }
+        
+        // Filter for active claims (not deleted and not rejected)
+        const activeClaims = claims.filter(claim => 
+          !claim.isDeleted && ['Pending', 'Under Review', 'Approved', 'Verified'].includes(claim.status)
+        );
+        setClaimCount(activeClaims.length.toString());
 
         // Fetch tickets count
         const ticketsResponse = await fetch('http://localhost:5000/api/tickets');
         const ticketsData = await ticketsResponse.json();
-        if (ticketsData && Array.isArray(ticketsData)) {
-          setTicketCount(ticketsData.length.toString());
-        } else if (ticketsData.tickets && Array.isArray(ticketsData.tickets)) {
-          setTicketCount(ticketsData.tickets.length.toString());
+        let tickets = ticketsData;
+        if (ticketsData.tickets && Array.isArray(ticketsData.tickets)) {
+          tickets = ticketsData.tickets;
         }
+        
+        // Filter for open tickets (Open or In Progress)
+        const openTickets = tickets.filter(ticket => 
+          ['Open', 'In Progress'].includes(ticket.status)
+        );
+        setTicketCount(openTickets.length.toString());
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
       } finally {

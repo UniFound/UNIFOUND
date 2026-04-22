@@ -6,7 +6,6 @@ import UserForm from "./pages/UserForm";
 import UsersPage from "./pages/Users";
 import Categories from "./pages/Categories";
 import Analytics from "./pages/Analytics";
-import AuditLogs from "./pages/AuditLogs";
 import Reports from "./pages/Reports";
 import LostItems from "./pages/LostItemsPage";
 import FoundItemsPage from "./pages/FoundItemsPage";
@@ -34,7 +33,6 @@ function App() {
         <Route path="/admin/user-form" element={<UserForm />} />
         <Route path="/admin/categories" element={<Categories />} />
         <Route path="/admin/analytics" element={<Analytics />} />
-        <Route path="/admin/audit" element={<AuditLogs />} />
         <Route path="/admin/reports" element={<Reports />} />
         <Route path="/lostItem" element={<LostItems />} />
         <Route path="/foundItem" element={<FoundItemsPage />} />

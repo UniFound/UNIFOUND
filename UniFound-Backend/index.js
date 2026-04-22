@@ -13,8 +13,8 @@ import conversationRoutes from "./routes/conversationRoutes.js";
 import messageRouter from "./routes/messageRouter.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import ticketRouter from "./routes/ticketRouter.js";
-import auditLogRoutes from "./routes/auditLogRoutes.js";
-import chatRouter from "./routes/chatRouter.js"; // 
+import chatRouter from "./routes/chatRouter.js";
+import reportRouter from "./routes/reportRouter.js"; 
 
 dotenv.config();
 
@@ -50,8 +50,8 @@ app.use("/api/conversations", conversationRoutes);
 app.use("/api/messages", messageRouter); 
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/tickets", ticketRouter);
-app.use("/api/audit-logs", auditLogRoutes);
 app.use("/api/chats", chatRouter);
+app.use("/api/reports", reportRouter);
 
 // Root route
 app.get("/", (req, res) => {
