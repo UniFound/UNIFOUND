@@ -6,6 +6,7 @@ import {
   updateClaim,
   deleteClaim,
   updateClaimStatus,
+  appendEvidence,
 } from "../controllers/claimController.js";
 
 const router = express.Router();
@@ -26,5 +27,7 @@ router.put("/:id", updateClaim);
 router.delete("/:id", deleteClaim);
 
 router.patch("/:id/status", updateClaimStatus);
+
+router.patch("/:id/append-evidence", appendEvidence);
 
 export default router;

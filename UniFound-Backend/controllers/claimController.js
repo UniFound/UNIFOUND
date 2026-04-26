@@ -273,3 +273,35 @@ export const updateClaimStatus = async (req, res) => {
     res.status(500).json({ message: "Error updating status", error });
   }
 };
+
+// D:/UniFound/UniFound-Backend/controllers/claimController.js
+
+export const appendEvidence = async (req, res) => {
+  try {
+    const { id } = req.params; 
+    const { additionalInfo } = req.body;
+
+    const claim = await Claim.findOne({ claimId: id }); 
+
+    if (!claim) {
+      return res.status(404).json({ message: "Claim not found with ID: " + id });
+    }
+
+   
+    claim.description = claim.description + "\n\n[Additional Evidence]: " + additionalInfo;
+    
+    claim.status = "Pending"; 
+
+    await claim.save();
+
+    res.status(200).json({ 
+      success: true, 
+      message: "Evidence appended successfully",
+      claim 
+    });
+
+  } catch (error) {
+    console.error("Error appending evidence:", error);
+    res.status(500).json({ message: "Internal Server Error", error: error.message });
+  }
+};
