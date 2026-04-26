@@ -1,12 +1,23 @@
-import express from 'express';
-import { createUser, deleteUser, getUser, loginUser, getUserByEmail } from '../controllers/userController.js';
+import express from "express";
+import { 
+  getUser, 
+  createUser, 
+  updateUser,
+  deleteUser, 
+  loginUser, 
+  getUserByEmail 
+} from "../controllers/userController.js";
 
-const userRouter = express.Router();
+const router = express.Router();
 
-userRouter.post("/register", createUser)
-userRouter.get("/", getUser)
-userRouter.get("/email/:email", getUserByEmail)  
-userRouter.delete("/:name", deleteUser)
-userRouter.post("/login", loginUser)
+// Public routes
+router.post("/login", loginUser);
+router.post("/register", createUser);
 
-export default userRouter;
+// Protected routes (add middleware as needed)
+router.get("/", getUser);
+router.get("/:email", getUserByEmail);
+router.put("/:userId", updateUser);
+router.delete("/:userId", deleteUser);
+
+export default router;
