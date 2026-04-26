@@ -1,5 +1,6 @@
 "use client";
 
+import Footer from "../components/Footer.jsx";
 import Navbar from "../components/Navbar.jsx";
 import { Users, ShieldCheck, Zap, Globe, Heart, Target, ChevronRight } from "lucide-react";
 
@@ -18,7 +19,7 @@ export default function AboutPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans pb-24 relative overflow-hidden">
+    <div className="min-h-screen bg-slate-50 font-sans relative overflow-hidden">
       {/* Decorative Background Elements */}
       <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-blue-50/50 to-transparent -z-10"></div>
       <div className="absolute top-20 -right-20 w-96 h-96 bg-blue-100/40 rounded-full blur-3xl -z-10"></div>
@@ -26,7 +27,7 @@ export default function AboutPage() {
 
       <Navbar />
 
-      <div className="pt-32 px-6 max-w-7xl mx-auto space-y-24 relative z-10">
+      <div className="pt-32 px-6 max-w-7xl mx-auto space-y-24 relative z-10 pb-24">
         
         {/* --- HERO SECTION --- */}
         <section className="flex flex-col lg:flex-row items-center gap-16 animate-in fade-in slide-in-from-bottom-8 duration-1000">
@@ -48,7 +49,6 @@ export default function AboutPage() {
                 Learn More
               </button>
               
-              {/* මෙතන තමයි වෙනස් කළේ - Array එක map කරලා real images ගත්තා */}
               <div className="flex -space-x-3 items-center ml-4">
                 {teamMembers.map((member, i) => (
                   <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-slate-200 shadow-sm overflow-hidden">
@@ -62,13 +62,11 @@ export default function AboutPage() {
 
           <div className="flex-1 relative group">
             <div className="absolute inset-0 bg-blue-600 rounded-[3rem] rotate-3 group-hover:rotate-1 transition-transform duration-500 -z-10 opacity-10"></div>
-            {/* මෙතන පින්තූරය පෙන්වීමට /about-hero.png වෙනුවට ඔබ කැමති image එකක් දාන්න */}
             <img
               src="https://ytzzomqohkjpftxnrzjd.supabase.co/storage/v1/object/public/unifound-images/Minuri/image_2026-04-07_024833101.png"
               alt="About UniFound"
               className="w-full h-auto rounded-[3rem] shadow-2xl transition-all duration-700 group-hover:-translate-y-2"
             />
-            {/* Floating Info Card */}
             <div className="absolute -bottom-6 -left-6 bg-white/80 backdrop-blur-xl p-6 rounded-3xl shadow-2xl border border-white max-w-[200px] animate-bounce-slow">
               <div className="bg-emerald-100 w-10 h-10 rounded-2xl flex items-center justify-center mb-3 text-emerald-600">
                 <ShieldCheck size={24} />
@@ -126,14 +124,12 @@ export default function AboutPage() {
           </div>
         </section>
 
-{/* --- MISSION SECTION --- */}
+        {/* --- MISSION SECTION --- */}
         <section className="relative overflow-hidden bg-white border border-blue-100 p-10 md:p-16 rounded-[2.5rem] shadow-xl shadow-blue-500/5 group max-w-5xl mx-auto">
-          {/* Soft Blue Decorative Orbs */}
           <div className="absolute -top-10 -right-10 w-40 h-40 bg-blue-100/50 rounded-full blur-3xl group-hover:bg-blue-200/50 transition-colors duration-700"></div>
           <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-sky-50/50 rounded-full blur-3xl group-hover:bg-sky-100/50 transition-colors duration-700"></div>
           
           <div className="relative z-10 text-center space-y-10">
-            {/* Minimal Header */}
             <div className="space-y-3">
               <div className="inline-flex p-3 bg-blue-50 rounded-2xl text-blue-600 mb-2 group-hover:scale-110 transition-transform duration-500">
                   <Target size={28} />
@@ -144,7 +140,6 @@ export default function AboutPage() {
               </p>
             </div>
 
-            {/* Compact Mission Grid */}
             <div className="grid sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
               {[
                 { title: "Trust", desc: "Verified networks for safe exchange.", color: "bg-blue-50" },
@@ -158,7 +153,6 @@ export default function AboutPage() {
               ))}
             </div>
 
-            {/* Action Button */}
             <div className="pt-2">
               <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3.5 rounded-xl font-black text-xs transition-all shadow-lg shadow-blue-200 active:scale-95 flex items-center gap-2 mx-auto uppercase tracking-widest">
                 Join our community <ChevronRight size={16} />
@@ -166,8 +160,8 @@ export default function AboutPage() {
             </div>
           </div>
         </section>
-
       </div>
+      <Footer/>
     </div>
   );
 }

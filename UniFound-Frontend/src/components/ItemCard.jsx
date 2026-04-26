@@ -1,15 +1,40 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react"; 
 import { useNavigate } from "react-router-dom";
 import ClaimFormModal from "./ClaimFormModal";
-import { Calendar, Tag, ArrowRight, ShieldCheck } from "lucide-react";
+import { Calendar, Tag, ArrowRight, ShieldCheck, Heart } from "lucide-react";
 
 export default function ItemCard({ item }) {
   const navigate = useNavigate();
   const [showClaimModal, setShowClaimModal] = useState(false);
+  const [isFavourite, setIsFavourite] = useState(false); 
+
+  
+  useEffect(() => {
+    const savedFavs = JSON.parse(localStorage.getItem("favouriteItems") || "[]");
+    const isExist = savedFavs.some((fav) => fav._id === item?._id);
+    setIsFavourite(isExist);
+  }, [item?._id]);
 
   if (!item) return null; // Safe check
+
+  
+  const toggleFavourite = (e) => {
+    e.stopPropagation(); 
+    
+    let savedFavs = JSON.parse(localStorage.getItem("favouriteItems") || "[]");
+
+    if (isFavourite) {
+      savedFavs = savedFavs.filter((fav) => fav._id !== item._id);
+      setIsFavourite(false);
+    } else {
+      savedFavs.push(item);
+      setIsFavourite(true);
+    }
+
+    localStorage.setItem("favouriteItems", JSON.stringify(savedFavs));
+  };
 
   return (
     <>
@@ -19,20 +44,30 @@ export default function ItemCard({ item }) {
       >
         
         {/* Image Area */}
-        {item.image_url ? (
-          <div className="w-full h-44 overflow-hidden rounded-lg mb-4 bg-gray-50">
+        <div className="relative w-full h-44 overflow-hidden rounded-lg mb-4 bg-gray-50">
+          {item.image_url ? (
             <img
               src={item.image_url}
               alt={item.title || "Found Item"}
               className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
             />
-          </div>
-        ) : (
-          <div className="w-full h-44 flex flex-col items-center justify-center bg-gray-50 rounded-lg mb-4 text-gray-400 gap-1">
-            <Tag size={20} className="text-gray-300" />
-            <span className="text-xs font-medium">No Image Available</span>
-          </div>
-        )}
+          ) : (
+            <div className="w-full h-full flex flex-col items-center justify-center text-gray-400 gap-1">
+              <Tag size={20} className="text-gray-300" />
+              <span className="text-xs font-medium">No Image Available</span>
+            </div>
+          )}
+
+          {/* Favourite Button - Logic added here */}
+          <button 
+            onClick={toggleFavourite}
+            className={`absolute top-2 right-2 p-1.5 backdrop-blur-sm rounded-full transition-all shadow-sm ${
+              isFavourite ? "bg-red-50 text-red-500" : "bg-white/80 text-gray-400 hover:text-red-500 hover:bg-white"
+            }`}
+          >
+            <Heart size={14} fill={isFavourite ? "currentColor" : "none"} />
+          </button>
+        </div>
 
         {/* Title & Status */}
         <div className="flex items-center justify-between mb-2">

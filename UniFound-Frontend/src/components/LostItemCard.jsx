@@ -2,11 +2,39 @@
 
 import { useNavigate } from "react-router-dom";
 import { MapPin, ArrowRight, Eye, Heart } from "lucide-react";
+import { useState, useEffect } from "react"; 
 
 export default function LostItemCard({ item }) {
   const navigate = useNavigate();
+  const [isFavourite, setIsFavourite] = useState(false);
+
+  
+  useEffect(() => {
+    const savedFavs = JSON.parse(localStorage.getItem("favouriteItems") || "[]");
+    const isExist = savedFavs.some((fav) => fav._id === item?._id);
+    setIsFavourite(isExist);
+  }, [item?._id]);
 
   if (!item) return null;
+
+  
+  const toggleFavourite = (e) => {
+    e.stopPropagation(); 
+    
+    let savedFavs = JSON.parse(localStorage.getItem("favouriteItems") || "[]");
+
+    if (isFavourite) {
+      
+      savedFavs = savedFavs.filter((fav) => fav._id !== item._id);
+      setIsFavourite(false);
+    } else {
+      
+      savedFavs.push(item);
+      setIsFavourite(true);
+    }
+
+    localStorage.setItem("favouriteItems", JSON.stringify(savedFavs));
+  };
 
   return (
     <div className="bg-white rounded-lg border border-gray-100 hover:shadow-lg hover:border-gray-200 transition-all duration-300 flex flex-col overflow-hidden group cursor-pointer"
@@ -34,9 +62,13 @@ export default function LostItemCard({ item }) {
           Lost
         </div>
 
-        {/* Wishlist Icon */}
-        <button className="absolute top-2.5 right-2.5 p-1.5 bg-white/80 backdrop-blur-sm rounded-full text-gray-400 hover:text-red-500 hover:bg-white transition-all shadow-sm">
-          <Heart size={14} />
+        {/* Wishlist Icon - Logic added here */}
+        <button 
+          onClick={toggleFavourite}
+          className={`absolute top-2.5 right-2.5 p-1.5 backdrop-blur-sm rounded-full transition-all shadow-sm ${
+            isFavourite ? "bg-red-50 text-red-500" : "bg-white/80 text-gray-400 hover:text-red-500 hover:bg-white"
+          }`}>
+          <Heart size={14} fill={isFavourite ? "currentColor" : "none"} />
         </button>
       </div>
 

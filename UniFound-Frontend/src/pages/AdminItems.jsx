@@ -7,10 +7,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   Search, MapPin, Trash2, Plus, CheckCircle, Loader2, X, 
   ShieldCheck, ArrowRight, Clock, Database, Edit3, Tag, 
-  Filter, Layers, ChevronRight
+  Filter, Layers, ChevronRight, BarChart2
 } from "lucide-react";
 
 import AdminAddItems from "./AdminAddItems"; 
+import { useNavigate } from "react-router-dom";
 
 // ප්‍රධාන වෙනස්කම්: 
 // 1. font-black -> font-bold/font-extrabold ලෙස වඩාත් පිරිසිදු කර ඇත.
@@ -26,6 +27,8 @@ export default function AdminItems() {
   const [selectedItem, setSelectedItem] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+
+  const navigate = useNavigate();
 
   const fetchItems = useCallback(async () => {
     setLoading(true);
@@ -94,12 +97,24 @@ export default function AdminItems() {
             </div>
           </div>
           
-          <button 
-            onClick={() => { setIsEditing(false); setIsModalOpen(true); }} 
-            className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-xs transition-all shadow-md"
-          >
-            <Plus size={16} strokeWidth={3} /> New Record
-          </button>
+          <div className="flex items-center gap-3">
+            {/* Analytics Button */}
+            <button 
+              onClick={() => navigate("/admin/adminanalytics")}
+              className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-slate-600 bg-slate-100/80 border border-slate-200 rounded-xl transition-all duration-200 hover:bg-blue-600 hover:text-white hover:border-blue-600 hover:shadow-md active:scale-95"
+            >
+              <BarChart2 size={16} />
+              <span>Analytics</span>
+            </button>
+
+            {/* New Record Button */}
+            <button 
+              onClick={() => { setIsEditing(false); setIsModalOpen(true); }} 
+              className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-xs transition-all shadow-md active:scale-95"
+            >
+              <Plus size={16} strokeWidth={3} /> New Record
+            </button>
+          </div>
         </div>
       </nav>
 
@@ -170,7 +185,7 @@ export default function AdminItems() {
                   <tr key={item._id} onClick={() => setSelectedItem(item)} className="group hover:bg-slate-50/80 cursor-pointer transition-all">
                     <td className="px-8 py-5">
                       <div className="flex items-center gap-4">
-                        <img src={item.image_url} className="w-12 h-12 rounded-xl object-cover shadow-sm border border-slate-100" />
+                        <img src={item.image_url} className="w-12 h-12 rounded-xl object-cover shadow-sm border border-slate-100" alt={item.title} />
                         <div>
                           <p className="font-bold text-slate-800 text-[15px]">{item.title}</p>
                           <p className="text-[10px] text-blue-600 font-bold uppercase tracking-tight">ID: {item.itemId?.slice(-8).toUpperCase()}</p>
@@ -267,9 +282,9 @@ export default function AdminItems() {
                   <div>
                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">Metadata & Description</p>
                     <div className="p-8 bg-blue-50/40 rounded-3xl border border-blue-100/30">
-                       <p className="text-slate-600 leading-relaxed text-[15px] font-medium">
-                        {selectedItem.description || "No specific metadata found for this record."}
-                       </p>
+                        <p className="text-slate-600 leading-relaxed text-[15px] font-medium">
+                         {selectedItem.description || "No specific metadata found for this record."}
+                        </p>
                     </div>
                   </div>
                 </div>

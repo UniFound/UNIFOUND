@@ -23,7 +23,7 @@ export const createItem = async (req, res) => {
     // Format new unique ID (e.g., ITEM001, ITEM002...)
     const itemId = `ITEM${String(newNumber).padStart(3, "0")}`;
 
-    const isApprovedValue = isAdmin === true ? true : false;
+    const isApprovedValue = (isAdmin === true || isAdmin === "true");
 
     // Create item without strict ObjectId validation to allow custom string IDs (e.g., "USR-123")
     const item = await Item.create({
@@ -87,6 +87,7 @@ export const approveItem = async (req, res) => {
     const item = await Item.findByIdAndUpdate(
       req.params.id,
       { isApproved: true },
+      {isAdmin:true},
       { new: true }
     );
 

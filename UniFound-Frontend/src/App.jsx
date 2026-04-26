@@ -22,6 +22,8 @@ import ClaimHistory from "./pages/ClaimHistory";
 import AutoMatchView from "./pages/AutoMatchView";
 import ChatPage from "./pages/ChatPage";
 import ClaimTracking from "./pages/ClaimTracking";
+import AdminAnalytics from "./pages/AdminAnalytics";
+import FavouritesPage from "./pages/FavouritePage";
 
 function App() {
   return (
@@ -48,6 +50,8 @@ function App() {
         <Route path="/tickets" element={<TicketsPage />} />
         <Route path="/ticket/:ticketId" element={<TicketDetailsPage />} />
         <Route path="/claim-details/:id" element={<ClaimTracking />} />
+        <Route path="/admin/adminanalytics" element={<AdminAnalytics />} />
+        <Route path="/favourites" element={<FavouritesPage />} />
       </Routes>
     </Router>
   );
